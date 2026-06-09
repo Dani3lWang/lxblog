@@ -26,7 +26,8 @@ src/config/
 ├── plantumlConfig.ts         # PlantUML 图表配置
 ├── profileConfig.ts          # 用户资料配置
 ├── sidebarConfig.ts          # 侧边栏布局配置
-├── sponsorConfig.ts          # 打赏配置
+├── sponsorConfig.ts          # 赞助配置
+├── wakenConfig.ts        # Waken-wa 实时面板集成配置
 └── README.md                 # 本文件
 ```
 
@@ -66,7 +67,43 @@ import { profileConfig } from "@/config/profileConfig";
 | `plantumlConfig.ts` | PlantUML 图表渲染配置 |
 | `profileConfig.ts` | 用户资料配置（头像、姓名、社交链接） |
 | `sidebarConfig.ts` | 侧边栏布局配置（左侧/右侧/移动端组件列表） |
-| `sponsorConfig.ts` | 打赏配置（打赏方式、打赏者列表） |
+| `sponsorConfig.ts` | 赞助配置（赞助方式、赞助者列表） |
+| `wakenConfig.ts` | Waken-wa 实时面板集成配置 |
+
+## 🇨🇳 国内备案号（footerConfig.beian）
+
+大陆站点部署到国内服务器或使用国内 CDN（腾讯云 EdgeOne、阿里云、华为云等）时，域名必须完成 **ICP 备案**，且拿到 ICP 备案号后 30 天内必须补做 **公安网安备案**。两个备案号均需展示在首页底部并可点击跳转。
+
+在 `src/config/footerConfig.ts` 中配置：
+
+```ts
+export const footerConfig: FooterConfig = {
+  enable: false,                 // 是否启用 FooterConfig.html 自由 HTML 注入
+  beian: {
+    enable: true,                // 是否在页脚渲染备案号
+    // 工信部 ICP 备案
+    icp: {
+      number: "京ICP备2026000001号-1", // 完整备案号，前缀为省份简称
+      // link 留空时默认跳转到 https://beian.miit.gov.cn/
+      // link: "https://beian.miit.gov.cn/",
+    },
+    // 公安网安备案（拿到 ICP 后 30 天内必须补做）
+    police: {
+      number: "京公网安备 11010102000000号",
+      // link 留空时默认跳转到 https://beian.mps.gov.cn/
+      // link: "https://beian.mps.gov.cn/",
+    },
+  },
+};
+```
+
+**渲染效果**：在版权行下方新增一行，左侧是带盾牌图标的公安网安备案号，右侧是工信部 ICP 备案号，两侧均 `target="_blank"` 跳转官方查询页。
+
+**注意事项**：
+- `number` 字段必须与备案审批下来的字符串**完全一致**（含省份简称"京/沪/粤/浙/..."以及末尾的"号"和可能的"-1"子号）
+- 部署到海外/香港，或仅使用 EdgeOne Pages 默认 `*.edgeone.app` 测试域名时，可保持 `beian.enable: false`
+- 仅做 ICP 备案、公安备案未办理时，把 `police` 整个字段注释掉即可（公安备案可选，ICP 必填）
+- 备案号以外的任意 HTML 内容仍可走 `src/config/FooterConfig.html` 自由注入（与 `beian` 不冲突，会显示在备案号上方）
 
 ## 📝 说明
 
