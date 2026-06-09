@@ -26,6 +26,7 @@ src/config/
 ├── galleryConfig.ts      # 相册配置
 ├── sponsorConfig.ts      # 赞助配置
 ├── coverImageConfig.ts   # 封面图配置
+├── wakenConfig.ts        # Waken-wa 实时面板集成配置
 └── README.md             # 本文件
 ```
 
@@ -62,6 +63,7 @@ import { profileConfig } from '../config/profileConfig';
 - `friendsConfig.ts` - 友链配置（友链列表等）
 - `sponsorConfig.ts` - 赞助配置（赞助方式、二维码等）
 - `coverImageConfig.ts` - 封面图配置（随机封面图列表等）
+- `wakenConfig.ts` - Waken-wa 实时面板集成配置
 
 ## 🇨🇳 国内备案号（footerConfig.beian）
 
