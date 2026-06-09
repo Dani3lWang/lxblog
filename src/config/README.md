@@ -6,29 +6,28 @@
 
 ```
 src/config/
-├── index.ts                  # 配置索引文件 - 统一导出
-├── siteConfig.ts             # 站点基础配置
-├── analyticsConfig.ts        # 统计分析配置（Google Analytics、Umami、51la 等）
-├── announcementConfig.ts     # 公告配置
-├── backgroundWallpaper.ts    # 背景壁纸配置
-├── commentConfig.ts          # 评论系统配置
-├── coverImageConfig.ts       # 封面图配置
-├── effectsConfig.ts          # 动画特效配置（樱花等）
-├── expressiveCodeConfig.ts   # 代码高亮配置
-├── fontConfig.ts             # 字体配置
-├── footerConfig.ts           # 页脚配置
-├── friendsConfig.ts          # 友链配置
-├── galleryConfig.ts          # 相册配置
-├── licenseConfig.ts          # 许可证配置
-├── musicConfig.ts            # 音乐播放器配置
-├── navBarConfig.ts           # 导航栏配置（含 LinkPresets 链接预设）
-├── pioConfig.ts              # 看板娘配置（Spine、Live2D）
-├── plantumlConfig.ts         # PlantUML 图表配置
-├── profileConfig.ts          # 用户资料配置
-├── sidebarConfig.ts          # 侧边栏布局配置
-├── sponsorConfig.ts          # 赞助配置
+├── index.ts              # 配置索引文件 - 统一导出
+├── siteConfig.ts         # 站点基础配置
+├── backgroundWallpaper.ts # 背景壁纸配置
+├── profileConfig.ts      # 用户资料配置
+├── musicConfig.ts        # 音乐播放器配置
+├── effectsConfig.ts      # 动画特效配置（樱花等）
+├── commentConfig.ts      # 评论系统配置
+├── announcementConfig.ts # 公告配置
+├── licenseConfig.ts      # 许可证配置
+├── footerConfig.ts       # 页脚配置
+├── expressiveCodeConfig.ts # 代码高亮配置
+├── fontConfig.ts         # 字体配置
+├── sidebarConfig.ts      # 侧边栏配置
+├── navBarConfig.ts       # 导航栏配置
+├── pioConfig.ts          # Pio 模型配置
+├── adConfig.ts           # 广告配置
+├── friendsConfig.ts      # 友链配置
+├── galleryConfig.ts      # 相册配置
+├── sponsorConfig.ts      # 赞助配置
+├── coverImageConfig.ts   # 封面图配置
 ├── wakenConfig.ts        # Waken-wa 实时面板集成配置
-└── README.md                 # 本文件
+└── README.md             # 本文件
 ```
 
 ## 🚀 使用方式
@@ -64,6 +63,7 @@ import { profileConfig } from "@/config/profileConfig";
 - `friendsConfig.ts` - 友链配置（友链列表等）
 - `sponsorConfig.ts` - 赞助配置（赞助方式、二维码等）
 - `coverImageConfig.ts` - 封面图配置（随机封面图列表等）
+- `wakenConfig.ts` - Waken-wa 实时面板集成配置
 
 ## 🇨🇳 国内备案号（footerConfig.beian）
 
