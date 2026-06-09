@@ -27,6 +27,7 @@ src/config/
 ├── profileConfig.ts          # 用户资料配置
 ├── sidebarConfig.ts          # 侧边栏布局配置
 ├── sponsorConfig.ts          # 赞助配置
+├── wakenConfig.ts        # Waken-wa 实时面板集成配置
 └── README.md                 # 本文件
 ```
 
@@ -67,6 +68,7 @@ import { profileConfig } from "@/config/profileConfig";
 | `profileConfig.ts` | 用户资料配置（头像、姓名、社交链接） |
 | `sidebarConfig.ts` | 侧边栏布局配置（左侧/右侧/移动端组件列表） |
 | `sponsorConfig.ts` | 赞助配置（赞助方式、赞助者列表） |
+| `wakenConfig.ts` | Waken-wa 实时面板集成配置 |
 
 ## 🇨🇳 国内备案号（footerConfig.beian）
 
