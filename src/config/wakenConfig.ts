@@ -28,6 +28,7 @@ export interface WakenConfig {
 	navName: string;
 	/** 导航栏图标，使用 Iconify 名称 */
 	navIcon: string;
+<<<<<<< HEAD
 	/** 状态卡片完整 URL（包含所有查询参数），可从 Waken-wa 后台/前端复制 */
 	statusCardUrl: string;
 	/** 状态卡片组件配置 */
@@ -36,7 +37,6 @@ export interface WakenConfig {
 		enable: boolean;
 		/** 卡片在侧栏的标题（鼠标悬停在标题上可点击跳转 waken 站点） */
 		title: string;
-		/** 加载失败时是否完全隐藏卡片（避免显示破图） */
 		hideOnError: boolean;
 		/** 缓存破坏刷新间隔（毫秒），最小 5000；swup 切换会立即刷新，此项是兜底 */
 		refreshIntervalMs: number;
@@ -44,19 +44,20 @@ export interface WakenConfig {
 		position: "top" | "sticky";
 		/** 放在哪一侧：left / right / both */
 		side: "left" | "right" | "both";
-	};
-}
-
-export const wakenConfig: WakenConfig = {
-	// 默认关闭，等用户填入 url 并独立部署 Waken 后再开启
-	enable: true,
-
-	// TODO: 替换为你自己的 Waken 部署地址，例如 "https://waken.yourdomain.com"
-	url: "http://124.221.153.114/",
+=======
+	/** 「现在」小组件配置 */
+	nowWidget: {
+		/** 是否在博客侧栏 / 页面中展示「现在」小组件 */
+		enable: boolean;
+		/** 拉取间隔（毫秒），最小 5000 */
+		refreshIntervalMs: number;
+		/** 当 Waken 不可达 / 接口失败时是否完全隐藏小组件 */
+		hideOnError: boolean;
 
 	navName: "Waken",
 	navIcon: "material-symbols:bedtime-outline",
 
+<<<<<<< HEAD
 	// 状态卡片完整 URL（带所有查询参数）
 	// 从 Waken-wa 前端"嵌入"对话框或直接拼装后端 /api/status-card 端点
 	statusCardUrl:
@@ -70,5 +71,11 @@ export const wakenConfig: WakenConfig = {
 		refreshIntervalMs: 60_000,
 		position: "sticky",
 		side: "right",
+=======
+	nowWidget: {
+		enable: true,
+		refreshIntervalMs: 30_000,
+		hideOnError: false,
+>>>>>>> 0880362f (Add Waken-wa integration and docs)
 	},
 };
