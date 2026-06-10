@@ -67,7 +67,17 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
-	// 自定义导航栏链接
+	// Waken 集成 - 当 wakenConfig.enable 时插入到导航栏（在"关于"之后、"链接"之前）
+	if (wakenConfig.enable) {
+		links.push({
+			name: wakenConfig.navName,
+			url: wakenConfig.url,
+			external: true,
+			icon: wakenConfig.navIcon,
+		});
+	}
+
+	// 自定义导航栏链接,并且支持多级菜单
 	links.push({
 		name: "链接",
 		url: "#",

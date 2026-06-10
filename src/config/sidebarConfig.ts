@@ -212,6 +212,17 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				},
 			},
 		},
+		{
+			// 组件类型：Waken-wa 实时状态卡片
+			// 由 wakenConfig.nowWidget.enable 控制；wakenConfig 关闭时组件自身不渲染
+			type: "wakenStatus",
+			// 是否启用该组件
+			enable: true,
+			// 组件位置
+			position: "sticky",
+			// 是否在文章详情页显示
+			showOnPostPage: true,
+		},
 	],
 
 	// 移动端底部组件配置列表
