@@ -25,7 +25,7 @@ const initialSrc = wakenConfig.statusCardUrl;
 		target="_blank"
 		rel="noopener noreferrer"
 		aria-label="在 Waken-wa 查看完整状态"
-		class="waken-status-link block w-full overflow-hidden rounded-xl transition active:scale-[0.98] hover:opacity-95"
+		class="block w-full overflow-hidden rounded-xl transition active:scale-[0.98] hover:opacity-95"
 	>
 		<img
 			data-waken-status
@@ -93,28 +93,24 @@ const initialSrc = wakenConfig.statusCardUrl;
 			document.querySelectorAll("img[data-waken-status]").forEach((img) => {
 				if (img.dataset.errorBound === "1") return;
 				img.dataset.errorBound = "1";
-				img.addEventListener("error", () => handleBroken(img));
-			});
-		}
-
-		// 同步检查：图片在错误监听绑定前就已经失败（错误事件已错失）
-		function checkAlreadyBroken() {
-			document.querySelectorAll("img[data-waken-status]").forEach((img) => {
-				if (img.complete && img.naturalWidth === 0 && img.src && img.src !== window.location.href) {
-					if (img.dataset.errorHandled !== "1") {
-						img.dataset.errorHandled = "1";
-						handleBroken(img);
+				img.addEventListener("error", () => {
+					if (img.dataset.hideOnError === "true") {
+						// 隐藏整张卡片（WidgetLayout 是最近的 widget-layout 祖先）
+						const card = img.closest("widget-layout");
+						if (card) card.style.display = "none";
+					} else {
+						img.style.opacity = "0.4";
 					}
-				}
+				});
 			});
 		}
 
 		function init() {
 			bindErrorHide();
-			checkAlreadyBroken();
+			refreshAll();
 		}
 
-		// 首次绑定（不立即 refreshAll——SSR 输出的图片已经在浏览器里，避免覆盖后产生一次重抓造成的闪烁）
+		// 首次绑定
 		init();
 
 		// 兜底定时刷新（只在页面长时间停留时生效）
