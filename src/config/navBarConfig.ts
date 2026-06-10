@@ -6,6 +6,7 @@ import {
 	NavBarSearchMethod,
 } from "../types/config";
 import { siteConfig } from "./siteConfig";
+import { wakenConfig } from "./wakenConfig";
 
 // 根据页面开关动态生成导航栏配置
 const getDynamicNavBarConfig = (): NavBarConfig => {
@@ -67,6 +68,16 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			LinkPreset.About,
 		],
 	});
+
+	// Waken 集成 - 当 wakenConfig.enable 时插入到导航栏（在"关于"之后、"链接"之前）
+	if (wakenConfig.enable) {
+		links.push({
+			name: wakenConfig.navName,
+			url: wakenConfig.url,
+			external: true,
+			icon: wakenConfig.navIcon,
+		});
+	}
 
 	// 自定义导航栏链接,并且支持多级菜单
 	links.push({
