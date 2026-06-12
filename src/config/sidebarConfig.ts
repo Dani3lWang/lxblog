@@ -1,4 +1,26 @@
-import type { SidebarLayoutConfig } from "../types/sidebarConfig";
+import type {
+	SidebarLayoutConfig,
+	WidgetComponentConfig,
+} from "../types/sidebarConfig";
+import { wakenConfig } from "./wakenConfig";
+
+// ============================================================================
+// Waken 状态卡片注入逻辑
+// 由 wakenConfig.nowWidget.{enable,position,side} 共同决定:
+//   - enable:总开关(wakenConfig.enable)与小组件开关(nowWidget.enable)均为 true 时渲染
+//   - position:"top" 或 "sticky",决定卡片落在侧栏哪个区段
+//   - side:"left" / "right" / "both",决定注入到哪个数组
+// 移动端底部组件不自动注入(移动端没有左右概念,保持显式列出原则)
+// ============================================================================
+const buildWakenWidget = (): WidgetComponentConfig => ({
+	type: "wakenStatus",
+	enable: wakenConfig.enable && wakenConfig.nowWidget.enable,
+	position: wakenConfig.nowWidget.position,
+	showOnPostPage: true,
+});
+const wakenSide = wakenConfig.nowWidget.side;
+const wakenInLeft = wakenSide === "left" || wakenSide === "both";
+const wakenInRight = wakenSide === "right" || wakenSide === "both";
 
 /**
  * 侧边栏布局配置
@@ -94,6 +116,8 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				collapseThreshold: 10,
 			},
 		},
+		// Waken 状态卡片(仅当 nowWidget.side 为 "left" 或 "both" 时注入)
+		...(wakenInLeft ? [buildWakenWidget()] : []),
 	],
 
 	// 右侧边栏组件配置列表
@@ -212,28 +236,8 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				},
 			},
 		},
-		{
-			// 组件类型：Waken-wa 实时状态卡片
-			// 由 wakenConfig.nowWidget.enable 控制；wakenConfig 关闭时组件自身不渲染
-			type: "wakenStatus",
-			// 是否启用该组件
-			enable: true,
-			// 组件位置
-			position: "sticky",
-			// 是否在文章详情页显示
-			showOnPostPage: true,
-		},
-		{
-			// 组件类型：Waken-wa 实时状态卡片
-			// 由 wakenConfig.nowWidget.enable 控制；wakenConfig 关闭时组件自身不渲染
-			type: "wakenStatus",
-			// 是否启用该组件
-			enable: true,
-			// 组件位置
-			position: "sticky",
-			// 是否在文章详情页显示
-			showOnPostPage: true,
-		},
+		// Waken 状态卡片(仅当 nowWidget.side 为 "right" 或 "both" 时注入)
+		...(wakenInRight ? [buildWakenWidget()] : []),
 	],
 
 	// 移动端底部组件配置列表
