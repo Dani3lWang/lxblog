@@ -46,6 +46,7 @@ export type {
 	SponsorItem,
 	SponsorMethod,
 } from "./sponsorConfig";
+export type { WakenConfig } from "./wakenConfig";
 
 // 响应式图像布局类型
 export type ResponsiveImageLayout = "constrained" | "full-width" | "none";
