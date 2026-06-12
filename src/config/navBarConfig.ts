@@ -4,7 +4,6 @@ import {
 	type NavBarSearchConfig,
 	NavBarSearchMethod,
 } from "../types/config";
-import { siteConfig } from "./siteConfig";
 import { wakenConfig } from "./wakenConfig";
 
 // ============================================================================
@@ -76,19 +75,25 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		icon: "material-symbols:link",
 		// 子菜单
 		children: [
-			{
-				name: "Waken-wa",
-				url: wakenConfig.url,
-				external: true,
-				icon: wakenConfig.navIcon,
-			},
+			// Waken-wa:总开关 wakenConfig.enable 关闭时此项不出现
+			...(wakenConfig.enable
+				? [
+						{
+							name: wakenConfig.navName,
+							url: wakenConfig.url,
+							external: true,
+							icon: wakenConfig.navIcon,
+						},
+					]
+				: []),
 			{
 				name: "GitHub",
 				url: "https://github.com/Dani3lWang",
 				external: true,
 				icon: "fa7-brands:github",
 			},
-			/*{
+			/* 预留示例(注释保留供使用者参考)
+			{
 				name: "Gitee",
 				url: "https://gitee.com/CuteLeaf/Firefly",
 				external: true,
@@ -105,7 +110,8 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://docs-firefly.cuteleaf.cn",
 				external: true,
 				icon: "material-symbols:docs",
-			}*/,
+			},
+			*/
 		],
 	});
 
