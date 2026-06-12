@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import WidgetLayout from "@/components/common/WidgetLayout.astro";
 import { wakenConfig } from "@/config";
 
@@ -9,7 +8,7 @@ interface Props {
 }
 const { class: className, style } = Astro.props;
 
-// 稳定 ID：同一组件在多次构建/SSG 输出中保持一致，便于客户端定位与缓存命中
+// 稳定 ID:同一组件在多次构建/SSG 输出中保持一致，便于客户端定位与缓存命中
 const widgetDomId = "waken-status-card";
 const initialSrc = wakenConfig.statusCardUrl;
 ---
@@ -18,7 +17,8 @@ const initialSrc = wakenConfig.statusCardUrl;
 	id={widgetDomId}
 	class={className}
 	style={style}
-	name={wakenConfig.nowWidget.title}
+	showTitle={false}
+	contentPadding={false}
 >
 	<a
 		href={wakenConfig.url}
@@ -35,13 +35,9 @@ const initialSrc = wakenConfig.statusCardUrl;
 			alt="Waken-wa 当前状态卡片"
 			loading="lazy"
 			decoding="async"
-			class="waken-status-img w-full h-auto block rounded-xl"
+			class="waken-status-img w-full h-auto block"
 		/>
 	</a>
-	<div class="flex items-center justify-end gap-1 mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-		<Icon name={wakenConfig.navIcon} class="text-[0.9rem]" />
-		<span>via {wakenConfig.navName}</span>
-	</div>
 </WidgetLayout>
 
 <script is:inline define:vars={{ refreshIntervalMs: wakenConfig.nowWidget.refreshIntervalMs, widgetId: widgetDomId }}>
