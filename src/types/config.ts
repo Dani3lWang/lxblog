@@ -19,8 +19,9 @@ export type {
 	NavBarConfig,
 	NavBarLink,
 	NavBarSearchConfig,
-	NavBarSearchMethod,
 } from "./navBarConfig";
+// NavBarSearchMethod 是 enum(值 + 类型),需要走非 type 的 re-export
+export { NavBarSearchMethod } from "./navBarConfig";
 export type { Live2DWidgetConfig, SpineModelConfig } from "./pioConfig";
 export type { PlantUMLConfig } from "./plantumlConfig";
 export type { ProfileConfig } from "./profileConfig";
