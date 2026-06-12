@@ -1,0 +1,66 @@
+name: Sync upstream master
+
+on:
+  schedule:
+    # 每天 UTC 02:00 跑一次（北京时间 10:00）
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch upstream
+        run: git fetch upstream master
+
+      - name: Check divergence
+        id: check
+        run: |
+          if git merge-base --is-ancestor upstream/master master; then
+            echo "ahead_or_equal=true" >> "$GITHUB_OUTPUT"
+            echo "upstream_count=0" >> "$GITHUB_OUTPUT"
+            echo "local_count=$(git rev-list --count master..upstream/master)" >> "$GITHUB_OUTPUT"
+            echo "本地 master 已是上游的超集，无需同步"
+          elif git merge-base --is-ancestor master upstream/master; then
+            echo "ahead_or_equal=false" >> "$GITHUB_OUTPUT"
+            echo "upstream_count=$(git rev-list --count master..upstream/master)" >> "$GITHUB_OUTPUT"
+            echo "local_count=0" >> "$GITHUB_OUTPUT"
+            echo "需要快进 master 到 upstream/master"
+          else
+            echo "ahead_or_equal=diverged" >> "$GITHUB_OUTPUT"
+            echo "upstream_count=$(git rev-list --count master..upstream/master)" >> "$GITHUB_OUTPUT"
+            echo "local_count=$(git rev-list --count upstream/master..master)" >> "$GITHUB_OUTPUT"
+            echo "::error::master 与 upstream 已分叉，需要人工处理（考虑把 master 重新指向 upstream/master）"
+            exit 1
+          fi
+
+      - name: Fast-forward master
+        if: steps.check.outputs.ahead_or_equal == 'false'
+        run: git merge --ff-only upstream/master
+
+      - name: Push to origin
+        if: steps.check.outputs.ahead_or_equal == 'false'
+        run: git push origin master
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 上游同步结果" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- 本地 master 领先/落后状态：${{ steps.check.outputs.ahead_or_equal }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- upstream 比 master 新：${{ steps.check.outputs.upstream_count }} 个提交" >> "$GITHUB_STEP_SUMMARY"
+          echo "- master 比 upstream 新：${{ steps.check.outputs.local_count }} 个提交" >> "$GITHUB_STEP_SUMMARY"
