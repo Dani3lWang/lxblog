@@ -67,7 +67,7 @@ export const wakenConfig: WakenConfig = {
 		title: "当前状态",
 		hideOnError: true,
 		// 600s = 10 分钟兜底刷新一次；swup 页面切换也会重拉
-		refreshIntervalMs: 600_000,
+		refreshIntervalMs: 60_000,
 		position: "sticky",
 		side: "right",
 	},

@@ -9,8 +9,8 @@ interface Props {
 }
 const { class: className, style } = Astro.props;
 
-// 用一个稳定 id 方便客户端脚本定位与缓存破坏
-const widgetDomId = `waken-status-${Math.random().toString(36).slice(2, 9)}`;
+// 稳定 ID：同一组件在多次构建/SSG 输出中保持一致，便于客户端定位与缓存命中
+const widgetDomId = "waken-status-card";
 const initialSrc = wakenConfig.statusCardUrl;
 ---
 
@@ -25,7 +25,7 @@ const initialSrc = wakenConfig.statusCardUrl;
 		target="_blank"
 		rel="noopener noreferrer"
 		aria-label="在 Waken-wa 查看完整状态"
-		class="block w-full overflow-hidden rounded-xl transition active:scale-[0.98] hover:opacity-95"
+		class="waken-status-link block w-full overflow-hidden rounded-xl transition active:scale-[0.98] hover:opacity-95"
 	>
 		<img
 			data-waken-status
@@ -44,7 +44,7 @@ const initialSrc = wakenConfig.statusCardUrl;
 	</div>
 </WidgetLayout>
 
-<script is:inline define:vars={{ refreshIntervalMs: wakenConfig.nowWidget.refreshIntervalMs }}>
+<script is:inline define:vars={{ refreshIntervalMs: wakenConfig.nowWidget.refreshIntervalMs, widgetId: widgetDomId }}>
 	(function bindWakenStatusRefresh() {
 		function bust(url) {
 			// 给原 URL 追加/覆盖一个 _ts 时间戳参数，确保 img 重新请求
@@ -55,6 +55,28 @@ const initialSrc = wakenConfig.statusCardUrl;
 			} catch (e) {
 				const sep = url.indexOf("?") >= 0 ? "&" : "?";
 				return url + sep + "_ts=" + Date.now();
+			}
+		}
+
+		// 找最近的 widget 容器：优先用 id 锚定，回退到 class 探测
+		function findWidgetCard(img) {
+			let card = document.getElementById(widgetId);
+			if (card && card.contains(img)) return card;
+			let el = img.parentElement;
+			while (el) {
+				if (el.tagName && el.tagName.toLowerCase() === "widget-layout") return el;
+				el = el.parentElement;
+			}
+			// 兜底：找最近的 [data-id] 容器
+			return img.closest("[data-id]");
+		}
+
+		function handleBroken(img) {
+			if (img.dataset.hideOnError === "true") {
+				const card = findWidgetCard(img);
+				if (card) card.style.display = "none";
+			} else {
+				img.style.opacity = "0.4";
 			}
 		}
 
@@ -71,24 +93,28 @@ const initialSrc = wakenConfig.statusCardUrl;
 			document.querySelectorAll("img[data-waken-status]").forEach((img) => {
 				if (img.dataset.errorBound === "1") return;
 				img.dataset.errorBound = "1";
-				img.addEventListener("error", () => {
-					if (img.dataset.hideOnError === "true") {
-						// 隐藏整张卡片（WidgetLayout 是最近的 widget-layout 祖先）
-						const card = img.closest("widget-layout");
-						if (card) card.style.display = "none";
-					} else {
-						img.style.opacity = "0.4";
+				img.addEventListener("error", () => handleBroken(img));
+			});
+		}
+
+		// 同步检查：图片在错误监听绑定前就已经失败（错误事件已错失）
+		function checkAlreadyBroken() {
+			document.querySelectorAll("img[data-waken-status]").forEach((img) => {
+				if (img.complete && img.naturalWidth === 0 && img.src && img.src !== window.location.href) {
+					if (img.dataset.errorHandled !== "1") {
+						img.dataset.errorHandled = "1";
+						handleBroken(img);
 					}
-				});
+				}
 			});
 		}
 
 		function init() {
 			bindErrorHide();
-			refreshAll();
+			checkAlreadyBroken();
 		}
 
-		// 首次绑定
+		// 首次绑定（不立即 refreshAll——SSR 输出的图片已经在浏览器里，避免覆盖后产生一次重抓造成的闪烁）
 		init();
 
 		// 兜底定时刷新（只在页面长时间停留时生效）
@@ -96,9 +122,12 @@ const initialSrc = wakenConfig.statusCardUrl;
 			setInterval(refreshAll, refreshIntervalMs);
 		}
 
-		// 配合 swup 页面切换：每次换页都重拉 + 重新绑定 error 监听
+		// 配合 swup 页面切换：每次换页都重新绑定错误监听 + 缓存破坏重拉
 		document.addEventListener("swup:contentReplaced", () => {
-			setTimeout(init, 50);
+			setTimeout(() => {
+				init();
+				refreshAll();
+			}, 50);
 		});
 	})();
 </script>
