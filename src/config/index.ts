@@ -24,6 +24,7 @@ export type {
 	SponsorConfig,
 	SponsorItem,
 	SponsorMethod,
+	WakenConfig,
 	WidgetComponentConfig,
 	WidgetComponentType,
 	WidgetSpecificConfig,
@@ -52,4 +53,5 @@ export { profileConfig } from "./profileConfig"; // 用户资料配置
 export { sidebarLayoutConfig } from "./sidebarConfig"; // 侧边栏布局配置
 // 核心配置
 export { siteConfig } from "./siteConfig"; // 站点基础配置
-export { sponsorConfig } from "./sponsorConfig"; // 赞助配置
+export { sponsorConfig } from "./sponsorConfig";
+export { wakenConfig } from "./wakenConfig"; // Waken-wa 实时面板集成配置 // 赞助配置
