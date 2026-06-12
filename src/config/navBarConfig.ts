@@ -70,7 +70,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
-	// 自定义导航栏链接
+	// 自定义导航栏链接,并且支持多级菜单
 	links.push({
 		name: "链接",
 		url: "#",
@@ -78,12 +78,18 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		// 子菜单
 		children: [
 			{
+				name: "Waken-wa",
+				url: wakenConfig.url,
+				external: true,
+				icon: wakenConfig.navIcon,
+			},
+			{
 				name: "GitHub",
-				url: "https://github.com/CuteLeaf/Firefly",
+				url: "https://github.com/Dani3lWang",
 				external: true,
 				icon: "fa7-brands:github",
 			},
-			{
+			/*{
 				name: "Gitee",
 				url: "https://gitee.com/CuteLeaf/Firefly",
 				external: true,
@@ -100,7 +106,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://docs-firefly.cuteleaf.cn",
 				external: true,
 				icon: "material-symbols:docs",
-			},
+			}*/,
 		],
 	});
 
