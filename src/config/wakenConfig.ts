@@ -37,7 +37,7 @@ export const wakenConfig: WakenConfig = {
 		"http://124.221.153.114/api/status-card?variant=aurora&showHeader=1&showAvatar=1&showName=1&showBio=1&showNote=0&preferGame=1&showInClassStatus=1&width=auto&height=auto&radius=20&bg=%23FFFFFF&fg=%23111827&muted=%236B7280&accent=%2322C55E&border=%23E5E7EB",
 
 	nowWidget: {
-		enable: true,
+		enable: false,
 		title: "当前状态",
 		hideOnError: true,
 		// 600s = 10 分钟兜底刷新一次；swup 页面切换也会重拉
