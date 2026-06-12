@@ -3,7 +3,9 @@ import {
 	type NavBarLink,
 	type NavBarSearchConfig,
 	NavBarSearchMethod,
-} from "../types/navBarConfig";
+} from "../types/config";
+import { siteConfig } from "./siteConfig";
+import { wakenConfig } from "./wakenConfig";
 
 // ============================================================================
 // 导航栏配置 - 根据顺序动态生成导航栏链接
