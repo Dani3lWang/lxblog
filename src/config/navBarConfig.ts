@@ -69,16 +69,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
-	// Waken 集成 - 当 wakenConfig.enable 时插入到导航栏（在"关于"之后、"链接"之前）
-	if (wakenConfig.enable) {
-		links.push({
-			name: wakenConfig.navName,
-			url: wakenConfig.url,
-			external: true,
-			icon: wakenConfig.navIcon,
-		});
-	}
-
 	// 自定义导航栏链接,并且支持多级菜单
 	links.push({
 		name: "链接",
@@ -88,12 +78,18 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		// 子菜单
 		children: [
 			{
+				name: "Waken-wa",
+				url: wakenConfig.url,
+				external: true,
+				icon: wakenConfig.navIcon,
+			},
+			{
 				name: "GitHub",
-				url: "https://github.com/CuteLeaf/Firefly",
+				url: "https://github.com/Dani3lWang",
 				external: true,
 				icon: "fa7-brands:github",
 			},
-			{
+			/*{
 				name: "Gitee",
 				url: "https://gitee.com/CuteLeaf/Firefly",
 				external: true,
@@ -104,7 +100,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://qm.qq.com/q/ZGsFa8qX2G",
 				external: true,
 				icon: "fa7-brands:qq",
-			},
+			 },*/
 		],
 	});
 
