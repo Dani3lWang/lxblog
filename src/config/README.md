@@ -27,7 +27,7 @@ src/config/
 ├── profileConfig.ts          # 用户资料配置
 ├── sidebarConfig.ts          # 侧边栏布局配置
 ├── sponsorConfig.ts          # 赞助配置
-├── wakenConfig.ts        # Waken-wa 实时面板集成配置
+├── wakenConfig.ts            # Waken-wa 实时面板集成配置
 └── README.md                 # 本文件
 ```
 
@@ -110,3 +110,16 @@ export const footerConfig: FooterConfig = {
 - 每个配置文件对应 `types/` 目录下的独立类型定义文件
 - `siteConfig.ts` 只保留站点核心信息，不聚合其他模块配置
 - `navBarConfig.ts` 底部的 `LinkPresets` 可自由自定义导航栏链接的名称、图标和 URL
+
+## 🌙 Waken 集成的三个开关
+
+`wakenConfig.ts` 的字段对运行时影响:
+
+| 字段 | 影响范围 |
+|---|---|
+| `enable` | **总开关**。关闭后,导航栏「链接」下的 Waken-wa 入口与侧栏状态卡片**同时**消失 |
+| `nowWidget.enable` | 仅控制侧栏卡片。总开关仍开时,关掉它只是把卡片藏起来,导航入口保留 |
+| `nowWidget.side` | `"left"` / `"right"` / `"both"`,决定卡片注入到哪一侧;由 `src/config/sidebarConfig.ts` 顶部 `buildWakenWidget()` 工厂在构建期落点 |
+| `nowWidget.position` | `"top"` 或 `"sticky"`,决定卡片落在侧栏哪个区段 |
+
+移动端底部组件(<768px)**不会**自动注入 Waken 卡片(移动端无左右概念,如需在底部展示请在 `mobileBottomComponents` 里显式添加 `type: "wakenStatus"`)。

@@ -292,9 +292,9 @@ export const wakenConfig: WakenConfig = {
 
 ```astro
 ---
-import WakenNow from "@/components/widget/WakenNow.astro";
+import WakenStatus from "@/components/widget/WakenStatus.astro";
 ---
-<WakenNow />
+<WakenStatus />
 ```
 
 ## ⚙️ 文章 Frontmatter
