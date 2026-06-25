@@ -134,7 +134,6 @@ export const footerConfig: FooterConfig = {
 - 仅做 ICP 备案、公安备案未办理时，把 `police` 整个字段注释掉即可（公安备案可选，ICP 必填）
 - 备案号以外的任意 HTML 内容仍可走 `src/config/FooterConfig.html` 自由注入（与 `beian` 不冲突，会显示在备案号上方）
 
-## 📝 说明
 
 - 所有配置文件均可通过 `index.ts` 统一导入
 - 每个配置文件对应 `types/` 目录下的独立类型定义文件
