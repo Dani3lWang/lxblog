@@ -8,7 +8,7 @@
 > 
 > ![Node.js >= 22](https://img.shields.io/badge/node.js-%3E%3D22-brightgreen) 
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue)
-![Astro](https://img.shields.io/badge/Astro-6.4.4-orange)
+![Astro](https://img.shields.io/badge/Astro-7.0.2-orange)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue)
 >
 > [![Stars](https://img.shields.io/github/stars/CuteLeaf/Firefly?style=social)](https://github.com/CuteLeaf/Firefly/stargazers)
@@ -43,7 +43,19 @@
 
 🔧 高度可配置: 大部分功能模块均可通过配置文件自定义
 
-<img alt="firefly" src="./docs/images/1.webp" />
+<table width="100%" align="center">
+  <tr>
+    <td colspan="3" align="center">
+      <img src="./docs/images/1.webp" >
+      <br>横幅模式</td>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/images/3.webp" width="300"><br>透明模式</td>
+    <td align="center"><img src="./docs/images/2.webp" width="300"><br>全屏壁纸模式</td>
+    <td align="center"><img src="./docs/images/4.webp" width="300"><br>纯色模式</td>
+  </tr>
+</table>
 <img alt="Lighthouse" src="./docs/images/Lighthouse.png" />
 
 >[!TIP]
@@ -236,29 +248,12 @@ src/
 │   ├── pioConfig.ts              # 看板娘配置
 │   ├── plantumlConfig.ts         # PlantUML 图表配置
 │   ├── profileConfig.ts          # 用户资料配置
+│   ├── licenseConfig.ts          # 许可证配置
+│   ├── FooterConfig.html         # 页脚HTML内容
 │   ├── sidebarConfig.ts          # 侧边栏布局配置
-│   └── sponsorConfig.ts          # 赞助配置
-│   ├── index.ts              # 配置索引文件
-│   ├── siteConfig.ts         # 站点基础配置
-│   ├── backgroundWallpaper.ts # 背景壁纸配置
-│   ├── profileConfig.ts      # 用户资料配置
-│   ├── commentConfig.ts      # 评论系统配置
-│   ├── announcementConfig.ts # 公告配置
-│   ├── licenseConfig.ts      # 许可证配置
-│   ├── footerConfig.ts       # 页脚配置
-│   ├── FooterConfig.html     # 页脚HTML内容
-│   ├── expressiveCodeConfig.ts # 代码高亮配置
-│   ├── effectsConfig.ts      # 动画特效配置（樱花等）
-│   ├── fontConfig.ts         # 字体配置
-│   ├── sidebarConfig.ts      # 侧边栏布局配置
-│   ├── navBarConfig.ts       # 导航栏配置
-│   ├── musicConfig.ts        # 音乐播放器配置
-│   ├── pioConfig.ts          # 看板娘配置
-│   ├── adConfig.ts           # 广告配置
-│   ├── galleryConfig.ts      # 相册配置
-│   ├── sponsorConfig.ts      # 赞助配置
-│   ├── wakenConfig.ts        # Waken-wa 实时面板集成配置
-│   └── coverImageConfig.ts  # 文章封面图配置
+│   ├── adConfig.ts               # 广告配置
+│   ├── wakenConfig.ts            # Waken-wa 实时面板集成配置
+│   └── coverImageConfig.ts       # 文章封面图配置
 ```
 
 ### 集成 Waken-wa 实时面板

@@ -212,6 +212,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		// 纯 "photo-library" 也没有纯 "photo-library-outline"
 		icon: "material-symbols:photo-library-outline-rounded",
 	},
+	Anime: {
+		name: "追番",
+		url: "/anime/",
+		icon: "material-symbols:live-tv",
+		pageKey: "anime",
+	},
 };
 
 export const navBarConfig: NavBarConfig = getDynamicNavBarConfig();

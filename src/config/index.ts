@@ -49,6 +49,12 @@ export type {
 } from "../types/config";
 // NavBarSearchMethod 是 enum(值 + 类型),走值导出
 export { NavBarSearchMethod } from "../types/config";
+export type {
+	BuiltinFontProvider,
+	CustomFontProvider,
+	FontDefinition,
+	FontSelectionConfig,
+} from "../types/fontConfig"; // 字体类型定义
 export { analyticsConfig } from "./analyticsConfig"; // 统计分析配置
 export { announcementConfig } from "./announcementConfig"; // 公告配置
 // 样式配置
@@ -58,7 +64,7 @@ export { commentConfig } from "./commentConfig"; // 评论系统配置
 export { coverImageConfig } from "./coverImageConfig"; // 封面图配置
 export { sakuraConfig } from "./effectsConfig"; // 动画特效配置（樱花等）
 export { expressiveCodeConfig } from "./expressiveCodeConfig"; // 代码高亮配置
-export { fontConfig } from "./fontConfig"; // 字体配置
+export { fontConfig, fontsList } from "./fontConfig"; // 字体配置
 export { footerConfig } from "./footerConfig"; // 页脚配置
 export { friendsPageConfig, getEnabledFriends } from "./friendsConfig"; // 友链配置
 export { galleryConfig } from "./galleryConfig"; // 相册配置
