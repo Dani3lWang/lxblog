@@ -1,9 +1,7 @@
 name: Sync upstream master
 
 on:
-  schedule:
-    # 每天 UTC 02:00 跑一次（北京时间 10:00）
-    - cron: "0 2 * * *"
+  # 自动 schedule 已取消，仅保留手动触发入口
   workflow_dispatch:
 
 jobs:
