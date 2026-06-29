@@ -100,7 +100,13 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		// 子菜单
 		children: [
 			// Waken-wa:总开关 wakenConfig.enable 关闭时此项不出现
-			...(wakenConfig.enable
+			{
+				name: "GitHub",
+				url: "https://github.com/Dani3lWang",
+				external: true,
+				icon: "fa7-brands:github",
+			},
+			/*...(wakenConfig.enable
 				? [
 						{
 							name: wakenConfig.navName,
@@ -110,13 +116,8 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 						},
 					]
 				: []),
-			{
-				name: "GitHub",
-				url: "https://github.com/Dani3lWang",
-				external: true,
-				icon: "fa7-brands:github",
-			},
-			/* 预留示例(注释保留供使用者参考)
+			
+			#预留示例(注释保留供使用者参考)
 			{
 				name: "Gitee",
 				url: "https://gitee.com/CuteLeaf/Firefly",
