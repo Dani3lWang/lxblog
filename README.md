@@ -252,44 +252,7 @@ src/
 │   ├── FooterConfig.html         # 页脚HTML内容
 │   ├── sidebarConfig.ts          # 侧边栏布局配置
 │   ├── adConfig.ts               # 广告配置
-│   ├── wakenConfig.ts            # Waken-wa 实时面板集成配置
 │   └── coverImageConfig.ts       # 文章封面图配置
-```
-
-### 集成 Waken-wa 实时面板
-
-Firefly 支持以「独立部署 + 轻量接入」的方式连接 [Waken-wa](https://github.com/MoYoez/waken-wa) 个人实时面板，
-无需在博客内运行额外的服务端，即可在博客中展示当前活动状态与导航入口。
-
-编辑 `src/config/wakenConfig.ts`：
-
-```typescript
-export const wakenConfig: WakenConfig = {
-  // 开启集成后导航栏与「现在」小组件才会显示
-  enable: true,
-  // 替换为你自己的 Waken 部署地址（不要带末尾斜杠）
-  url: "https://waken.yourdomain.com",
-  navName: "Waken",
-  navIcon: "material-symbols:bedtime-outline",
-  nowWidget: {
-    enable: true,
-    refreshIntervalMs: 30_000, // 拉取间隔，最小 5000
-    hideOnError: false,        // 接口失败时是否隐藏小组件
-  },
-};
-```
-
-> 前置条件：Waken 后台需开启「公开 Feed」并把博客域名加入 CORS 白名单（默认博客调用 `/api/activity?public=1`）。
->
-> 完整部署与排错步骤见 [`WAKEN_INTEGRATION.md`](./WAKEN_INTEGRATION.md)。
-
-如需在侧边栏 / 任意页面嵌入「现在」小组件，可像其他 Widget 一样引入：
-
-```astro
----
-import WakenStatus from "@/components/widget/WakenStatus.astro";
----
-<WakenStatus />
 ```
 
 ## ⚙️ 文章 Frontmatter

@@ -4,7 +4,6 @@ import {
 	type NavBarSearchConfig,
 	NavBarSearchMethod,
 } from "../types/config";
-import { wakenConfig } from "./wakenConfig";
 
 // ============================================================================
 // 导航栏配置 - 根据顺序动态生成导航栏链接
@@ -54,44 +53,42 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "/gallery/",
 		icon: "material-symbols:photo-library-outline-rounded",
 	});
-	// === 我的(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
-	// links.push({
-	// 	name: "我的",
-	// 	url: "#",
-	// 	icon: "material-symbols:person",
-	// 	children: [
-	// 		// 相册
-	// 		LinkPresets.Gallery,
-	// 		// 番组计划
-	// 		LinkPresets.Bangumi,
-	// 	],
-	// });
+	/* === 我的(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
+	 links.push({
+	 	name: "我的",
+		url: "#",
+		icon: "material-symbols:person",
+	 	children: [
+	 		// 相册
+	 		LinkPresets.Gallery,
+	 		// 番组计划
+	 		LinkPresets.Bangumi,
+	 	],
+	 });
 
-	// ─────────────────────────────────────────────────────────────
-	// 2026-06-12 临时改动:把"关于(下拉)"换成直链到 /about/
-	// 原因:下拉原本只有"赞助"和"关于我",且赞助页面已关闭,不如直进
-	// 恢复方法:
-	//   1) 注释掉下面这一行
-	//   2) 取消下方"// === 关于(原始模板) ==="块注释
-	// ─────────────────────────────────────────────────────────────
+	─────────────────────────────────────────────────────────────
+	 2026-06-12 临时改动:把"关于(下拉)"换成直链到 /about/
+	 原因:下拉原本只有"赞助"和"关于我",且赞助页面已关闭,不如直进
+	─────────────────────────────────────────────────────────────
+	*/
 	links.push({
 		name: "关于",
 		url: "/about/",
 		icon: "material-symbols:info",
 	});
-	// === 关于(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
-	// links.push({
-	// 	name: "关于",
-	// 	url: "#",
-	// 	icon: "material-symbols:info",
-	// 	children: [
-	// 		// 赞助
-	// 		LinkPresets.Sponsor,
-	// 		// 关于页面
-	// 		LinkPresets.About,
-	// 	],
-	// });
-
+	/*=== 关于(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
+	 links.push({
+		name: "关于",
+	 	url: "#",
+	 	icon: "material-symbols:info",
+	 	children: [
+	 		// 赞助
+			LinkPresets.Sponsor,
+			// 关于页面
+			LinkPresets.About,
+		],
+	 });
+	*/
 	// 自定义导航栏链接,并且支持多级菜单
 	links.push({
 		name: "链接",
