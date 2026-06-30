@@ -4,8 +4,6 @@ import {
 	type NavBarSearchConfig,
 	NavBarSearchMethod,
 } from "../types/config";
-import { siteConfig } from "./siteConfig";
-import { wakenConfig } from "./wakenConfig";
 
 // ============================================================================
 // 导航栏配置 - 根据顺序动态生成导航栏链接
@@ -35,43 +33,62 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
-	// 友链
-	links.push(LinkPresets.Friends);
+	// 友链 —— 2026-06-12:siteConfig.pages.friends = false,导航栏入口移除
+	// 恢复方法:取消下面一行的注释即可
+	// links.push(LinkPresets.Friends);
 
 	// 留言板
 	links.push(LinkPresets.Guestbook);
 
-	// 我的及其子菜单
+	// ─────────────────────────────────────────────────────────────
+	// 2026-06-12 临时改动:把"我的(下拉)"换成"相册(直链)"
+	// 原因:目前还没有更多拓展内容,下拉只含相册/番组,不如直接给一个相册入口
+	// 恢复方法:
+	//   1) 注释掉下面这一行
+	//   2) 取消下方"// === 我的(原始模板) ==="块注释
+	//   3) 若"番组计划"也启用了,确保 LinkPresets.Bangumi 还能用
+	// ─────────────────────────────────────────────────────────────
 	links.push({
-		name: "我的",
+		name: "相册",
+		url: "/gallery/",
+		icon: "material-symbols:photo-library-outline-rounded",
+	});
+	/* === 我的(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
+	 links.push({
+	 	name: "我的",
 		url: "#",
 		icon: "material-symbols:person",
-		children: [
-			// 相册
-			LinkPresets.Gallery,
+	 	children: [
+	 		// 相册
+	 		LinkPresets.Gallery,
+	 		// 番组计划
+	 		LinkPresets.Bangumi,
+	 	],
+	 });
 
-			// 追番
-			LinkPresets.Anime,
-
-			// 番组计划
-			LinkPresets.Bangumi,
-		],
-	});
-
-	// 关于及其子菜单
+	─────────────────────────────────────────────────────────────
+	 2026-06-12 临时改动:把"关于(下拉)"换成直链到 /about/
+	 原因:下拉原本只有"赞助"和"关于我",且赞助页面已关闭,不如直进
+	─────────────────────────────────────────────────────────────
+	*/
 	links.push({
 		name: "关于",
-		url: "#",
+		url: "/about/",
 		icon: "material-symbols:info",
-		children: [
-			// 打赏
+	});
+	/*=== 关于(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
+	 links.push({
+		name: "关于",
+	 	url: "#",
+	 	icon: "material-symbols:info",
+	 	children: [
+	 		// 赞助
 			LinkPresets.Sponsor,
-
 			// 关于页面
 			LinkPresets.About,
 		],
-	});
-
+	 });
+	*/
 	// 自定义导航栏链接,并且支持多级菜单
 	links.push({
 		name: "链接",
@@ -79,19 +96,26 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		icon: "material-symbols:link",
 		// 子菜单
 		children: [
-			{
-				name: "Waken-wa",
-				url: wakenConfig.url,
-				external: true,
-				icon: wakenConfig.navIcon,
-			},
+			// Waken-wa:总开关 wakenConfig.enable 关闭时此项不出现
 			{
 				name: "GitHub",
 				url: "https://github.com/Dani3lWang",
 				external: true,
 				icon: "fa7-brands:github",
 			},
-			/*{
+			/*...(wakenConfig.enable
+				? [
+						{
+							name: wakenConfig.navName,
+							url: wakenConfig.url,
+							external: true,
+							icon: wakenConfig.navIcon,
+						},
+					]
+				: []),
+			
+			#预留示例(注释保留供使用者参考)
+			{
 				name: "Gitee",
 				url: "https://gitee.com/CuteLeaf/Firefly",
 				external: true,
@@ -108,7 +132,8 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://docs-firefly.cuteleaf.cn",
 				external: true,
 				icon: "material-symbols:docs",
-			}*/,
+			},
+			*/
 		],
 	});
 
@@ -157,19 +182,16 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		name: "友链",
 		url: "/friends/",
 		icon: "material-symbols:group",
-		pageKey: "friends",
 	},
 	Sponsor: {
-		name: "打赏",
+		name: "赞助",
 		url: "/sponsor/",
 		icon: "material-symbols:favorite",
-		pageKey: "sponsor",
 	},
 	Guestbook: {
 		name: "留言",
 		url: "/guestbook/",
 		icon: "material-symbols:chat",
-		pageKey: "guestbook",
 	},
 	About: {
 		name: "关于我",
@@ -180,13 +202,13 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		name: "番组计划",
 		url: "/bangumi/",
 		icon: "material-symbols:movie",
-		pageKey: "bangumi",
 	},
 	Gallery: {
 		name: "相册",
 		url: "/gallery/",
-		icon: "material-symbols:photo-library",
-		pageKey: "gallery",
+		// 2026-06-12:修正为 outline-rounded 变体,material-symbols 合集里没有
+		// 纯 "photo-library" 也没有纯 "photo-library-outline"
+		icon: "material-symbols:photo-library-outline-rounded",
 	},
 	Anime: {
 		name: "追番",

@@ -7,27 +7,47 @@ export type {
 	AnalyticsConfig,
 	AnnouncementConfig,
 	BackgroundWallpaperConfig,
+	CalendarConfig,
 	CommentConfig,
 	CoverImageConfig,
 	ExpressiveCodeConfig,
+	Favicon,
+	FontConfig,
+	FontItem,
 	FooterConfig,
+	FriendLink,
+	FriendsPageConfig,
 	GalleryAlbum,
 	GalleryConfig,
+	ImageFormat,
+	LIGHT_DARK_MODE,
 	LicenseConfig,
+	Live2DWidgetConfig,
+	MobileBottomComponentConfig,
 	MusicPlayerConfig,
 	NavBarConfig,
+	NavBarLink,
+	NavBarSearchConfig,
 	PlantUMLConfig,
+	PluginCollapsibleConfig,
+	PluginLanguageBadgeConfig,
 	ProfileConfig,
+	ResponsiveImageLayout,
 	SakuraConfig,
 	SidebarLayoutConfig,
 	SiteConfig,
+	SiteInfoConfig,
+	SpineModelConfig,
 	SponsorConfig,
 	SponsorItem,
 	SponsorMethod,
+	WALLPAPER_MODE,
 	WidgetComponentConfig,
 	WidgetComponentType,
 	WidgetSpecificConfig,
 } from "../types/config";
+// NavBarSearchMethod 是 enum(值 + 类型),走值导出
+export { NavBarSearchMethod } from "../types/config";
 export type {
 	BuiltinFontProvider,
 	CustomFontProvider,
@@ -58,4 +78,4 @@ export { profileConfig } from "./profileConfig"; // 用户资料配置
 export { sidebarLayoutConfig } from "./sidebarConfig"; // 侧边栏布局配置
 // 核心配置
 export { siteConfig } from "./siteConfig"; // 站点基础配置
-export { sponsorConfig } from "./sponsorConfig"; // 打赏配置
+export { sponsorConfig } from "./sponsorConfig"; // 赞助配置
