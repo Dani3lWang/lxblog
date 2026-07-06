@@ -38,3 +38,5 @@ Firefly-docs/
 cache/
 package/
 .obsidian/
+src/content/posts/Sample/
+docs/visual-diff-analysis.md
