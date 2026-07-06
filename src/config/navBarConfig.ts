@@ -87,10 +87,10 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			// 关于页面
 			LinkPresets.About,
 		],
-	 });
-	*/
+	 });*/
+
 	// 自定义导航栏链接,并且支持多级菜单
-	links.push({
+	/*links.push({
 		name: "链接",
 		url: "#",
 		icon: "material-symbols:link",
@@ -101,7 +101,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://github.com/Dani3lWang",
 				external: true,
 				icon: "fa7-brands:github",
-			},
+			},*/
 			/*#预留示例(注释保留供使用者参考)
 			{
 				name: "Gitee",
@@ -121,10 +121,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "material-symbols:docs",
 			},
-			*/
+			
 		],
-	});
-
+	});*/
 	// 文档链接
 	// links.push({
 	// 	name: "文档",
