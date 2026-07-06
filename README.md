@@ -95,7 +95,6 @@
 - [x] **导航栏自定义** - Logo、标题、链接全面自定义
 - [x] **壁纸模式切换** - 横幅壁纸、全屏壁纸、全屏透明壁纸、纯色背景
 - [x] **主题色自定义** - 360° 色相调节
-- [x] **Waken 实时面板集成** - 一键接入独立部署的 [Waken-wa](https://github.com/MoYoez/waken-wa) 个人实时面板，自动渲染「现在」小组件与导航入口
 
 如果你有好用的功能和优化，请提交 [Pull Request](https://github.com/CuteLeaf/Firefly/pulls)
 

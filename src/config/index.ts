@@ -12,8 +12,6 @@ export type {
 	CoverImageConfig,
 	ExpressiveCodeConfig,
 	Favicon,
-	FontConfig,
-	FontItem,
 	FooterConfig,
 	FriendLink,
 	FriendsPageConfig,

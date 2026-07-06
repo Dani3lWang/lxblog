@@ -98,11 +98,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				collapseThreshold: 10,
 			},
 		},
-		// 2026-06-29:Waken 状态卡片注入已移除(以注释形式保留)
-		// 恢复方法:取消下方块注释
-		// // Waken 状态卡片(仅当 nowWidget.side 为 "left" 或 "both" 时注入)
-		// ...(wakenInLeft ? [buildWakenWidget()] : []),
-	],
+		],
 
 	// 右侧边栏组件配置列表
 	rightComponents: [
@@ -220,11 +216,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				},
 			},
 		},
-		// 2026-06-29:Waken 状态卡片注入已移除(以注释形式保留)
-		// 恢复方法:取消下方块注释
-		// // Waken 状态卡片(仅当 nowWidget.side 为 "right" 或 "both" 时注入)
-		// ...(wakenInRight ? [buildWakenWidget()] : []),
-	],
+		],
 
 	// 移动端底部组件配置列表
 	// 这些组件只在移动端(<768px)显示在页面底部，独立于左右侧边栏配置
