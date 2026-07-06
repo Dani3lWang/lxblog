@@ -220,6 +220,10 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				},
 			},
 		},
+		// 2026-06-29:Waken 状态卡片注入已移除(以注释形式保留)
+		// 恢复方法:取消下方块注释
+		// // Waken 状态卡片(仅当 nowWidget.side 为 "right" 或 "both" 时注入)
+		// ...(wakenInRight ? [buildWakenWidget()] : []),
 	],
 
 	// 移动端底部组件配置列表

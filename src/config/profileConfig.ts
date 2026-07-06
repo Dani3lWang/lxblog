@@ -24,7 +24,7 @@ export const profileConfig: ProfileConfig = {
 		/*{
 			name: "qq",
 			icon: "fa7-brands:qq",
-			url: "https://qm.qq.com/q/ZGsFa8qX2G",
+			url: "",
 			showName: false,
 		},*/
 		{
@@ -39,11 +39,11 @@ export const profileConfig: ProfileConfig = {
 			url: "mailto:lilchen1@163.com",
 			showName: false,
 		},
-		{
+		/*{
 			name: "RSS",
 			icon: "fa7-solid:rss",
 			url: "/rss/",
 			showName: false,
-		},
+		},*/
 	],
 };

@@ -54,7 +54,7 @@ const allTags = [...new Set(albums.flatMap((a) => a.tags || []))].sort();
       {albums.length > 0 && (
         <gallery-filter class="mb-6">
           <div class="relative mb-3">
-            <Icon is:inline
+            <Icon
               name="material-symbols:search"
               class="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 text-lg pointer-events-none"
             />
@@ -106,7 +106,7 @@ const allTags = [...new Set(albums.flatMap((a) => a.tags || []))].sort();
           </div>
           {/* 搜索无结果提示 */}
           <div class="albums-empty hidden flex-col items-center justify-center py-12 text-neutral-400 dark:text-neutral-500">
-            <Icon is:inline name="material-symbols:search-off-rounded" class="text-4xl mb-3" />
+            <Icon name="material-symbols:search-off-rounded" class="text-4xl mb-3" />
             <div class="text-sm">{i18n(I18nKey.searchNoResults)}</div>
           </div>
         </>
