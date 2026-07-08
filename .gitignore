@@ -30,11 +30,13 @@ yarn.lock
 # ide
 .idea
 *.iml
-.claude
-.vscode
+.claude/
+.vscode/
+.reasonix/
 
 # docs
 Firefly-docs/
+docs/分析/
 
 cache/
 package/
