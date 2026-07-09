@@ -90,7 +90,9 @@ export type SiteConfig = {
 		moviesGames: boolean; // 影视与游戏页面开关
 		musicPage: boolean; // 音乐页面开关
 		changelog: boolean; // 更新日志页面开关
-		life: boolean; // 生活记录模块开关
+		notebooks: boolean; // 笔记本页面开关
+		routines: boolean; // 规划页面开关
+		places: boolean; // 足迹页面开关
 	};
 
 	// 分类导航栏开关

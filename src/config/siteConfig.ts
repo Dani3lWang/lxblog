@@ -120,8 +120,12 @@ export const siteConfig: SiteConfig = {
 		musicPage: true,
 		// 更新日志页面开关
 		changelog: true,
-		// 生活记录模块开关（/life/ 及其子页面）
-		life: true,
+		// 笔记本页面开关
+		notebooks: true,
+		// 规划页面开关
+		routines: true,
+		// 足迹页面开关
+		places: true,
 	},
 
 	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航

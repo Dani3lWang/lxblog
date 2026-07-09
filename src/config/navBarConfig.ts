@@ -61,6 +61,13 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			icon: "material-symbols:chat",
 		});
 	}
+	if (siteConfig.pages.notebooks) {
+		momentsChildren.push({
+			name: "笔记本",
+			url: "/moments/notebooks/",
+			icon: "material-symbols:book-outline",
+		});
+	}
 	if (momentsChildren.length > 0) {
 		links.push({
 			name: "动态",
@@ -70,22 +77,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		});
 	}
 
-	// 生活入口 —— 生活首页 / 笔记本 / 规划 / 足迹
-	if (siteConfig.pages.life) {
-		links.push({
-			name: "生活",
-			url: "/life/",
-			icon: "material-symbols:favorite",
-			children: [
-				LinkPresets.Life,
-				LinkPresets.Notebooks,
-				LinkPresets.Routines,
-				LinkPresets.Places,
-			],
-		});
-	}
-
-	// 记录入口 - 书架、影视与游戏、音乐、更新日志
+	// 记录入口 - 书架、影视与游戏、音乐、更新日志、规划、足迹
 	const recordChildren: NavBarLink[] = [];
 	if (siteConfig.pages.books) {
 		recordChildren.push(LinkPresets.Books);
@@ -99,13 +91,23 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	if (siteConfig.pages.changelog) {
 		recordChildren.push(LinkPresets.Changelog);
 	}
+	if (siteConfig.pages.routines) {
+		recordChildren.push(LinkPresets.Routines);
+	}
+	if (siteConfig.pages.places) {
+		recordChildren.push(LinkPresets.Places);
+	}
 
 	if (recordChildren.length > 0) {
 		const defaultUrl = siteConfig.pages.books
 			? "/books/"
 			: siteConfig.pages.moviesGames
 				? "/movies-games/"
-				: "/music/";
+				: siteConfig.pages.musicPage
+					? "/music/"
+					: siteConfig.pages.routines
+						? "/routines/"
+						: "/places/";
 
 		links.push({
 			name: "记录",
@@ -229,24 +231,19 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/about/",
 		icon: "material-symbols:person",
 	},
-	Life: {
-		name: "生活首页",
-		url: "/life/",
-		icon: "material-symbols:favorite",
-	},
 	Notebooks: {
 		name: "笔记本",
-		url: "/life/notebooks/",
+		url: "/moments/notebooks/",
 		icon: "material-symbols:book-outline",
 	},
 	Routines: {
 		name: "规划",
-		url: "/life/routines/",
+		url: "/routines/",
 		icon: "material-symbols:schedule-outline",
 	},
 	Places: {
 		name: "足迹",
-		url: "/life/places/",
+		url: "/places/",
 		icon: "material-symbols:location-on-outline",
 	},
 	Bangumi: {

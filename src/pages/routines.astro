@@ -9,19 +9,19 @@ const navItems = [
 	{
 		label: "笔记本",
 		icon: "material-symbols:book-outline",
-		href: "/life/notebooks/",
+		href: "/moments/notebooks/",
 		color: "#ec4899",
 	},
 	{
 		label: "规划",
 		icon: "material-symbols:schedule-outline",
-		href: "/life/routines/",
+		href: "/routines/",
 		color: "#06b6d4",
 	},
 	{
 		label: "足迹",
 		icon: "material-symbols:location-on-outline",
-		href: "/life/places/",
+		href: "/places/",
 		color: "#10b981",
 	},
 ];
@@ -65,15 +65,15 @@ const totalEntries = entriesWithContent.length;
 
 <MainGridLayout title="日常规划" description="我的规划与思考">
 	<div class="routines-page flex w-full flex-col gap-5">
-		<a href="/life/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
-			<span>←</span> 返回生活
+		<a href="/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
+			<span>←</span> 返回首页
 		</a>
 		<!-- 导航栏 -->
 		<div class="nav-tabs-wrapper" id="life-nav-wrapper">
 			<div class="nav-container">
-				<a href={url("/life/")} class="nav-tab nav-tab-home" data-category-name="生活">
-					<Icon name="material-symbols:favorite" class="tab-icon" />
-					<span class="tab-label">生活</span>
+				<a href={url("/")} class="nav-tab nav-tab-home" data-category-name="首页">
+					<Icon name="material-symbols:home-outline-rounded" class="tab-icon" />
+					<span class="tab-label">首页</span>
 				</a>
 				<div class="nav-tabs-scroll" id="life-nav-tabs-scroll">
 					<div class="nav-tabs" id="life-nav-tabs">
@@ -422,7 +422,7 @@ const totalEntries = entriesWithContent.length;
 			const homeTab = tabs.querySelector('.nav-tab-home');
 			if (homeTab) {
 				homeTab.removeAttribute('data-active');
-				if (pathname === '/life/' || pathname === '/life') {
+				if (pathname === '/' || pathname === '') {
 					homeTab.setAttribute('data-active', '');
 				}
 			}

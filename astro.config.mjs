@@ -62,6 +62,10 @@ export default defineConfig({
 	redirects: {
 		"/gallery/": "/moments/gallery/",
 		"/guestbook/": "/moments/guestbook/",
+		"/life/": "/moments/",
+		"/life/notebooks/": "/moments/notebooks/",
+		"/life/routines/": "/routines/",
+		"/life/places/": "/places/",
 	},
 
 	// 字体配置 - 只加载实际使用的字体，跳过未引用的以加快构建
@@ -235,6 +239,15 @@ export default defineConfig({
 				if (pathname === "/moments/guestbook/" && !siteConfig.pages.guestbook) {
 					return false;
 				}
+				if (pathname === "/moments/notebooks/" && !siteConfig.pages.notebooks) {
+					return false;
+				}
+				if (pathname === "/routines/" && !siteConfig.pages.routines) {
+					return false;
+				}
+				if (pathname === "/places/" && !siteConfig.pages.places) {
+					return false;
+				}
 				if (pathname === "/books/" && !siteConfig.pages.books) {
 					return false;
 				}
@@ -245,9 +258,6 @@ export default defineConfig({
 					return false;
 				}
 				if (pathname === "/changelog/" && !siteConfig.pages.changelog) {
-					return false;
-				}
-				if (pathname.startsWith("/life/") && !siteConfig.pages.life) {
 					return false;
 				}
 

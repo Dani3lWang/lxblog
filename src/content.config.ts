@@ -134,7 +134,7 @@ const lifeCollection = defineCollection({
 const notebooksCollection = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,json}",
-		base: "./src/content/life/notebooks",
+		base: "./src/content/moments/notebooks",
 	}),
 	schema: z.object({
 		name: z.string().optional().default("未命名日记本"),
@@ -149,7 +149,7 @@ const notebooksCollection = defineCollection({
 const routinesCollection = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,mdx}",
-		base: "./src/content/life/routines",
+		base: "./src/content/routines",
 	}),
 	schema: z.object({
 		name: z.string(),

@@ -9,19 +9,19 @@ const navItems = [
 	{
 		label: "笔记本",
 		icon: "material-symbols:book-outline",
-		href: "/life/notebooks/",
+		href: "/moments/notebooks/",
 		color: "#ec4899",
 	},
 	{
 		label: "规划",
 		icon: "material-symbols:schedule-outline",
-		href: "/life/routines/",
+		href: "/routines/",
 		color: "#06b6d4",
 	},
 	{
 		label: "足迹",
 		icon: "material-symbols:location-on-outline",
-		href: "/life/places/",
+		href: "/places/",
 		color: "#10b981",
 	},
 ];
@@ -80,7 +80,7 @@ const notebooks = allEntries
 			entries: folderEntries.length,
 			updatedAt:
 				latestEntry?.date instanceof Date ? latestEntry.date : new Date(0),
-			selfPath: `/life/notebooks/${folderName}/`,
+			selfPath: `/moments/notebooks/${folderName}/`,
 			folderName,
 		};
 	})
@@ -105,15 +105,15 @@ const thisMonthUpdates = sortedNotebooks.filter((item) =>
 
 <MainGridLayout title="笔记本" description="成长日记、学习复盘、灵感随笔">
 	<div class="diary-page flex w-full flex-col gap-6">
-		<a href="/life/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
-			<span>←</span> 返回生活
+		<a href="/moments/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
+			<span>←</span> 返回动态
 		</a>
 		<!-- 导航栏 -->
 		<div class="nav-tabs-wrapper" id="life-nav-wrapper">
 			<div class="nav-container">
-				<a href={url("/life/")} class="nav-tab nav-tab-home" data-category-name="生活">
-					<Icon name="material-symbols:favorite" class="tab-icon" />
-					<span class="tab-label">生活</span>
+				<a href={url("/moments/")} class="nav-tab nav-tab-home" data-category-name="动态">
+					<Icon name="material-symbols:local-cafe" class="tab-icon" />
+					<span class="tab-label">动态</span>
 				</a>
 				<div class="nav-tabs-scroll" id="life-nav-tabs-scroll">
 					<div class="nav-tabs" id="life-nav-tabs">
@@ -187,7 +187,7 @@ const thisMonthUpdates = sortedNotebooks.filter((item) =>
 					<div class="mt-6 p-4 rounded-xl bg-[var(--btn-regular-bg)] text-left text-sm">
 						<p class="text-[var(--text-color)] mb-2">创建步骤：</p>
 						<ol class="text-[var(--content-meta)] space-y-1 list-decimal list-inside">
-							<li>在 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">src/content/life/notebooks/</code> 下创建文件夹</li>
+							<li>在 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">src/content/moments/notebooks/</code> 下创建文件夹</li>
 							<li>在文件夹内创建 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">_index.md</code> 文件</li>
 							<li>在文件夹内创建 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">*.md</code> 文件作为日记条目</li>
 						</ol>
@@ -480,7 +480,7 @@ const thisMonthUpdates = sortedNotebooks.filter((item) =>
 			const homeTab = tabs.querySelector('.nav-tab-home');
 			if (homeTab) {
 				homeTab.removeAttribute('data-active');
-				if (pathname === '/life/' || pathname === '/life') {
+				if (pathname === '/moments/' || pathname === '/moments') {
 					homeTab.setAttribute('data-active', '');
 				}
 			}
