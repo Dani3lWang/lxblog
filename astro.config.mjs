@@ -218,6 +218,21 @@ export default defineConfig({
 				if (pathname === "/anime/" && !siteConfig.pages.anime) {
 					return false;
 				}
+				if (pathname === "/moments/" && !siteConfig.pages.moments) {
+					return false;
+				}
+				if (pathname === "/books/" && !siteConfig.pages.books) {
+					return false;
+				}
+				if (pathname === "/movies-games/" && !siteConfig.pages.moviesGames) {
+					return false;
+				}
+				if (pathname === "/music/" && !siteConfig.pages.musicPage) {
+					return false;
+				}
+				if (pathname === "/changelog/" && !siteConfig.pages.changelog) {
+					return false;
+				}
 
 				return true;
 			},
