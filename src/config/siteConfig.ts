@@ -111,6 +111,16 @@ export const siteConfig: SiteConfig = {
 		gallery: true,
 		// 追番页面开关
 		anime: false,
+		// 动态页面开关
+		moments: true,
+		// 书架页面开关
+		books: true,
+		// 影视与游戏页面开关
+		moviesGames: true,
+		// 音乐页面开关
+		musicPage: true,
+		// 更新日志页面开关
+		changelog: true,
 	},
 
 	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航

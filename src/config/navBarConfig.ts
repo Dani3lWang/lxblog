@@ -4,6 +4,7 @@ import {
 	type NavBarSearchConfig,
 	NavBarSearchMethod,
 } from "../types/config";
+import { siteConfig } from "./siteConfig";
 
 // ============================================================================
 // 导航栏配置 - 根据顺序动态生成导航栏链接
@@ -71,6 +72,39 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	 原因:下拉原本只有"赞助"和"关于我",且赞助页面已关闭,不如直进
 	─────────────────────────────────────────────────────────────
 	*/
+	// 动态（说说）
+	links.push(LinkPresets.Moments);
+
+	// 记录入口 - 书架、影视与游戏、音乐、更新日志
+	const recordChildren: NavBarLink[] = [];
+	if (siteConfig.pages.books) {
+		recordChildren.push(LinkPresets.Books);
+	}
+	if (siteConfig.pages.moviesGames) {
+		recordChildren.push(LinkPresets.MoviesGames);
+	}
+	if (siteConfig.pages.musicPage) {
+		recordChildren.push(LinkPresets.MusicPage);
+	}
+	if (siteConfig.pages.changelog) {
+		recordChildren.push(LinkPresets.Changelog);
+	}
+
+	if (recordChildren.length > 0) {
+		const defaultUrl = siteConfig.pages.books
+			? "/books/"
+			: siteConfig.pages.moviesGames
+				? "/movies-games/"
+				: "/music/";
+
+		links.push({
+			name: "记录",
+			url: defaultUrl,
+			icon: "material-symbols:camera-outdoor",
+			children: recordChildren,
+		});
+	}
+
 	links.push({
 		name: "关于",
 		url: "/about/",
@@ -202,6 +236,31 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/anime/",
 		icon: "material-symbols:live-tv",
 		pageKey: "anime",
+	},
+	Moments: {
+		name: "动态",
+		url: "/moments/",
+		icon: "material-symbols:local-cafe",
+	},
+	Books: {
+		name: "书架",
+		url: "/books/",
+		icon: "material-symbols:book",
+	},
+	MoviesGames: {
+		name: "影视与游戏",
+		url: "/movies-games/",
+		icon: "material-symbols:movie",
+	},
+	MusicPage: {
+		name: "音乐",
+		url: "/music/",
+		icon: "material-symbols:library-music",
+	},
+	Changelog: {
+		name: "更新日志",
+		url: "/changelog/",
+		icon: "material-symbols:update",
 	},
 };
 
