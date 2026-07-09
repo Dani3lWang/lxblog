@@ -1,20 +1,35 @@
 ---
 // @ts-nocheck
-import MainGridLayout from '@/layouts/MainGridLayout.astro';
-import { getCollection } from 'astro:content';
-import { Icon } from 'astro-icon/components';
-import { url } from '@/utils/url-utils';
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { url } from "@/utils/url-utils";
 
 const navItems = [
-  { label: "笔记本", icon: "material-symbols:book-outline", href: "/life/notebooks/", color: "#ec4899" },
-  { label: "规划", icon: "material-symbols:schedule-outline", href: "/life/routines/", color: "#06b6d4" },
-  { label: "足迹", icon: "material-symbols:location-on-outline", href: "/life/places/", color: "#10b981" },
+	{
+		label: "笔记本",
+		icon: "material-symbols:book-outline",
+		href: "/life/notebooks/",
+		color: "#ec4899",
+	},
+	{
+		label: "规划",
+		icon: "material-symbols:schedule-outline",
+		href: "/life/routines/",
+		color: "#06b6d4",
+	},
+	{
+		label: "足迹",
+		icon: "material-symbols:location-on-outline",
+		href: "/life/places/",
+		color: "#10b981",
+	},
 ];
 
-const lifeEntries = await getCollection('life');
+const lifeEntries = await getCollection("life");
 
 const isIn = (entryId: string, folder: string) =>
-	entryId.replace(/\\\\/g, '/').startsWith(`${folder}/`);
+	entryId.replace(/\\\\/g, "/").startsWith(`${folder}/`);
 
 const now = new Date();
 const currentYear = now.getFullYear();
@@ -29,7 +44,7 @@ const isSameYear = (date?: Date | string) => {
 const sum = (arr: number[]) => arr.reduce((acc, num) => acc + num, 0);
 
 const visitedPlaces = lifeEntries
-	.filter((entry) => isIn(entry.id, 'places'))
+	.filter((entry) => isIn(entry.id, "places"))
 	.filter((entry) => !entry.id.toLowerCase().includes("readme"))
 	.map((entry) => entry.data);
 
@@ -39,9 +54,13 @@ const sortedPlaces = [...visitedPlaces].sort((a, b) => {
 	return bTime - aTime;
 });
 
-const visitedProvincesCount = new Set(sortedPlaces.map((p) => p.province).filter(Boolean)).size;
+const visitedProvincesCount = new Set(
+	sortedPlaces.map((p) => p.province).filter(Boolean),
+).size;
 const totalVisitCount = sum(sortedPlaces.map((p) => p.visitCount || 1));
-const thisYearVisitCount = sortedPlaces.filter((p) => isSameYear(p.date)).length;
+const thisYearVisitCount = sortedPlaces.filter((p) =>
+	isSameYear(p.date),
+).length;
 
 const placesByProvince = {};
 sortedPlaces.forEach((place) => {
@@ -51,21 +70,22 @@ sortedPlaces.forEach((place) => {
 	}
 	placesByProvince[place.province].push({
 		province: place.province,
-		city: place.city || '',
-		district: place.district || '',
-		experience: place.experience || '',
+		city: place.city || "",
+		district: place.district || "",
+		experience: place.experience || "",
 		visitCount: place.visitCount || 1,
-		date: place.date instanceof Date ? place.date.toISOString().split('T')[0] : '',
+		date:
+			place.date instanceof Date ? place.date.toISOString().split("T")[0] : "",
 	});
 });
 
-const clientSortedPlaces = sortedPlaces.map(p => ({
+const clientSortedPlaces = sortedPlaces.map((p) => ({
 	province: p.province,
-	city: p.city || '',
-	district: p.district || '',
-	experience: p.experience || '',
+	city: p.city || "",
+	district: p.district || "",
+	experience: p.experience || "",
 	visitCount: p.visitCount || 1,
-	date: p.date instanceof Date ? p.date.toISOString().split('T')[0] : '',
+	date: p.date instanceof Date ? p.date.toISOString().split("T")[0] : "",
 }));
 ---
 <MainGridLayout title='去过的地方' description='足迹地图与旅行记录'>

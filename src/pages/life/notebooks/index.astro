@@ -6,28 +6,49 @@ import { Icon } from "astro-icon/components";
 import { url } from "@/utils/url-utils";
 
 const navItems = [
-  { label: "笔记本", icon: "material-symbols:book-outline", href: "/life/notebooks/", color: "#ec4899" },
-  { label: "规划", icon: "material-symbols:schedule-outline", href: "/life/routines/", color: "#06b6d4" },
-  { label: "足迹", icon: "material-symbols:location-on-outline", href: "/life/places/", color: "#10b981" },
+	{
+		label: "笔记本",
+		icon: "material-symbols:book-outline",
+		href: "/life/notebooks/",
+		color: "#ec4899",
+	},
+	{
+		label: "规划",
+		icon: "material-symbols:schedule-outline",
+		href: "/life/routines/",
+		color: "#06b6d4",
+	},
+	{
+		label: "足迹",
+		icon: "material-symbols:location-on-outline",
+		href: "/life/places/",
+		color: "#10b981",
+	},
 ];
 
 const allEntries = await getCollection("notebooks");
 
-const sortByDateDesc = <T extends Record<string, unknown>>(list: T[], field: keyof T) =>
+const sortByDateDesc = <T extends Record<string, unknown>>(
+	list: T[],
+	field: keyof T,
+) =>
 	[...list].sort((a, b) => {
 		const aDate = a[field] instanceof Date ? a[field]!.getTime() : 0;
 		const bDate = b[field] instanceof Date ? b[field]!.getTime() : 0;
 		return bDate - aDate;
 	});
 
-	const notebooks = allEntries.map((entry) => {
+const notebooks = allEntries
+	.map((entry) => {
 		const normalizedId = entry.id.replace(/\\/g, "/");
 		// 排除 README.md 和非日记本文件夹
 		if (normalizedId === "readme" || normalizedId === "readme.md") {
 			return null;
 		}
 		// 匹配文件夹的 _index 文件（支持有无扩展名）
-		const isNotebookRoot = normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) || normalizedId.match(/^([^/]+)\/_index$/);
+		const isNotebookRoot =
+			normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) ||
+			normalizedId.match(/^([^/]+)\/_index$/);
 
 		if (!isNotebookRoot) {
 			return null;
@@ -38,13 +59,17 @@ const sortByDateDesc = <T extends Record<string, unknown>>(list: T[], field: key
 		const folderEntries = allEntries.filter((item) => {
 			const itemId = item.id.replace(/\\/g, "/");
 			// 排除 _index 文件及其各种扩展名形式
-			const isIndexFile = itemId === `${folderName}/_index` || 
-			                    itemId === `${folderName}/_index.md` || 
-			                    itemId === `${folderName}/_index.json`;
+			const isIndexFile =
+				itemId === `${folderName}/_index` ||
+				itemId === `${folderName}/_index.md` ||
+				itemId === `${folderName}/_index.json`;
 			return itemId.startsWith(`${folderName}/`) && !isIndexFile;
 		});
 
-		const sortedEntries = sortByDateDesc(folderEntries.map((e) => e.data), "date");
+		const sortedEntries = sortByDateDesc(
+			folderEntries.map((e) => e.data),
+			"date",
+		);
 		const latestEntry = sortedEntries[0];
 
 		return {
@@ -53,14 +78,19 @@ const sortByDateDesc = <T extends Record<string, unknown>>(list: T[], field: key
 			cover: entry.data.cover,
 			summary: entry.data.summary,
 			entries: folderEntries.length,
-			updatedAt: latestEntry?.date instanceof Date ? latestEntry.date : new Date(0),
+			updatedAt:
+				latestEntry?.date instanceof Date ? latestEntry.date : new Date(0),
 			selfPath: `/life/notebooks/${folderName}/`,
 			folderName,
 		};
-	}).filter(Boolean);
+	})
+	.filter(Boolean);
 
 const sortedNotebooks = sortByDateDesc(notebooks, "updatedAt");
-const totalNotebookEntries = sortedNotebooks.reduce((acc, book) => acc + (book?.entries || 0), 0);
+const totalNotebookEntries = sortedNotebooks.reduce(
+	(acc, book) => acc + (book?.entries || 0),
+	0,
+);
 const now = new Date();
 const currentYear = now.getFullYear();
 const currentMonth = now.getMonth();
@@ -68,7 +98,9 @@ const isSameMonth = (date?: Date) => {
 	if (!date) return false;
 	return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
 };
-const thisMonthUpdates = sortedNotebooks.filter((item) => isSameMonth(item.updatedAt)).length;
+const thisMonthUpdates = sortedNotebooks.filter((item) =>
+	isSameMonth(item.updatedAt),
+).length;
 ---
 
 <MainGridLayout title="笔记本" description="成长日记、学习复盘、灵感随笔">

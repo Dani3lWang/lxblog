@@ -1,0 +1,119 @@
+---
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
+import { siteConfig } from "@/config";
+import { url } from "@/utils/url-utils";
+import { galleryConfig } from "@/config";
+
+const moments = await getCollection("moments");
+const sortedMoments = moments.sort(
+	(a, b) => b.data.published.getTime() - a.data.published.getTime(),
+);
+const latestMoments = sortedMoments.slice(0, 3);
+
+const albums = galleryConfig.albums.slice(0, 3);
+
+const navItems = [
+	{
+		name: "说说",
+		description: "记录生活点滴",
+		url: "/moments/shuoshuo/",
+		icon: "material-symbols:chat",
+		color: "#06b6d4",
+		count: sortedMoments.length,
+		enabled: siteConfig.pages.moments,
+	},
+	{
+		name: "相册",
+		description: "照片与回忆",
+		url: "/moments/gallery/",
+		icon: "material-symbols:photo-library-outline-rounded",
+		color: "#ec4899",
+		count: albums.length,
+		enabled: siteConfig.pages.gallery,
+	},
+	{
+		name: "留言",
+		description: "留下你的想法",
+		url: "/moments/guestbook/",
+		icon: "material-symbols:chat",
+		color: "#10b981",
+		count: 0,
+		enabled: siteConfig.pages.guestbook,
+	},
+].filter((item) => item.enabled);
+---
+
+<MainGridLayout title="动态" description="生活动态、相册与留言板">
+	<div class="moments-overview flex w-full flex-col gap-6">
+		<!-- 标题区 -->
+		<section class="hero-section card-base relative overflow-hidden rounded-[var(--radius-large)] p-6 md:p-8">
+			<div class="absolute -right-8 -top-8 h-48 w-48 rounded-full bg-[var(--primary)]/5 blur-3xl"></div>
+			<div class="absolute -bottom-8 -left-8 h-64 w-64 rounded-full bg-[var(--primary)]/5 blur-3xl"></div>
+			<div class="relative">
+				<h1 class="text-3xl font-bold text-[var(--text-color)] mb-2">
+					☕ 动态
+				</h1>
+				<p class="max-w-2xl text-sm text-[var(--content-meta)] md:text-base">
+					记录生活中的点点滴滴，分享瞬间与回忆。
+				</p>
+			</div>
+		</section>
+
+		<!-- 子模块入口 -->
+		<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+			{navItems.map((item) => (
+				<a
+					href={url(item.url)}
+					class="moment-nav-card group card-base rounded-[var(--radius-large)] p-6 transition-all hover:shadow-lg hover:-translate-y-1"
+				>
+					<div class="flex items-start justify-between mb-4">
+						<div
+							class="h-12 w-12 rounded-xl flex items-center justify-center text-white text-2xl"
+							style={`background: ${item.color}`}
+						>
+							<Icon name={item.icon} />
+						</div>
+						<span class="text-2xl font-bold text-[var(--text-color)]">{item.count}</span>
+					</div>
+					<h3 class="text-lg font-bold text-[var(--text-color)] group-hover:text-[var(--primary)] transition-colors">
+						{item.name}
+					</h3>
+					<p class="text-sm text-[var(--content-meta)]">{item.description}</p>
+				</a>
+			))}
+		</section>
+
+		<!-- 最新说说 -->
+		{latestMoments.length > 0 && (
+			<section class="card-base rounded-[var(--radius-large)] p-6">
+				<div class="flex items-center justify-between mb-4">
+					<h2 class="text-xl font-bold text-[var(--text-color)]">最新说说</h2>
+					<a href={url("/moments/shuoshuo/")} class="text-sm text-[var(--primary)] hover:underline">
+						查看全部
+					</a>
+				</div>
+				<div class="space-y-4">
+					{latestMoments.map((moment) => (
+						<a
+							href={url("/moments/shuoshuo/")}
+							class="block p-4 rounded-xl border border-[var(--line-divider)] hover:border-[var(--primary)]/30 transition-colors"
+						>
+							<p class="text-[var(--text-color)] line-clamp-2">{moment.body?.slice(0, 120) || "（无内容）"}</p>
+							<span class="text-xs text-[var(--content-meta)] mt-2 block">
+								{moment.data.published.toLocaleDateString("zh-CN")}
+							</span>
+						</a>
+					))}
+				</div>
+			</section>
+		)}
+	</div>
+</MainGridLayout>
+
+<style>
+	.moment-nav-card {
+		border: 1px solid var(--line-divider);
+	}
+</style>

@@ -14,8 +14,12 @@ export async function getStaticPaths() {
 		if (normalizedId === "readme" || normalizedId === "readme.md") {
 			continue;
 		}
-		const isIndexFile = /\/(_index|_index\.md|_index\.json)?$/.test(normalizedId) && (normalizedId.endsWith("_index") || normalizedId.includes("/_index."));
-		const isNotebookRoot = normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) || normalizedId.match(/^([^/]+)\/_index$/);
+		const isIndexFile =
+			/\/(_index|_index\.md|_index\.json)?$/.test(normalizedId) &&
+			(normalizedId.endsWith("_index") || normalizedId.includes("/_index."));
+		const isNotebookRoot =
+			normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) ||
+			normalizedId.match(/^([^/]+)\/_index$/);
 
 		if (!isIndexFile || !isNotebookRoot) {
 			continue;
@@ -70,8 +74,12 @@ export async function getStaticPaths() {
 const { entry, entries, sortedEntries, item, isNotebookIndex } = Astro.props;
 const slug = Astro.params.slug as string;
 const normalizedEntryId = entry.id.replace(/\\/g, "/");
-const isNotebookRootMatch = normalizedEntryId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) || normalizedEntryId.match(/^([^/]+)\/_index$/);
-const folderName = isNotebookRootMatch ? isNotebookRootMatch[1] : normalizedEntryId.split("/")[0];
+const isNotebookRootMatch =
+	normalizedEntryId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) ||
+	normalizedEntryId.match(/^([^/]+)\/_index$/);
+const folderName = isNotebookRootMatch
+	? isNotebookRootMatch[1]
+	: normalizedEntryId.split("/")[0];
 ---
 
 {isNotebookIndex ? (

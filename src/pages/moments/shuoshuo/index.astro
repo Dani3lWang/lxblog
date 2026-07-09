@@ -60,12 +60,12 @@ const albumCount = albums.length;
 	)}
 
 	<!-- 评论区 - 使用统一的 Comment 组件 -->
-	<Comment customPath="/moments/" />
+	<Comment customPath="/moments/shuoshuo/" />
 
 	<!-- 访客统计 -->
 	<div class="visitor-stat">
 		<Icon name="material-symbols:visibility-outline" class="stat-icon" />
-		<span class="waline-count" data-path="/moments/">-</span>
+		<span class="waline-count" data-path="/moments/shuoshuo/">-</span>
 		<span class="stat-label">次浏览</span>
 	</div>
 </MainGridLayout>
@@ -133,7 +133,7 @@ const albumCount = albums.length;
 	var countElements = document.querySelectorAll('.waline-count[data-path="/moments/"]');
 	if (countElements.length > 0) {
 		var serverURL = "https://your-waline-server.vercel.app";
-		fetch(serverURL + "/api/uv?path=/moments/")
+		fetch(serverURL + "/api/uv?path=/moments/shuoshuo/")
 			.then(function(res) { return res.json(); })
 			.then(function(data) {
 				var count = data.data ? data.data.unique_visitor || data.uv || 0 : (data.uv || 0);

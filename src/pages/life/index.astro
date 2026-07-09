@@ -6,79 +6,147 @@ import { Icon } from "astro-icon/components";
 import { url } from "@/utils/url-utils";
 
 const allLifeEntries = await getCollection("life");
-const isIn = (entryId, folder) => entryId.replace(/\\/g, "/").startsWith(folder + "/");
+const isIn = (entryId, folder) =>
+	entryId.replace(/\\/g, "/").startsWith(folder + "/");
 
 const routinesRaw = await getCollection("routines");
-const routinesFiltered = routinesRaw.filter(e => !e.id.toLowerCase().includes("readme"));
-const routinesData = await Promise.all(routinesFiltered.map(async e => {
-  const bodyText = e.body ? e.body.split("\n").filter(l => !l.trim().match(/^-{3}$/)).join("\n").trim() : "";
-  return {
-    id: e.id, type: "规划", icon: undefined, emoji: e.data.icon,
-    color: e.data.color || "#06b6d4", bgColor: "rgba(6, 182, 212, 0.1)",
-    date: e.data.updatedAt, name: e.data.name || "规划",
-    time: e.data.time, description: e.data.description, body: bodyText,
-    href: "/life/routines/",
-  };
-}));
+const routinesFiltered = routinesRaw.filter(
+	(e) => !e.id.toLowerCase().includes("readme"),
+);
+const routinesData = await Promise.all(
+	routinesFiltered.map(async (e) => {
+		const bodyText = e.body
+			? e.body
+					.split("\n")
+					.filter((l) => !l.trim().match(/^-{3}$/))
+					.join("\n")
+					.trim()
+			: "";
+		return {
+			id: e.id,
+			type: "规划",
+			icon: undefined,
+			emoji: e.data.icon,
+			color: e.data.color || "#06b6d4",
+			bgColor: "rgba(6, 182, 212, 0.1)",
+			date: e.data.updatedAt,
+			name: e.data.name || "规划",
+			time: e.data.time,
+			description: e.data.description,
+			body: bodyText,
+			href: "/life/routines/",
+		};
+	}),
+);
 
 const placesData = allLifeEntries
-  .filter(e => isIn(e.id, "places") && !e.id.toLowerCase().includes("readme"))
-  .map(e => ({
-    id: e.id, type: "足迹", icon: "material-symbols:location-on-outline",
-    color: "#10b981", bgColor: "rgba(16, 185, 129, 0.1)",
-    date: e.data.date, province: e.data.province, city: e.data.city,
-    district: e.data.district, visitCount: e.data.visitCount || 1,
-    experience: e.data.experience, href: "/life/places/",
-  }));
+	.filter((e) => isIn(e.id, "places") && !e.id.toLowerCase().includes("readme"))
+	.map((e) => ({
+		id: e.id,
+		type: "足迹",
+		icon: "material-symbols:location-on-outline",
+		color: "#10b981",
+		bgColor: "rgba(16, 185, 129, 0.1)",
+		date: e.data.date,
+		province: e.data.province,
+		city: e.data.city,
+		district: e.data.district,
+		visitCount: e.data.visitCount || 1,
+		experience: e.data.experience,
+		href: "/life/places/",
+	}));
 
 const notebooksRaw = await getCollection("notebooks");
 
 // 首先收集所有笔记本文件夹的名称映射
 const notebookNameMap = new Map();
-notebooksRaw.forEach(entry => {
-  const normalizedId = entry.id.replace(/\\/g, "/");
-  // 匹配 _index 文件来获取笔记本名称
-  const isIndexFile = normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/);
-  if (isIndexFile) {
-    const folderName = isIndexFile[1];
-    notebookNameMap.set(folderName, entry.data.name || folderName);
-  }
+notebooksRaw.forEach((entry) => {
+	const normalizedId = entry.id.replace(/\\/g, "/");
+	// 匹配 _index 文件来获取笔记本名称
+	const isIndexFile = normalizedId.match(
+		/^([^/]+)\/(_index|_index\.md|_index\.json)$/,
+	);
+	if (isIndexFile) {
+		const folderName = isIndexFile[1];
+		notebookNameMap.set(folderName, entry.data.name || folderName);
+	}
 });
 
 const notebookEntries = notebooksRaw
-  .filter(e => { const id = e.id.replace(/\\/g, "/"); return !id.endsWith("/_index"); })
-  .sort((a, b) => { const aT = a.data.date instanceof Date ? a.data.date.getTime() : 0; const bT = b.data.date instanceof Date ? b.data.date.getTime() : 0; return bT - aT; });
+	.filter((e) => {
+		const id = e.id.replace(/\\/g, "/");
+		return !id.endsWith("/_index");
+	})
+	.sort((a, b) => {
+		const aT = a.data.date instanceof Date ? a.data.date.getTime() : 0;
+		const bT = b.data.date instanceof Date ? b.data.date.getTime() : 0;
+		return bT - aT;
+	});
 
-const notebookData = notebookEntries.map(e => {
-  const normalizedId = e.id.replace(/\\/g, "/");
-  const folderName = normalizedId.split("/")[0];
-  const notebookName = notebookNameMap.get(folderName) || folderName;
-  return {
-    id: e.id,
-    notebookName,  // 笔记本名称，如"我的宝宝"
-    type: "笔记",
-    icon: "material-symbols:edit-note",
-    color: "#ec4899",
-    bgColor: "rgba(236, 72, 153, 0.1)",
-    date: e.data.date,
-    entryName: e.data.name || "未命名",  // 日记标题，如"我和宝宝"
-    href: `/life/notebooks/${folderName}/`,
-  };
+const notebookData = notebookEntries.map((e) => {
+	const normalizedId = e.id.replace(/\\/g, "/");
+	const folderName = normalizedId.split("/")[0];
+	const notebookName = notebookNameMap.get(folderName) || folderName;
+	return {
+		id: e.id,
+		notebookName, // 笔记本名称，如"我的宝宝"
+		type: "笔记",
+		icon: "material-symbols:edit-note",
+		color: "#ec4899",
+		bgColor: "rgba(236, 72, 153, 0.1)",
+		date: e.data.date,
+		entryName: e.data.name || "未命名", // 日记标题，如"我和宝宝"
+		href: `/life/notebooks/${folderName}/`,
+	};
 });
 
 const allItems = [...routinesData, ...placesData, ...notebookData]
-  .filter(i => i.date instanceof Date && !Number.isNaN(i.date.getTime()))
-  .sort((a, b) => { const aT = a.date instanceof Date ? a.date.getTime() : 0; const bT = b.date instanceof Date ? b.date.getTime() : 0; return bT - aT; });
+	.filter((i) => i.date instanceof Date && !Number.isNaN(i.date.getTime()))
+	.sort((a, b) => {
+		const aT = a.date instanceof Date ? a.date.getTime() : 0;
+		const bT = b.date instanceof Date ? b.date.getTime() : 0;
+		return bT - aT;
+	});
 
-function formatDate(date) { if (!date) return ""; const d = date instanceof Date ? date : new Date(String(date)); if (Number.isNaN(d.getTime())) return ""; return d.toISOString().split("T")[0]; }
-function formatTimeAgo(date) { const now = new Date(); const diff = now.getTime() - date.getTime(); const mins = Math.floor(diff / 60000); const hrs = Math.floor(diff / 3600000); const days = Math.floor(diff / 86400000); if (mins < 1) return "刚刚"; if (mins < 60) return mins + " 分钟前"; if (hrs < 24) return hrs + " 小时前"; if (days < 30) return days + " 天前"; return formatDate(date); }
+function formatDate(date) {
+	if (!date) return "";
+	const d = date instanceof Date ? date : new Date(String(date));
+	if (Number.isNaN(d.getTime())) return "";
+	return d.toISOString().split("T")[0];
+}
+function formatTimeAgo(date) {
+	const now = new Date();
+	const diff = now.getTime() - date.getTime();
+	const mins = Math.floor(diff / 60000);
+	const hrs = Math.floor(diff / 3600000);
+	const days = Math.floor(diff / 86400000);
+	if (mins < 1) return "刚刚";
+	if (mins < 60) return mins + " 分钟前";
+	if (hrs < 24) return hrs + " 小时前";
+	if (days < 30) return days + " 天前";
+	return formatDate(date);
+}
 
 const navItems = [
-  { label: "笔记本", icon: "material-symbols:book-outline", href: "/life/notebooks/", color: "#ec4899" },
-  { label: "规划", icon: "material-symbols:schedule-outline", href: "/life/routines/", color: "#06b6d4" },
-  { label: "足迹", icon: "material-symbols:location-on-outline", href: "/life/places/", color: "#10b981" },
+	{
+		label: "笔记本",
+		icon: "material-symbols:book-outline",
+		href: "/life/notebooks/",
+		color: "#ec4899",
+	},
+	{
+		label: "规划",
+		icon: "material-symbols:schedule-outline",
+		href: "/life/routines/",
+		color: "#06b6d4",
+	},
+	{
+		label: "足迹",
+		icon: "material-symbols:location-on-outline",
+		href: "/life/places/",
+		color: "#10b981",
+	},
 ];
-
 ---
 
 <MainGridLayout title="生活" description="用心记录每一天">

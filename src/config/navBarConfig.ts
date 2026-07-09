@@ -38,42 +38,52 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 恢复方法:取消下面一行的注释即可
 	// links.push(LinkPresets.Friends);
 
-	// 留言板
-	links.push(LinkPresets.Guestbook);
+	// 动态入口 —— 说说 / 相册 / 留言
+	const momentsChildren: NavBarLink[] = [];
+	if (siteConfig.pages.moments) {
+		momentsChildren.push({
+			name: "说说",
+			url: "/moments/shuoshuo/",
+			icon: "material-symbols:chat",
+		});
+	}
+	if (siteConfig.pages.gallery) {
+		momentsChildren.push({
+			name: "相册",
+			url: "/moments/gallery/",
+			icon: "material-symbols:photo-library-outline-rounded",
+		});
+	}
+	if (siteConfig.pages.guestbook) {
+		momentsChildren.push({
+			name: "留言",
+			url: "/moments/guestbook/",
+			icon: "material-symbols:chat",
+		});
+	}
+	if (momentsChildren.length > 0) {
+		links.push({
+			name: "动态",
+			url: "/moments/",
+			icon: "material-symbols:local-cafe",
+			children: momentsChildren,
+		});
+	}
 
-	// ─────────────────────────────────────────────────────────────
-	// 2026-06-12 临时改动:把"我的(下拉)"换成"相册(直链)"
-	// 原因:目前还没有更多拓展内容,下拉只含相册/番组,不如直接给一个相册入口
-	// 恢复方法:
-	//   1) 注释掉下面这一行
-	//   2) 取消下方"// === 我的(原始模板) ==="块注释
-	//   3) 若"番组计划"也启用了,确保 LinkPresets.Bangumi 还能用
-	// ─────────────────────────────────────────────────────────────
-	links.push({
-		name: "相册",
-		url: "/gallery/",
-		icon: "material-symbols:photo-library-outline-rounded",
-	});
-	/* === 我的(原始模板) - 2026-06-12 暂时禁用,需要时取消整段注释即可恢复 ===
-	 links.push({
-	 	name: "我的",
-		url: "#",
-		icon: "material-symbols:person",
-	 	children: [
-	 		// 相册
-	 		LinkPresets.Gallery,
-	 		// 番组计划
-	 		LinkPresets.Bangumi,
-	 	],
-	 });
-
-	─────────────────────────────────────────────────────────────
-	 2026-06-12 临时改动:把"关于(下拉)"换成直链到 /about/
-	 原因:下拉原本只有"赞助"和"关于我",且赞助页面已关闭,不如直进
-	─────────────────────────────────────────────────────────────
-	*/
-	// 动态（说说）
-	links.push(LinkPresets.Moments);
+	// 生活入口 —— 生活首页 / 笔记本 / 规划 / 足迹
+	if (siteConfig.pages.life) {
+		links.push({
+			name: "生活",
+			url: "/life/",
+			icon: "material-symbols:favorite",
+			children: [
+				LinkPresets.Life,
+				LinkPresets.Notebooks,
+				LinkPresets.Routines,
+				LinkPresets.Places,
+			],
+		});
+	}
 
 	// 记录入口 - 书架、影视与游戏、音乐、更新日志
 	const recordChildren: NavBarLink[] = [];
@@ -211,13 +221,33 @@ export const LinkPresets: Record<string, NavBarLink> = {
 	},
 	Guestbook: {
 		name: "留言",
-		url: "/guestbook/",
+		url: "/moments/guestbook/",
 		icon: "material-symbols:chat",
 	},
 	About: {
 		name: "关于我",
 		url: "/about/",
 		icon: "material-symbols:person",
+	},
+	Life: {
+		name: "生活首页",
+		url: "/life/",
+		icon: "material-symbols:favorite",
+	},
+	Notebooks: {
+		name: "笔记本",
+		url: "/life/notebooks/",
+		icon: "material-symbols:book-outline",
+	},
+	Routines: {
+		name: "规划",
+		url: "/life/routines/",
+		icon: "material-symbols:schedule-outline",
+	},
+	Places: {
+		name: "足迹",
+		url: "/life/places/",
+		icon: "material-symbols:location-on-outline",
 	},
 	Bangumi: {
 		name: "番组计划",
@@ -226,7 +256,7 @@ export const LinkPresets: Record<string, NavBarLink> = {
 	},
 	Gallery: {
 		name: "相册",
-		url: "/gallery/",
+		url: "/moments/gallery/",
 		// 2026-06-12:修正为 outline-rounded 变体,material-symbols 合集里没有
 		// 纯 "photo-library" 也没有纯 "photo-library-outline"
 		icon: "material-symbols:photo-library-outline-rounded",

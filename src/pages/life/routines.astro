@@ -6,15 +6,32 @@ import { Icon } from "astro-icon/components";
 import { url } from "@/utils/url-utils";
 
 const navItems = [
-  { label: "笔记本", icon: "material-symbols:book-outline", href: "/life/notebooks/", color: "#ec4899" },
-  { label: "规划", icon: "material-symbols:schedule-outline", href: "/life/routines/", color: "#06b6d4" },
-  { label: "足迹", icon: "material-symbols:location-on-outline", href: "/life/places/", color: "#10b981" },
+	{
+		label: "笔记本",
+		icon: "material-symbols:book-outline",
+		href: "/life/notebooks/",
+		color: "#ec4899",
+	},
+	{
+		label: "规划",
+		icon: "material-symbols:schedule-outline",
+		href: "/life/routines/",
+		color: "#06b6d4",
+	},
+	{
+		label: "足迹",
+		icon: "material-symbols:location-on-outline",
+		href: "/life/places/",
+		color: "#10b981",
+	},
 ];
 
 const routinesEntries = await getCollection("routines");
 
 // 过滤掉 README 文件
-const filteredEntries = routinesEntries.filter((entry) => !entry.id.toLowerCase().includes("readme"));
+const filteredEntries = routinesEntries.filter(
+	(entry) => !entry.id.toLowerCase().includes("readme"),
+);
 
 // 按更新时间排序（最新的在前），没有更新时间的排最后
 const sortedEntries = [...filteredEntries].sort((a, b) => {
@@ -24,7 +41,7 @@ const sortedEntries = [...filteredEntries].sort((a, b) => {
 });
 
 // 获取最后更新时间（最新更新的那条）
-const lastUpdated = sortedEntries.find(e => e.data.updatedAt)?.data.updatedAt;
+const lastUpdated = sortedEntries.find((e) => e.data.updatedAt)?.data.updatedAt;
 
 // 渲染每个条目的正文内容
 const entriesWithContent = await Promise.all(
@@ -39,7 +56,7 @@ const entriesWithContent = await Promise.all(
 			icon: entry.data.icon || "📋",
 			color: entry.data.color || "var(--primary)",
 		};
-	})
+	}),
 );
 
 // 统计
