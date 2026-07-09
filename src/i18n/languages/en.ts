@@ -230,6 +230,7 @@ export const en: Translation = {
 	[Key.moviesGamesTabAnime]: "Anime",
 	[Key.moviesGamesTabDocumentary]: "Documentaries",
 	[Key.moviesGamesTabGame]: "Games",
+	[Key.moviesGamesTabMusic]: "Music",
 	[Key.moviesGamesNoData]: "No content yet",
 
 	// Music Page

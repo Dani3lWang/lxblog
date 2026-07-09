@@ -311,6 +311,19 @@ const managerConfigStr = JSON.stringify({
         }
     }
 
+    function setPlaylist(playlist) {
+        state.playlist = playlist || [];
+        state.currentIndex = -1;
+        state.isPlaying = false;
+        emit('fm:init', {
+            playlist: state.playlist,
+            playMode: state.playMode,
+            volume: state.volume,
+            isMuted: state.isMuted
+        });
+        emit('fm:play-state', { isPlaying: false });
+    }
+
     // ── Audio events → broadcast ─────────────────────────────
     audio.addEventListener('timeupdate', function () {
         if (isNaN(audio.duration)) return;
@@ -439,7 +452,8 @@ const managerConfigStr = JSON.stringify({
         seek: seek,
         seekToTime: seekToTime,
         playTrackByIndex: playTrackByIndex,
-        loadTrack: loadTrack
+        loadTrack: loadTrack,
+        setPlaylist: setPlaylist
     };
 })();
 </script>

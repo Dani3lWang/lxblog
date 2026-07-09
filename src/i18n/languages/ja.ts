@@ -229,6 +229,7 @@ export const ja: Translation = {
 	[Key.moviesGamesTabAnime]: "アニメ",
 	[Key.moviesGamesTabDocumentary]: "ドキュメンタリー",
 	[Key.moviesGamesTabGame]: "ゲーム",
+	[Key.moviesGamesTabMusic]: "音楽",
 	[Key.moviesGamesNoData]: "コンテンツがありません",
 
 	// 音楽ページ

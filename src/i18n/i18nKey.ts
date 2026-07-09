@@ -184,6 +184,7 @@ enum I18nKey {
 	moviesGamesTabAnime = "moviesGamesTabAnime",
 	moviesGamesTabDocumentary = "moviesGamesTabDocumentary",
 	moviesGamesTabGame = "moviesGamesTabGame",
+	moviesGamesTabMusic = "moviesGamesTabMusic",
 	moviesGamesNoData = "moviesGamesNoData",
 
 	// 音乐页面

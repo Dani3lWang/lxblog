@@ -1,8 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
 import ClientPagination from "@/components/common/ClientPagination.astro";
+import MusicCollectionCard from "@/components/pages/movies-games/MusicCollectionCard.astro";
 import MovieGameCard from "@/components/pages/movies-games/MovieGameCard.astro";
-import { siteConfig } from "@/config";
+import { musicPlayerConfig, siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
@@ -16,6 +17,8 @@ if (!siteConfig.pages.moviesGames) {
 }
 
 const buildTime = formatDateI18nWithTime(new Date());
+
+const metingApiBase = musicPlayerConfig.meting?.api || "";
 
 const customBangumi = await getCollection("bangumi");
 
@@ -60,6 +63,24 @@ interface MgItem {
 		tags: any[];
 	};
 	_subcategory?: string;
+}
+
+interface MusicItem {
+	title: string;
+	artist?: string;
+	image: string;
+	score: number;
+	status: number;
+	comment: string;
+	musicType?: "album" | "single" | "ep";
+	audioUrl: string;
+	lrcUrl: string;
+	metingServer: string;
+	metingId: string;
+	published: string;
+	link: string;
+	playlistIndex: number;
+	hasAudio: boolean;
 }
 
 const mgItems: MgItem[] = customBangumi
@@ -119,6 +140,92 @@ const mgItems: MgItem[] = customBangumi
 			new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
 	);
 
+const musicItems: MusicItem[] = customBangumi
+	.filter((item) => item.data.category === "music")
+	.map((item) => {
+		const { data } = item;
+		const imageSrc =
+			typeof data.image === "string" ? data.image : data.image.src;
+		const finalLink = "/bangumi/" + removeFileExtension(item.id) + "/";
+		const hasAudio = Boolean(data.audioUrl || data.metingId);
+		return {
+			title: data.title,
+			artist: data.artist || "",
+			image: imageSrc,
+			score: data.score || 0,
+			status: data.status,
+			comment: data.comment || "",
+			musicType: data.musicType,
+			audioUrl: data.audioUrl || "",
+			lrcUrl: data.lrcUrl || "",
+			metingServer: data.metingServer || "",
+			metingId: data.metingId || "",
+			published: data.published?.toISOString() || new Date().toISOString(),
+			link: finalLink,
+			playlistIndex: -1,
+			hasAudio,
+		};
+	})
+	.sort(
+		(a, b) => new Date(b.published).getTime() - new Date(a.published).getTime(),
+	);
+
+// Build playlist only from entries that have audioUrl or metingId
+const musicPlaylist = musicItems
+	.filter((item) => item.hasAudio)
+	.map((item) => ({
+		name: item.title,
+		artist: item.artist || "",
+		url: item.audioUrl,
+		pic: item.image,
+		lrc: item.lrcUrl,
+		metingServer: item.metingServer || "",
+		metingId: item.metingId || "",
+	}));
+
+// Assign playlist index for each music item
+const musicPlaylistIndexByTitle = new Map<string, number>();
+musicPlaylist.forEach((track, i) =>
+	musicPlaylistIndexByTitle.set(track.name, i),
+);
+musicItems.forEach((item) => {
+	item.playlistIndex = musicPlaylistIndexByTitle.get(item.title) ?? -1;
+});
+
+function getMusicStatusColor(type: number): string {
+	switch (type) {
+		case 1:
+			return "bg-sky-500/80";
+		case 2:
+			return "bg-emerald-500/80";
+		case 3:
+			return "bg-amber-500/80";
+		case 4:
+			return "bg-violet-500/80";
+		case 5:
+			return "bg-rose-400/80";
+		default:
+			return "bg-gray-500/80";
+	}
+}
+
+function getMusicStatusText(type: number): string {
+	switch (type) {
+		case 1:
+			return i18n(I18nKey.bangumiStatusMusicWish);
+		case 2:
+			return i18n(I18nKey.bangumiStatusMusicListened);
+		case 3:
+			return i18n(I18nKey.bangumiStatusMusicListening);
+		case 4:
+			return i18n(I18nKey.bangumiStatusOnHold);
+		case 5:
+			return i18n(I18nKey.bangumiStatusDropped);
+		default:
+			return i18n(I18nKey.bangumiStatusUnknown);
+	}
+}
+
 function getItemSubcategory(item: MgItem): string {
 	if (item._subcategory) return item._subcategory;
 	const tags = item.tags || [];
@@ -130,7 +237,14 @@ function getItemSubcategory(item: MgItem): string {
 	return "movie";
 }
 
-type TabKey = "all" | "movie" | "tv" | "anime" | "documentary" | "game";
+type TabKey =
+	| "all"
+	| "movie"
+	| "tv"
+	| "anime"
+	| "documentary"
+	| "game"
+	| "music";
 
 const tabConfig: { key: TabKey; i18nKey: I18nKey }[] = [
 	{ key: "all", i18nKey: I18nKey.moviesGamesTabAll },
@@ -139,33 +253,40 @@ const tabConfig: { key: TabKey; i18nKey: I18nKey }[] = [
 	{ key: "anime", i18nKey: I18nKey.moviesGamesTabAnime },
 	{ key: "documentary", i18nKey: I18nKey.moviesGamesTabDocumentary },
 	{ key: "game", i18nKey: I18nKey.moviesGamesTabGame },
+	...(musicItems.length > 0
+		? [{ key: "music" as TabKey, i18nKey: I18nKey.moviesGamesTabMusic }]
+		: []),
 ];
 
 interface SectionData {
-	tabKey: string;
+	tabKey: TabKey;
 	tabName: string;
 	tabCount: number;
-	items: MgItem[];
+	items: MgItem[] | MusicItem[];
 	filters: { value: string; label: string; count: number }[];
+	isMusic: boolean;
 }
 
 const sections: SectionData[] = [];
 
 for (const tc of tabConfig) {
-	const items =
+	const items: MgItem[] | MusicItem[] =
 		tc.key === "all"
 			? mgItems
-			: mgItems.filter((item) => {
-					if (tc.key === "game") return item.subject_type === 4;
-					if (item.subject_type === 4) return false;
-					return getItemSubcategory(item) === tc.key;
-				});
+			: tc.key === "music"
+				? musicItems
+				: mgItems.filter((item) => {
+						if (tc.key === "game") return item.subject_type === 4;
+						if (item.subject_type === 4) return false;
+						return getItemSubcategory(item) === tc.key;
+					});
 
 	if (tc.key !== "all" && items.length === 0) continue;
 
 	const statusCounts: Record<string, number> = {};
 	for (const item of items) {
-		const s = statusMap[item.type] || "unknown";
+		const statusValue = "status" in item ? item.status : (item as MgItem).type;
+		const s = statusMap[statusValue] || "unknown";
 		statusCounts[s] = (statusCounts[s] || 0) + 1;
 	}
 
@@ -208,6 +329,7 @@ for (const tc of tabConfig) {
 		tabCount: items.length,
 		items,
 		filters,
+		isMusic: tc.key === "music",
 	});
 }
 
@@ -294,15 +416,36 @@ const activeTab = sections[0]?.tabKey || "all";
 
 									<!-- Grid -->
 									<div class="mg-grid grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
-										{sec.items.map((item: MgItem) => (
-											<div
-												class="mg-item"
-												data-item-section={sec.tabKey}
-												data-item-status={statusMap[item.type] || "unknown"}
-											>
-												<MovieGameCard item={item as any} link={item.link} />
-											</div>
-										))}
+										{sec.isMusic
+											? (sec.items as MusicItem[]).map((item) => (
+													<div
+														class="mg-item music-item"
+														data-item-section={sec.tabKey}
+														data-item-status={statusMap[item.status] || "unknown"}
+													>
+														<MusicCollectionCard
+															title={item.title}
+															artist={item.artist}
+															image={item.image}
+															score={item.score}
+															statusText={getMusicStatusText(item.status)}
+															statusColor={getMusicStatusColor(item.status)}
+															comment={item.comment}
+															musicType={item.musicType}
+															hasAudio={item.hasAudio}
+															playlistIndex={item.playlistIndex}
+														/>
+													</div>
+												))
+											: (sec.items as MgItem[]).map((item) => (
+													<div
+														class="mg-item"
+														data-item-section={sec.tabKey}
+														data-item-status={statusMap[item.type] || "unknown"}
+													>
+														<MovieGameCard item={item as any} link={item.link} />
+													</div>
+												))}
 									</div>
 
 									<ClientPagination
@@ -475,4 +618,129 @@ const activeTab = sections[0]?.tabKey || "all";
 		initMgTabs();
 		initMgFilters();
 	}
+</script>
+
+<script is:inline define:vars={{ musicPlaylistJson: JSON.stringify(musicPlaylist), metingApiUrl: metingApiBase }}>
+(function() {
+	var musicPlaylist = JSON.parse(musicPlaylistJson);
+	var metingApi = metingApiUrl || '';
+	var SECTION_KEY = 'music';
+
+	function getMgr() {
+		return window.__fireflyMusic;
+	}
+
+	function resolveMetingUrl(server, id) {
+		if (!metingApi) return '';
+		var s = encodeURIComponent(server || '');
+		var i = encodeURIComponent(id || '');
+		return metingApi.replace(':server', s).replace(':type', 'song').replace(':id', i).replace(':r', Date.now().toString());
+	}
+
+	async function resolveMusicPlaylist(playlist) {
+		if (!playlist || playlist.length === 0) return [];
+		var resolved = JSON.parse(JSON.stringify(playlist));
+		for (var i = 0; i < resolved.length; i++) {
+			var track = resolved[i];
+			if (track.metingServer && track.metingId && !track.url) {
+				try {
+					var url = resolveMetingUrl(track.metingServer, track.metingId);
+					var res = await fetch(url);
+					if (!res.ok) throw new Error('HTTP ' + res.status);
+					var raw = await res.json();
+					var data = Array.isArray(raw) ? raw[0] : raw;
+					if (data) {
+						if (data.url) track.url = data.url;
+						if (data.pic && !track.pic) track.pic = data.pic;
+						if (data.lrc && !track.lrc) track.lrc = data.lrc;
+						track.artist = track.artist || data.author || data.artist || '';
+						track.name = (track.name && track.name !== track.metingId) ? track.name : (data.title || track.name);
+					}
+				} catch (e) {
+					console.warn('[MoviesGamesMusic] Meting resolve failed:', track.name, e);
+				}
+			}
+		}
+		return resolved;
+	}
+
+	function updatePlayingVisual(currentName) {
+		document.querySelectorAll('.music-card').forEach(function(card) {
+			var titleEl = card.querySelector('.music-title');
+			var title = titleEl ? titleEl.textContent : '';
+			if (currentName && title === currentName) {
+				card.classList.add('playing');
+			} else {
+				card.classList.remove('playing');
+			}
+		});
+	}
+
+	async function playMusicByIndex(index) {
+		var mgr = getMgr();
+		if (!mgr) {
+			console.warn('[MoviesGamesMusic] Music manager not found');
+			return;
+		}
+
+		var resolved = await resolveMusicPlaylist(musicPlaylist);
+		mgr.setPlaylist(resolved);
+
+		if (index >= 0 && index < resolved.length) {
+			mgr.loadTrack(index, true);
+			updatePlayingVisual(resolved[index].name);
+		}
+	}
+
+	function initMusicCards() {
+		var section = document.querySelector('[data-section="' + SECTION_KEY + '"]');
+		if (!section) return;
+
+		section.querySelectorAll('.music-card[data-has-audio="1"]').forEach(function(card) {
+			// clone to avoid duplicate listeners on Swup/Astro re-init
+			var newCard = card.cloneNode(true);
+			if (card.parentNode) {
+				card.parentNode.replaceChild(newCard, card);
+			}
+		});
+
+		section.querySelectorAll('.music-card[data-has-audio="1"]').forEach(function(card) {
+			card.addEventListener('click', function(e) {
+				e.preventDefault();
+				var idx = parseInt(this.dataset.playlistIndex || '-1', 10);
+				if (idx >= 0) {
+					playMusicByIndex(idx);
+				}
+			});
+		});
+	}
+
+	function listenToPlayState() {
+		var mgr = getMgr();
+		if (!mgr) return;
+		mgr.on('fm:track-loaded', function(payload) {
+			if (payload && payload.track) {
+				updatePlayingVisual(payload.track.name);
+			}
+		});
+		mgr.on('fm:play-state', function(payload) {
+			if (payload && !payload.isPlaying) {
+				updatePlayingVisual('');
+			}
+		});
+	}
+
+	document.addEventListener('astro:page-load', initMusicCards);
+	document.addEventListener('swup:contentReplaced', initMusicCards);
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', function() {
+			initMusicCards();
+			listenToPlayState();
+		});
+	} else {
+		initMusicCards();
+		listenToPlayState();
+	}
+})();
 </script>

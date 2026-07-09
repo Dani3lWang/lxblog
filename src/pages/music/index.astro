@@ -927,7 +927,7 @@ const getStatusText = (type: number) => {
 		var resolved = await resolveMetingTracks(collectionPlaylist);
 		console.log("[MusicPage] resolved, tracks with url:", resolved.filter(function(t){return t.url;}).length);
 		if (resolved.length > 0) {
-			mgr.loadExternalPlaylist(resolved);
+			mgr.setPlaylist(resolved);
 		}
 		syncAll();
 	}

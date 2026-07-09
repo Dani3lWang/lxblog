@@ -226,6 +226,7 @@ export const zh_TW: Translation = {
 	[Key.moviesGamesTabAnime]: "動漫",
 	[Key.moviesGamesTabDocumentary]: "紀錄片",
 	[Key.moviesGamesTabGame]: "遊戲",
+	[Key.moviesGamesTabMusic]: "音樂",
 	[Key.moviesGamesNoData]: "暫無內容",
 
 	// 音樂頁面

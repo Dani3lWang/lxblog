@@ -230,6 +230,7 @@ export const ru: Translation = {
 	[Key.moviesGamesTabAnime]: "Аниме",
 	[Key.moviesGamesTabDocumentary]: "Документальные",
 	[Key.moviesGamesTabGame]: "Игры",
+	[Key.moviesGamesTabMusic]: "Музыка",
 	[Key.moviesGamesNoData]: "Пока нет контента",
 
 	// Музыка

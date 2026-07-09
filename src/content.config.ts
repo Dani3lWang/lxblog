@@ -80,6 +80,7 @@ const bangumiCollection = defineCollection({
 			lrcUrl: z.string().optional(),
 			metingServer: z.string().optional(),
 			metingId: z.string().optional(),
+			musicType: z.enum(["album", "single", "ep"]).optional(),
 		}),
 });
 

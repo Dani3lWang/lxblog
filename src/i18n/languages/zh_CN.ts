@@ -224,6 +224,7 @@ export const zh_CN: Translation = {
 	[Key.moviesGamesTabAnime]: "动漫",
 	[Key.moviesGamesTabDocumentary]: "纪录片",
 	[Key.moviesGamesTabGame]: "游戏",
+	[Key.moviesGamesTabMusic]: "音乐",
 	[Key.moviesGamesNoData]: "暂无内容",
 
 	// 音乐页面

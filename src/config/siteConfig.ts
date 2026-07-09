@@ -117,7 +117,7 @@ export const siteConfig: SiteConfig = {
 		// 影视与游戏页面开关
 		moviesGames: true,
 		// 音乐页面开关
-		musicPage: true,
+		musicPage: false,
 		// 更新日志页面开关
 		changelog: true,
 		// 笔记本页面开关
