@@ -42,4 +42,6 @@ cache/
 package/
 .obsidian/
 src/content/posts/Sample/
+src/content/example/
+src/content/template/
 docs/visual-diff-analysis.md
