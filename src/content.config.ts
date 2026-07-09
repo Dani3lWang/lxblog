@@ -114,6 +114,7 @@ const lifeCollection = defineCollection({
 		// Place
 		province: z.string().optional().default(""),
 		city: z.string().optional().default(""),
+		district: z.string().optional().default(""),
 		experience: z.string().optional().default(""),
 		visitCount: z.number().optional().default(1),
 		lat: z.number().optional(),
@@ -137,9 +138,11 @@ const notebooksCollection = defineCollection({
 	}),
 	schema: z.object({
 		name: z.string().optional().default("未命名日记本"),
+		title: z.string().optional().default(""),
 		cover: z.string().optional().default(""),
 		summary: z.string().optional().default(""),
 		date: z.coerce.date().optional(),
+		tags: z.array(z.string()).optional().default([]),
 	}),
 });
 
@@ -154,7 +157,7 @@ const routinesCollection = defineCollection({
 		description: z.string().optional().default(""),
 		icon: z.string().optional().default("📌"),
 		color: z.string().optional().default(""),
-		updatedAt: z.union([z.string(), z.date()]).optional(),
+		updatedAt: z.coerce.date().optional(),
 	}),
 });
 

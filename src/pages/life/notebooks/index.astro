@@ -1,0 +1,520 @@
+---
+// @ts-nocheck
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { url } from "@/utils/url-utils";
+
+const navItems = [
+  { label: "笔记本", icon: "material-symbols:book-outline", href: "/life/notebooks/", color: "#ec4899" },
+  { label: "规划", icon: "material-symbols:schedule-outline", href: "/life/routines/", color: "#06b6d4" },
+  { label: "足迹", icon: "material-symbols:location-on-outline", href: "/life/places/", color: "#10b981" },
+];
+
+const allEntries = await getCollection("notebooks");
+
+const sortByDateDesc = <T extends Record<string, unknown>>(list: T[], field: keyof T) =>
+	[...list].sort((a, b) => {
+		const aDate = a[field] instanceof Date ? a[field]!.getTime() : 0;
+		const bDate = b[field] instanceof Date ? b[field]!.getTime() : 0;
+		return bDate - aDate;
+	});
+
+	const notebooks = allEntries.map((entry) => {
+		const normalizedId = entry.id.replace(/\\/g, "/");
+		// 排除 README.md 和非日记本文件夹
+		if (normalizedId === "readme" || normalizedId === "readme.md") {
+			return null;
+		}
+		// 匹配文件夹的 _index 文件（支持有无扩展名）
+		const isNotebookRoot = normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) || normalizedId.match(/^([^/]+)\/_index$/);
+
+		if (!isNotebookRoot) {
+			return null;
+		}
+
+		const folderName = isNotebookRoot[1];
+
+		const folderEntries = allEntries.filter((item) => {
+			const itemId = item.id.replace(/\\/g, "/");
+			// 排除 _index 文件及其各种扩展名形式
+			const isIndexFile = itemId === `${folderName}/_index` || 
+			                    itemId === `${folderName}/_index.md` || 
+			                    itemId === `${folderName}/_index.json`;
+			return itemId.startsWith(`${folderName}/`) && !isIndexFile;
+		});
+
+		const sortedEntries = sortByDateDesc(folderEntries.map((e) => e.data), "date");
+		const latestEntry = sortedEntries[0];
+
+		return {
+			id: entry.id,
+			name: entry.data.name,
+			cover: entry.data.cover,
+			summary: entry.data.summary,
+			entries: folderEntries.length,
+			updatedAt: latestEntry?.date instanceof Date ? latestEntry.date : new Date(0),
+			selfPath: `/life/notebooks/${folderName}/`,
+			folderName,
+		};
+	}).filter(Boolean);
+
+const sortedNotebooks = sortByDateDesc(notebooks, "updatedAt");
+const totalNotebookEntries = sortedNotebooks.reduce((acc, book) => acc + (book?.entries || 0), 0);
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth();
+const isSameMonth = (date?: Date) => {
+	if (!date) return false;
+	return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
+};
+const thisMonthUpdates = sortedNotebooks.filter((item) => isSameMonth(item.updatedAt)).length;
+---
+
+<MainGridLayout title="笔记本" description="成长日记、学习复盘、灵感随笔">
+	<div class="diary-page flex w-full flex-col gap-6">
+		<a href="/life/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
+			<span>←</span> 返回生活
+		</a>
+		<!-- 导航栏 -->
+		<div class="nav-tabs-wrapper" id="life-nav-wrapper">
+			<div class="nav-container">
+				<a href={url("/life/")} class="nav-tab nav-tab-home" data-category-name="生活">
+					<Icon name="material-symbols:favorite" class="tab-icon" />
+					<span class="tab-label">生活</span>
+				</a>
+				<div class="nav-tabs-scroll" id="life-nav-tabs-scroll">
+					<div class="nav-tabs" id="life-nav-tabs">
+						{navItems.map(item => (
+							<a href={url(item.href)} class="nav-tab" data-category-name={item.label}>
+								<Icon name={item.icon} class="tab-icon" />
+								<span class="tab-label">{item.label}</span>
+							</a>
+						))}
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 页面标题 -->
+		<section data-pagefind-body class="card-base relative overflow-hidden rounded-[var(--radius-large)] p-8">
+			<!-- 装饰元素 -->
+			<div class="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-[var(--primary)]/5 blur-2xl"></div>
+			<div class="absolute -bottom-4 -left-4 h-24 w-24 rounded-full bg-[var(--primary)]/5 blur-2xl"></div>
+
+			<div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+				<div>
+					<h1 data-pagefind-meta="title" data-pagefind-weight="10" class="">
+						<span class="text-4xl">📔</span>
+						我的日记本
+					</h1>
+					<p class="text-[var(--content-meta)] max-w-lg">
+						记录生活点滴，每一页都是珍贵的回忆。
+					</p>
+				</div>
+
+				<!-- 统计卡片 -->
+				<div class="flex gap-4 md:gap-6">
+					<div class="diary-stat-card">
+						<div class="diary-stat-icon bg-[var(--primary)]/10 text-[var(--primary)]">
+							<Icon name="material-symbols:menu-book-outline" class="text-2xl" />
+						</div>
+						<div class="text-center">
+							<div class="text-2xl font-bold text-[var(--text-color)]">{sortedNotebooks.length}</div>
+							<div class="text-xs text-[var(--content-meta)]">本日记</div>
+						</div>
+					</div>
+					<div class="diary-stat-card">
+						<div class="diary-stat-icon bg-[var(--primary)]/10 text-[var(--primary)]">
+							<Icon name="material-symbols:edit-note" class="text-2xl" />
+						</div>
+						<div class="text-center">
+							<div class="text-2xl font-bold text-[var(--text-color)]">{totalNotebookEntries}</div>
+							<div class="text-xs text-[var(--content-meta)]">篇记录</div>
+						</div>
+					</div>
+					<div class="diary-stat-card">
+						<div class="diary-stat-icon bg-[var(--primary)]/10 text-[var(--primary)]">
+							<Icon name="material-symbols:calendar-today" class="text-2xl" />
+						</div>
+						<div class="text-center">
+							<div class="text-2xl font-bold text-[var(--text-color)]">{thisMonthUpdates}</div>
+							<div class="text-xs text-[var(--content-meta)]">本月更新</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 笔记本网格 -->
+		<section>
+			{sortedNotebooks.length === 0 ? (
+				<div class="diary-empty">
+					<div class="text-6xl mb-4">📖</div>
+					<h3 class="text-xl font-semibold mb-2 text-[var(--text-color)]">还没有日记本</h3>
+					<p class="text-sm text-[var(--content-meta)]">开始记录你的第一篇日记吧！</p>
+					<div class="mt-6 p-4 rounded-xl bg-[var(--btn-regular-bg)] text-left text-sm">
+						<p class="text-[var(--text-color)] mb-2">创建步骤：</p>
+						<ol class="text-[var(--content-meta)] space-y-1 list-decimal list-inside">
+							<li>在 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">src/content/life/notebooks/</code> 下创建文件夹</li>
+							<li>在文件夹内创建 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">_index.md</code> 文件</li>
+							<li>在文件夹内创建 <code class="px-1 rounded bg-[var(--btn-regular-bg-hover)] font-mono">*.md</code> 文件作为日记条目</li>
+						</ol>
+					</div>
+				</div>
+			) : (
+				<div class="diary-grid">
+					{sortedNotebooks.map((book) => (
+						<a
+							href={book.selfPath}
+							class="diary-notebook group"
+						>
+							<!-- 日记本主体 -->
+							<div class="diary-notebook-cover relative overflow-hidden rounded-xl p-5 pb-16 shadow-md transition-all duration-300 group-hover:shadow-lg group-hover:scale-[1.02]" style="background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--primary) 5%, var(--card-bg)) 100%); border: 1px solid var(--line-divider);">
+								<!-- 书脊装饰 -->
+								<div class="diary-spine absolute left-0 top-0 bottom-0 w-4 rounded-l-xl" style="background: linear-gradient(to right, var(--primary), color-mix(in srgb, var(--primary) 70%, black))"></div>
+
+								<!-- 封面内容 -->
+								<div class="relative pl-6">
+									<!-- 标签 -->
+									<div class="flex items-center gap-2 mb-3">
+										<span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary);">
+											{book.folderName === 'growth' ? '成长' : book.folderName === 'study' ? '学习' : book.folderName === 'ideas' ? '灵感' : '笔记'}
+										</span>
+										<span class="text-xs text-[var(--content-meta)]">
+											{book.entries} 篇
+										</span>
+									</div>
+
+									<!-- 笔记本名称 -->
+									<h3 class="text-xl font-bold text-[var(--title-active)] mb-2 leading-tight group-hover:text-[var(--primary)] transition-colors">
+										{book.name || "未命名笔记本"}
+									</h3>
+
+									<!-- 描述 -->
+									<p class="text-sm text-[var(--content-meta)] line-clamp-2 mb-4">
+										{book.summary || "暂无描述"}
+									</p>
+
+									<!-- 装饰图案 -->
+									<div class="absolute bottom-4 right-4 text-6xl opacity-10">📔</div>
+								</div>
+
+								<!-- 翻页效果 -->
+								<div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(135deg, transparent 0%, color-mix(in srgb, var(--primary) 3%, transparent) 100%);"></div>
+							</div>
+
+							<!-- 日记本底部 -->
+							<div class="diary-notebook-spine px-4 py-3 rounded-b-xl -mt-2 relative" style="background: linear-gradient(to bottom, var(--primary), color-mix(in srgb, var(--primary) 80%, black));">
+								<div class="absolute inset-x-0 top-1/2 h-px opacity-20" style="background: linear-gradient(to right, transparent, white, transparent);"></div>
+								<div class="relative flex items-center justify-between">
+									<span class="text-xs opacity-80">
+										{book.updatedAt instanceof Date ? book.updatedAt.toISOString().split("T")[0] : "未更新"}
+									</span>
+									<span class="opacity-80">
+										<Icon name="material-symbols:chevron-right-rounded" class="text-lg transition-transform group-hover:translate-x-1" />
+									</span>
+								</div>
+							</div>
+						</a>
+					))}
+				</div>
+			)}
+		</section>
+
+		<!-- 装饰页脚 -->
+		<section class="text-center py-4">
+			<p class="text-sm text-[var(--content-meta)] opacity-50">
+				✨ 每一页都是成长的足迹
+			</p>
+		</section>
+	</div>
+</MainGridLayout>
+
+<style>
+	.diary-page {
+		--diary-primary: var(--primary);
+	}
+
+	/* 统计卡片 */
+	.diary-stat-card {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.75rem 1rem;
+		background: var(--card-bg);
+		border: 1px solid var(--line-divider);
+		border-radius: var(--radius-xl);
+	}
+
+	.diary-stat-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: var(--radius-lg);
+	}
+
+	/* 日记本网格 */
+	.diary-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 1.5rem;
+	}
+
+	/* 日记本卡片 */
+	.diary-notebook {
+		display: flex;
+		flex-direction: column;
+		text-decoration: none;
+		transition: transform 0.3s ease;
+	}
+
+	.diary-notebook:hover {
+		transform: translateY(-4px);
+	}
+
+	.diary-notebook-cover {
+		position: relative;
+		min-height: 180px;
+	}
+
+	.diary-spine {
+		border-radius: 0.5rem 0 0 0.5rem;
+	}
+
+	/* 日记本底部书脊 */
+	.diary-notebook-spine {
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	}
+
+	/* 空状态 */
+	.diary-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 4rem 2rem;
+		background: var(--card-bg);
+		border: 2px dashed var(--line-divider);
+		border-radius: var(--radius-3xl);
+	}
+
+	/* 行数限制 */
+	.line-clamp-2 {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* ========== 导航栏样式 ========== */
+	.nav-tabs-wrapper {
+		margin-bottom: 0;
+		overflow: hidden;
+		position: relative;
+	}
+	.nav-tabs-wrapper::before,
+	.nav-tabs-wrapper::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 32px;
+		z-index: 2;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.2s;
+	}
+	.nav-tabs-wrapper::before {
+		left: 0;
+		background: linear-gradient(to right, var(--card-bg), transparent);
+	}
+	.nav-tabs-wrapper::after {
+		right: 0;
+		background: linear-gradient(to left, var(--card-bg), transparent);
+	}
+	.nav-tabs-wrapper.show-left::before { opacity: 1; }
+	.nav-tabs-wrapper.show-right::after { opacity: 1; }
+
+	.nav-container {
+		display: flex;
+		align-items: center;
+		gap: 0;
+		background: var(--card-bg);
+		border: 1px solid var(--line-divider);
+		border-radius: 12px;
+		padding: 6px;
+	}
+
+	.nav-tab-home {
+		flex-shrink: 0;
+		background: var(--card-bg);
+	}
+
+	.nav-tabs-scroll {
+		flex: 1;
+		min-width: 0;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.nav-tabs {
+		display: flex;
+		gap: 6px;
+		padding: 2px;
+		overflow-x: auto;
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		-webkit-overflow-scrolling: touch;
+	}
+	.nav-tabs::-webkit-scrollbar { display: none; }
+
+	.nav-tab {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 6px 14px;
+		border-radius: 8px;
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: none;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+		background: transparent;
+		border: 1.5px solid var(--line-divider);
+		color: var(--btn-content);
+	}
+	.nav-tab:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+		background: transparent;
+	}
+	.nav-tab[data-active] {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: white;
+	}
+	.nav-tab[data-active]:hover {
+		opacity: 0.9;
+		transform: none;
+		box-shadow: none;
+	}
+	.nav-tab:active {
+		transform: scale(0.98);
+	}
+	.tab-icon { font-size: 18px; }
+
+	@media (max-width: 480px) {
+		.nav-tab {
+			padding: 6px 10px;
+			font-size: 13px;
+		}
+		.tab-icon { font-size: 16px; }
+	}
+</style>
+
+<script>
+// @ts-nocheck
+	document.addEventListener('DOMContentLoaded', initNavTabs);
+	document.addEventListener('astro:page-load', initNavTabs);
+
+	function initNavTabs() {
+		const wrapper = document.getElementById('life-nav-wrapper');
+		const tabsScroll = document.getElementById('life-nav-tabs-scroll');
+		const tabs = document.getElementById('life-nav-tabs');
+
+		if (!wrapper || !tabsScroll || !tabs) return;
+		if (tabs.dataset.initialized) return;
+		tabs.dataset.initialized = 'true';
+
+		const navContainer = tabsScroll.closest('.nav-container');
+
+		function updateActiveNav() {
+			const pathname = window.location.pathname;
+			const navPills = tabs.querySelectorAll('.nav-tab:not(.nav-tab-home)');
+
+			navPills.forEach(pill => {
+				pill.removeAttribute('data-active');
+				const href = pill.getAttribute('href');
+				if (href && pathname.startsWith(href)) {
+					pill.setAttribute('data-active', '');
+				}
+			});
+
+			const homeTab = tabs.querySelector('.nav-tab-home');
+			if (homeTab) {
+				homeTab.removeAttribute('data-active');
+				if (pathname === '/life/' || pathname === '/life') {
+					homeTab.setAttribute('data-active', '');
+				}
+			}
+		}
+
+		updateActiveNav();
+		document.addEventListener('swup:contentReplaced', updateActiveNav);
+
+		function scrollToActiveTab() {
+			const activeTab = tabs.querySelector('.nav-tab[data-active]');
+			if (activeTab) {
+				const scrollLeft = activeTab.offsetLeft - tabsScroll.offsetLeft - (tabsScroll.clientWidth - activeTab.offsetWidth) / 2;
+				tabs.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
+			}
+		}
+
+		const originalUpdateActiveNav = updateActiveNav;
+		updateActiveNav = function() {
+			originalUpdateActiveNav();
+			scrollToActiveTab();
+		};
+
+		function updateScrollIndicators() {
+			const scrollLeft = tabs.scrollLeft;
+			const scrollWidth = tabs.scrollWidth;
+			const clientWidth = tabs.clientWidth;
+
+			wrapper.classList.toggle('show-left', scrollLeft > 10);
+			wrapper.classList.toggle('show-right', scrollLeft < scrollWidth - clientWidth - 10);
+		}
+
+		tabs.addEventListener('scroll', updateScrollIndicators);
+		window.addEventListener('resize', updateScrollIndicators);
+		updateScrollIndicators();
+
+		if (navContainer) {
+			navContainer.addEventListener('mouseenter', () => {
+				document.body.style.overflow = 'hidden';
+			});
+
+			navContainer.addEventListener('mouseleave', () => {
+				document.body.style.overflow = '';
+			});
+
+			navContainer.addEventListener('wheel', (e) => {
+				if (tabs.scrollWidth > tabs.clientWidth) {
+					e.stopPropagation();
+					tabs.scrollLeft += e.deltaY + e.deltaX;
+					updateScrollIndicators();
+				}
+			}, { capture: true, passive: false });
+		}
+
+		let touchStartX = 0;
+		let touchScrollLeft = 0;
+
+		tabs.addEventListener('touchstart', (e) => {
+			touchStartX = e.touches[0].pageX;
+			touchScrollLeft = tabs.scrollLeft;
+		}, { passive: true });
+
+		tabs.addEventListener('touchmove', (e) => {
+			const touchX = e.touches[0].pageX;
+			const walk = (touchStartX - touchX) * 1.5;
+			tabs.scrollLeft = touchScrollLeft + walk;
+			updateScrollIndicators();
+		}, { passive: true });
+	}
+</script>
