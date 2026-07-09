@@ -226,6 +226,15 @@ export default defineConfig({
 				if (pathname === "/moments/" && !siteConfig.pages.moments) {
 					return false;
 				}
+				if (pathname === "/moments/shuoshuo/" && !siteConfig.pages.moments) {
+					return false;
+				}
+				if (pathname === "/moments/gallery/" && !siteConfig.pages.gallery) {
+					return false;
+				}
+				if (pathname === "/moments/guestbook/" && !siteConfig.pages.guestbook) {
+					return false;
+				}
 				if (pathname === "/books/" && !siteConfig.pages.books) {
 					return false;
 				}
