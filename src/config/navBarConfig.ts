@@ -38,7 +38,7 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 恢复方法:取消下面一行的注释即可
 	// links.push(LinkPresets.Friends);
 
-	// 动态入口 —— 说说 / 相册 / 留言
+	// 动态入口 —— 说说 / 相册 / 留言板
 	const momentsChildren: NavBarLink[] = [];
 	if (siteConfig.pages.moments) {
 		momentsChildren.push({
@@ -56,9 +56,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	}
 	if (siteConfig.pages.guestbook) {
 		momentsChildren.push({
-			name: "留言",
+			name: "留言板",
 			url: "/moments/guestbook/",
-			icon: "material-symbols:chat",
+			icon: "material-symbols:menu-book",
 		});
 	}
 	if (siteConfig.pages.notebooks) {
@@ -222,9 +222,9 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:favorite",
 	},
 	Guestbook: {
-		name: "留言",
+		name: "留言板",
 		url: "/moments/guestbook/",
-		icon: "material-symbols:chat",
+		icon: "material-symbols:menu-book",
 	},
 	About: {
 		name: "关于我",
