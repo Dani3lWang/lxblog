@@ -11,7 +11,10 @@ const sortedMoments = moments.sort(
 );
 
 const MOMENTS_PER_PAGE = 10;
-const totalPages = Math.max(1, Math.ceil(sortedMoments.length / MOMENTS_PER_PAGE));
+const totalPages = Math.max(
+	1,
+	Math.ceil(sortedMoments.length / MOMENTS_PER_PAGE),
+);
 
 const albums = await getCollection("album");
 const albumCount = albums.length;

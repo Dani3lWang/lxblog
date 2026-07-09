@@ -223,8 +223,7 @@ export const ru: Translation = {
 	// Фильмы и игры
 	[Key.moviesGames]: "Фильмы и игры",
 	[Key.moviesGamesTitle]: "Фильмы и игры",
-	[Key.moviesGamesSubtitle]:
-		"Фильмы, сериалы и игры, которые мне понравились.",
+	[Key.moviesGamesSubtitle]: "Фильмы, сериалы и игры, которые мне понравились.",
 	[Key.moviesGamesTabAll]: "Все",
 	[Key.moviesGamesTabMovie]: "Фильмы",
 	[Key.moviesGamesTabTV]: "Сериалы",

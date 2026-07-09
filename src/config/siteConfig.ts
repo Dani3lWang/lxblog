@@ -15,8 +15,7 @@ export const siteConfig: SiteConfig = {
 	site_url: "https://lovelongxin.me",
 
 	// 站点描述
-	description:
-		"",
+	description: "",
 
 	// 站点关键词
 	keywords: [

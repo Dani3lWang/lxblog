@@ -66,9 +66,10 @@ const mgItems: MgItem[] = customBangumi
 	.filter((item) => ["anime", "game", "real"].includes(item.data.category))
 	.map((item) => {
 		const { data, id } = item;
-		const imageSrc = typeof data.image === "string" ? data.image : data.image.src;
+		const imageSrc =
+			typeof data.image === "string" ? data.image : data.image.src;
 
-			const finalLink = "/bangumi/" + removeFileExtension(id) + "/";
+		const finalLink = "/bangumi/" + removeFileExtension(id) + "/";
 
 		const subjectTypeMap: Record<string, number> = {
 			anime: 2,
@@ -113,14 +114,19 @@ const mgItems: MgItem[] = customBangumi
 			},
 		};
 	})
-	.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+	.sort(
+		(a, b) =>
+			new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+	);
 
 function getItemSubcategory(item: MgItem): string {
 	if (item._subcategory) return item._subcategory;
 	const tags = item.tags || [];
 	if (tags.some((t: string) => t.includes("纪录"))) return "documentary";
-	if (tags.some((t: string) => t.includes("动漫") || t.includes("动画"))) return "anime";
-	if (tags.some((t: string) => t.includes("电视剧") || t.includes("剧集"))) return "tv";
+	if (tags.some((t: string) => t.includes("动漫") || t.includes("动画")))
+		return "anime";
+	if (tags.some((t: string) => t.includes("电视剧") || t.includes("剧集")))
+		return "tv";
 	return "movie";
 }
 
@@ -146,13 +152,14 @@ interface SectionData {
 const sections: SectionData[] = [];
 
 for (const tc of tabConfig) {
-	const items = tc.key === "all"
-		? mgItems
-		: mgItems.filter((item) => {
-			if (tc.key === "game") return item.subject_type === 4;
-			if (item.subject_type === 4) return false;
-			return getItemSubcategory(item) === tc.key;
-		});
+	const items =
+		tc.key === "all"
+			? mgItems
+			: mgItems.filter((item) => {
+					if (tc.key === "game") return item.subject_type === 4;
+					if (item.subject_type === 4) return false;
+					return getItemSubcategory(item) === tc.key;
+				});
 
 	if (tc.key !== "all" && items.length === 0) continue;
 
@@ -163,12 +170,36 @@ for (const tc of tabConfig) {
 	}
 
 	const filters = [
-		{ value: "all", label: i18n(I18nKey.bangumiFilterAll), count: items.length },
-		{ value: "collect", label: i18n(I18nKey.bangumiFilterWatched), count: statusCounts.collect || 0 },
-		{ value: "doing", label: i18n(I18nKey.bangumiFilterWatching), count: statusCounts.doing || 0 },
-		{ value: "wish", label: i18n(I18nKey.bangumiFilterWish), count: statusCounts.wish || 0 },
-		{ value: "on_hold", label: i18n(I18nKey.bangumiFilterOnHold), count: statusCounts.on_hold || 0 },
-		{ value: "dropped", label: i18n(I18nKey.bangumiFilterDropped), count: statusCounts.dropped || 0 },
+		{
+			value: "all",
+			label: i18n(I18nKey.bangumiFilterAll),
+			count: items.length,
+		},
+		{
+			value: "collect",
+			label: i18n(I18nKey.bangumiFilterWatched),
+			count: statusCounts.collect || 0,
+		},
+		{
+			value: "doing",
+			label: i18n(I18nKey.bangumiFilterWatching),
+			count: statusCounts.doing || 0,
+		},
+		{
+			value: "wish",
+			label: i18n(I18nKey.bangumiFilterWish),
+			count: statusCounts.wish || 0,
+		},
+		{
+			value: "on_hold",
+			label: i18n(I18nKey.bangumiFilterOnHold),
+			count: statusCounts.on_hold || 0,
+		},
+		{
+			value: "dropped",
+			label: i18n(I18nKey.bangumiFilterDropped),
+			count: statusCounts.dropped || 0,
+		},
 	].filter((f) => f.value === "all" || f.count > 0);
 
 	sections.push({

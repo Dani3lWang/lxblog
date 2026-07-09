@@ -26,7 +26,10 @@ const bookItems = customBangumi
 		return dateB - dateA;
 	})
 	.map((item) => {
-		const imageSrc = typeof item.data.image === "string" ? item.data.image : item.data.image.src;
+		const imageSrc =
+			typeof item.data.image === "string"
+				? item.data.image
+				: item.data.image.src;
 		const slug = removeFileExtension(item.id);
 		const link = `/books/${slug}/`;
 

@@ -12,12 +12,18 @@ const { item, link } = Astro.props;
 
 const getStatusColor = (type: number) => {
 	switch (type) {
-		case 1: return "bg-sky-500/80";
-		case 2: return "bg-emerald-500/80";
-		case 3: return "bg-amber-500/80";
-		case 4: return "bg-violet-500/80";
-		case 5: return "bg-rose-400/80";
-		default: return "bg-gray-500/80";
+		case 1:
+			return "bg-sky-500/80";
+		case 2:
+			return "bg-emerald-500/80";
+		case 3:
+			return "bg-amber-500/80";
+		case 4:
+			return "bg-violet-500/80";
+		case 5:
+			return "bg-rose-400/80";
+		default:
+			return "bg-gray-500/80";
 	}
 };
 
@@ -33,9 +39,12 @@ const getStatusText = (type: number) => {
 		case 3:
 			if (subjectType === 4) return i18n(I18nKey.bangumiStatusGamePlaying);
 			return i18n(I18nKey.bangumiStatusWatching);
-		case 4: return i18n(I18nKey.bangumiStatusOnHold);
-		case 5: return i18n(I18nKey.bangumiStatusDropped);
-		default: return i18n(I18nKey.bangumiStatusUnknown);
+		case 4:
+			return i18n(I18nKey.bangumiStatusOnHold);
+		case 5:
+			return i18n(I18nKey.bangumiStatusDropped);
+		default:
+			return i18n(I18nKey.bangumiStatusUnknown);
 	}
 };
 

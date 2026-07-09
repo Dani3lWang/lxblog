@@ -201,7 +201,8 @@ export const ja: Translation = {
 	// 更新ログ
 	[Key.changelog]: "更新ログ",
 	[Key.changelogTitle]: "更新ログ",
-	[Key.changelogSubtitle]: "ブログプロジェクトの機能追加、バグ修正、重要な変更を記録",
+	[Key.changelogSubtitle]:
+		"ブログプロジェクトの機能追加、バグ修正、重要な変更を記録",
 	[Key.changelogAll]: "すべて",
 	[Key.changelogFeature]: "新機能",
 	[Key.changelogImprovement]: "改善",

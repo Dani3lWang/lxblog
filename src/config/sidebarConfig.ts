@@ -98,7 +98,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				collapseThreshold: 10,
 			},
 		},
-		],
+	],
 
 	// 右侧边栏组件配置列表
 	rightComponents: [
@@ -216,7 +216,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				},
 			},
 		},
-		],
+	],
 
 	// 移动端底部组件配置列表
 	// 这些组件只在移动端(<768px)显示在页面底部，独立于左右侧边栏配置

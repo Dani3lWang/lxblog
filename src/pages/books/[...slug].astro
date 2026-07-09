@@ -27,12 +27,18 @@ const bannerPostMeta = {
 
 const getStatusText = (status: number) => {
 	switch (status) {
-		case 1: return i18n(I18nKey.bookshelfWantRead);
-		case 2: return i18n(I18nKey.bookshelfRead);
-		case 3: return i18n(I18nKey.bookshelfReading);
-		case 4: return i18n(I18nKey.bangumiStatusOnHold);
-		case 5: return i18n(I18nKey.bangumiStatusDropped);
-		default: return i18n(I18nKey.bangumiStatusUnknown);
+		case 1:
+			return i18n(I18nKey.bookshelfWantRead);
+		case 2:
+			return i18n(I18nKey.bookshelfRead);
+		case 3:
+			return i18n(I18nKey.bookshelfReading);
+		case 4:
+			return i18n(I18nKey.bangumiStatusOnHold);
+		case 5:
+			return i18n(I18nKey.bangumiStatusDropped);
+		default:
+			return i18n(I18nKey.bangumiStatusUnknown);
 	}
 };
 ---

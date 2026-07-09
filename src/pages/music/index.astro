@@ -21,7 +21,8 @@ const musicEntries = customBangumi
 	.filter((item) => item.data.category === "music")
 	.map((item) => {
 		const { data } = item;
-		const imageSrc = typeof data.image === "string" ? data.image : data.image.src;
+		const imageSrc =
+			typeof data.image === "string" ? data.image : data.image.src;
 		return {
 			title: data.title,
 			artist: data.artist || "",
@@ -36,7 +37,9 @@ const musicEntries = customBangumi
 			published: data.published?.toISOString() || new Date().toISOString(),
 		};
 	})
-	.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+	.sort(
+		(a, b) => new Date(b.published).getTime() - new Date(a.published).getTime(),
+	);
 
 // Build playlist from entries that have audioUrl
 const collectionPlaylist = musicEntries
@@ -53,16 +56,24 @@ const collectionPlaylist = musicEntries
 
 // Map title → playlist index for each playable entry
 const playlistIndexByTitle = new Map<string, number>();
-collectionPlaylist.forEach((track, i) => playlistIndexByTitle.set(track.name, i));
+collectionPlaylist.forEach((track, i) =>
+	playlistIndexByTitle.set(track.name, i),
+);
 
 const getStatusText = (type: number) => {
 	switch (type) {
-		case 1: return i18n(I18nKey.bangumiStatusMusicWish);
-		case 2: return i18n(I18nKey.bangumiStatusMusicListened);
-		case 3: return i18n(I18nKey.bangumiStatusMusicListening);
-		case 4: return i18n(I18nKey.bangumiStatusOnHold);
-		case 5: return i18n(I18nKey.bangumiStatusDropped);
-		default: return "";
+		case 1:
+			return i18n(I18nKey.bangumiStatusMusicWish);
+		case 2:
+			return i18n(I18nKey.bangumiStatusMusicListened);
+		case 3:
+			return i18n(I18nKey.bangumiStatusMusicListening);
+		case 4:
+			return i18n(I18nKey.bangumiStatusOnHold);
+		case 5:
+			return i18n(I18nKey.bangumiStatusDropped);
+		default:
+			return "";
 	}
 };
 ---
