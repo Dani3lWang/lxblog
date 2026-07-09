@@ -1,0 +1,409 @@
+---
+import { Icon } from "astro-icon/components";
+import { siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getCollection } from "astro:content";
+
+if (!siteConfig.pages.changelog) {
+	return Astro.redirect("/404/");
+}
+
+const entries = await getCollection("changelog");
+
+const sorted = entries
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const typeConfig = {
+	feature: {
+		label: i18n(I18nKey.changelogFeature),
+		icon: "material-symbols:rocket-launch",
+		cls: "cl-feature",
+	},
+	improvement: {
+		label: i18n(I18nKey.changelogImprovement),
+		icon: "material-symbols:build",
+		cls: "cl-improvement",
+	},
+	fix: {
+		label: i18n(I18nKey.changelogFix),
+		icon: "material-symbols:bug-report",
+		cls: "cl-fix",
+	},
+	removal: {
+		label: i18n(I18nKey.changelogRemoval),
+		icon: "material-symbols:delete",
+		cls: "cl-removal",
+	},
+};
+
+const displayTitle = i18n(I18nKey.changelogTitle);
+const displaySubtitle = i18n(I18nKey.changelogSubtitle);
+---
+
+<MainGridLayout title={displayTitle} description={displaySubtitle}>
+	<div class="cl-page" id="cl-page">
+		<header class="cl-header">
+			<h1 class="cl-title">{displayTitle}</h1>
+			<p class="cl-subtitle">{displaySubtitle}</p>
+		</header>
+
+		<!-- filter bar -->
+		<div class="cl-filter-bar" id="cl-filter-bar">
+			<button class="cl-filter-chip active" data-filter="all">
+				{i18n(I18nKey.changelogAll)}
+			</button>
+			{
+				Object.entries(typeConfig).map(([key, cfg]) => (
+					<button class={`cl-filter-chip ${cfg.cls}`} data-filter={key}>
+						<Icon name={cfg.icon} />
+						<span>{cfg.label}</span>
+					</button>
+				))
+			}
+		</div>
+
+		<!-- timeline -->
+		<section class="cl-timeline" id="cl-timeline">
+			{sorted.length > 0 ? (
+				sorted.map((entry) => {
+					const t = typeConfig[entry.data.type];
+					const dateStr = entry.data.date.toISOString().slice(0, 10);
+					return (
+						<article class={`cl-entry ${t.cls}`} data-type={entry.data.type}>
+							<time class="cl-entry-date" datetime={dateStr}>{dateStr} {entry.data.time || ""}</time>
+							<span class="cl-entry-version">{entry.data.version}</span>
+							<div class="cl-entry-card">
+								<div class="cl-entry-badge" title={t.label}>
+									<Icon name={t.icon} />
+									<span class="cl-entry-type-label">{t.label}</span>
+								</div>
+								<p class="cl-entry-title">{entry.data.description}</p>
+							</div>
+						</article>
+					);
+				})
+			) : (
+				<div class="cl-empty">
+					<Icon name="material-symbols:history" class="cl-empty-icon" />
+					<p>{i18n(I18nKey.changelogNoData)}</p>
+				</div>
+			)}
+		</section>
+	</div>
+</MainGridLayout>
+
+<style is:global>
+	.cl-page {
+		position: relative;
+		z-index: 2;
+		padding: 24px 24px 40px;
+		max-width: 800px;
+		margin: 0 auto;
+	}
+
+	/* Header */
+	.cl-header {
+		text-align: center;
+		margin-bottom: 32px;
+	}
+	.cl-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--deep-text);
+		margin: 0 0 8px;
+	}
+	html.dark .cl-title { color: var(--title-active); }
+	.cl-subtitle {
+		font-size: 0.875rem;
+		color: var(--content-meta);
+		margin: 0;
+	}
+
+	/* Filter bar */
+	.cl-filter-bar {
+		position: sticky;
+		top: 80px;
+		z-index: 10;
+		display: flex;
+		flex-wrap: nowrap;
+		gap: 8px;
+		padding: 12px 0 16px;
+		margin-bottom: 16px;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+		background: var(--card-bg);
+		border-radius: var(--radius-large);
+	}
+	.cl-filter-bar::-webkit-scrollbar { display: none; }
+
+	.cl-filter-chip {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		padding: 6px 14px;
+		border-radius: 9999px;
+		border: 1px solid var(--line-divider);
+		background: var(--btn-regular-bg);
+		color: var(--btn-content);
+		font-size: 0.8rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.22s ease;
+		white-space: nowrap;
+		font-family: inherit;
+	}
+	.cl-filter-chip:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+	}
+	.cl-filter-chip.active {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: #fff;
+	}
+	.cl-filter-chip svg {
+		width: 15px;
+		height: 15px;
+	}
+
+	/* Timeline */
+	.cl-timeline {
+		position: relative;
+		padding-left: 44px;
+	}
+	.cl-timeline::before {
+		content: "";
+		position: absolute;
+		left: 15px;
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: var(--line-divider);
+	}
+
+	/* Entry */
+	.cl-entry {
+		position: relative;
+		margin-bottom: 24px;
+		animation: cl-fade-up 0.35s ease backwards;
+	}
+	.cl-entry:nth-child(1) { animation-delay: 0.05s; }
+	.cl-entry:nth-child(2) { animation-delay: 0.10s; }
+	.cl-entry:nth-child(3) { animation-delay: 0.15s; }
+	.cl-entry:nth-child(4) { animation-delay: 0.20s; }
+	.cl-entry:nth-child(5) { animation-delay: 0.25s; }
+	.cl-entry:nth-child(6) { animation-delay: 0.30s; }
+	.cl-entry:nth-child(7) { animation-delay: 0.35s; }
+	.cl-entry:nth-child(8) { animation-delay: 0.40s; }
+	.cl-entry:nth-child(9) { animation-delay: 0.45s; }
+	.cl-entry:nth-child(10) { animation-delay: 0.50s; }
+
+	.cl-entry-date {
+		display: block;
+		font-size: 0.75rem;
+		color: var(--content-meta);
+		margin-bottom: 4px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Timeline dot */
+	.cl-entry::before {
+		content: "";
+		position: absolute;
+		left: -29px;
+		top: 22px;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: var(--card-bg);
+		border: 2px solid var(--line-divider);
+		transition: all 0.25s ease;
+		z-index: 2;
+	}
+
+	/* Type-specific dot colors */
+	.cl-entry.cl-feature::before { border-color: #22c55e; }
+	.cl-entry.cl-improvement::before { border-color: #3b82f6; }
+	.cl-entry.cl-fix::before { border-color: #f59e0b; }
+	.cl-entry.cl-removal::before { border-color: #ef4444; }
+
+	html.dark .cl-entry.cl-feature::before { border-color: #4ade80; }
+	html.dark .cl-entry.cl-improvement::before { border-color: #60a5fa; }
+	html.dark .cl-entry.cl-fix::before { border-color: #fbbf24; }
+	html.dark .cl-entry.cl-removal::before { border-color: #f87171; }
+
+	.cl-entry-version {
+		display: inline-block;
+		font-size: 0.7rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		color: var(--primary);
+		background: color-mix(in srgb, var(--primary) 12%, transparent);
+		padding: 2px 8px;
+		border-radius: 4px;
+		margin-bottom: 8px;
+		margin-left: 8px;
+	}
+
+	/* Card */
+	.cl-entry-card {
+		position: relative;
+		background: var(--card-bg);
+		border: 1px solid var(--line-divider);
+		border-radius: var(--radius-large);
+		padding: 12px 18px;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		border-left: 3px solid var(--line-divider);
+	}
+
+	/* Type-specific left border */
+	.cl-entry.cl-feature .cl-entry-card { border-left-color: #22c55e; }
+	.cl-entry.cl-improvement .cl-entry-card { border-left-color: #3b82f6; }
+	.cl-entry.cl-fix .cl-entry-card { border-left-color: #f59e0b; }
+	.cl-entry.cl-removal .cl-entry-card { border-left-color: #ef4444; }
+
+	html.dark .cl-entry.cl-feature .cl-entry-card { border-left-color: #4ade80; }
+	html.dark .cl-entry.cl-improvement .cl-entry-card { border-left-color: #60a5fa; }
+	html.dark .cl-entry.cl-fix .cl-entry-card { border-left-color: #fbbf24; }
+	html.dark .cl-entry.cl-removal .cl-entry-card { border-left-color: #f87171; }
+
+	.cl-entry-card:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-md);
+	}
+
+	/* Badge */
+	.cl-entry-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		margin-bottom: 10px;
+		padding: 3px 10px;
+		border-radius: 9999px;
+		letter-spacing: 0.03em;
+	}
+	.cl-entry.cl-feature .cl-entry-badge {
+		color: #16a34a;
+		background: #f0fdf4;
+	}
+	.cl-entry.cl-improvement .cl-entry-badge {
+		color: #2563eb;
+		background: #eff6ff;
+	}
+	.cl-entry.cl-fix .cl-entry-badge {
+		color: #d97706;
+		background: #fffbeb;
+	}
+	.cl-entry.cl-removal .cl-entry-badge {
+		color: #dc2626;
+		background: #fef2f2;
+	}
+
+	html.dark .cl-entry.cl-feature .cl-entry-badge {
+		color: #4ade80;
+		background: rgba(34,197,94,0.1);
+	}
+	html.dark .cl-entry.cl-improvement .cl-entry-badge {
+		color: #60a5fa;
+		background: rgba(59,130,246,0.1);
+	}
+	html.dark .cl-entry.cl-fix .cl-entry-badge {
+		color: #fbbf24;
+		background: rgba(245,158,11,0.1);
+	}
+	html.dark .cl-entry.cl-removal .cl-entry-badge {
+		color: #f87171;
+		background: rgba(239,68,68,0.1);
+	}
+
+	.cl-entry-badge svg {
+		width: 14px;
+		height: 14px;
+	}
+
+	.cl-entry-title {
+		font-size: 0.9rem;
+		color: var(--deep-text);
+		margin: 0;
+		line-height: 1.5;
+	}
+	html.dark .cl-entry-title { color: var(--title-active); }
+
+	/* Empty */
+	.cl-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 48px 0;
+		color: var(--content-meta);
+		gap: 12px;
+	}
+	.cl-empty-icon {
+		width: 40px;
+		height: 40px;
+		opacity: 0.4;
+	}
+
+	/* Animations */
+	@keyframes cl-fade-up {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Filter JS — hidden state */
+	.cl-entry.hidden {
+		display: none;
+	}
+
+	/* Responsive */
+	@media (max-width: 640px) {
+		.cl-page {
+			padding: 16px 12px 32px;
+		}
+		.cl-timeline {
+			padding-left: 32px;
+		}
+		.cl-timeline::before { left: 11px; }
+		.cl-entry::before { left: -21px; }
+		.cl-entry-card { padding: 14px 16px; }
+	}
+</style>
+
+<script>
+	(function() {
+		var bar = document.getElementById('cl-filter-bar');
+		if (!bar) return;
+		bar.addEventListener('click', function(e) {
+			var chip = e.target.closest('.cl-filter-chip');
+			if (!chip) return;
+			var filter = chip.getAttribute('data-filter');
+			if (!filter) return;
+
+			// Update active chip
+			bar.querySelectorAll('.cl-filter-chip').forEach(function(c) { c.classList.remove('active'); });
+			chip.classList.add('active');
+
+			// Show/hide entries
+			var entries = document.querySelectorAll('.cl-entry');
+			entries.forEach(function(entry) {
+				if (filter === 'all' || entry.getAttribute('data-type') === filter) {
+					entry.classList.remove('hidden');
+				} else {
+					entry.classList.add('hidden');
+				}
+			});
+		});
+	})();
+</script>
