@@ -37,11 +37,12 @@ yarn.lock
 # docs
 Firefly-docs/
 docs/分析/
+docs/visual-diff-analysis.md
+src/content/posts/Sample/
+src/content/example/
+src/content/template/
 
 cache/
 package/
 .obsidian/
-src/content/posts/Sample/
-src/content/example/
-src/content/template/
-docs/visual-diff-analysis.md
+
