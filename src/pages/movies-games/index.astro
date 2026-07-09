@@ -1,0 +1,447 @@
+---
+import { Icon } from "astro-icon/components";
+import ClientPagination from "@/components/common/ClientPagination.astro";
+import MovieGameCard from "@/components/pages/movies-games/MovieGameCard.astro";
+import { siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { formatDateI18nWithTime } from "@/utils/date-utils";
+import { removeFileExtension } from "@/utils/url-utils";
+import Comment from "@components/comment/index.astro";
+import { getCollection } from "astro:content";
+
+if (!siteConfig.pages.moviesGames) {
+	return Astro.redirect("/404/");
+}
+
+const buildTime = formatDateI18nWithTime(new Date());
+
+const customBangumi = await getCollection("bangumi");
+
+const statusMap: Record<number, string> = {
+	1: "wish",
+	2: "collect",
+	3: "doing",
+	4: "on_hold",
+	5: "dropped",
+};
+
+interface MgItem {
+	subject_id: number;
+	subject_type: number;
+	rate: number;
+	type: number;
+	comment: string | null;
+	tags: string[];
+	ep_status: number;
+	vol_status: number;
+	updated_at: string;
+	private: boolean;
+	link: string;
+	subject: {
+		id: number;
+		type: number;
+		name: string;
+		name_cn: string;
+		short_summary: string;
+		images: {
+			medium: string;
+			large: string;
+			common: string;
+			small: string;
+			grid: string;
+		};
+		volumes: number;
+		eps: number;
+		collection_total: number;
+		score: number;
+		rank: number;
+		tags: any[];
+	};
+	_subcategory?: string;
+}
+
+const mgItems: MgItem[] = customBangumi
+	.filter((item) => ["anime", "game", "real"].includes(item.data.category))
+	.map((item) => {
+		const { data, id } = item;
+		const imageSrc = typeof data.image === "string" ? data.image : data.image.src;
+
+			const finalLink = "/bangumi/" + removeFileExtension(id) + "/";
+
+		const subjectTypeMap: Record<string, number> = {
+			anime: 2,
+			game: 4,
+			real: 6,
+		};
+
+		const subcategory = (data as any).subcategory as string | undefined;
+
+		return {
+			subject_id: 0,
+			subject_type: subjectTypeMap[data.category] || 2,
+			rate: data.score || 0,
+			type: data.status,
+			comment: data.comment || null,
+			tags: data.tags || [],
+			ep_status: 0,
+			vol_status: 0,
+			updated_at: data.published?.toISOString() || new Date().toISOString(),
+			private: false,
+			link: finalLink,
+			_subcategory: subcategory,
+			subject: {
+				id: 0,
+				type: subjectTypeMap[data.category] || 2,
+				name: data.title,
+				name_cn: data.name_cn || data.title,
+				short_summary: "",
+				images: {
+					medium: imageSrc,
+					large: imageSrc,
+					common: imageSrc,
+					small: imageSrc,
+					grid: imageSrc,
+				},
+				volumes: 0,
+				eps: 0,
+				collection_total: 0,
+				score: data.score || 0,
+				rank: 0,
+				tags: [],
+			},
+		};
+	})
+	.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+
+function getItemSubcategory(item: MgItem): string {
+	if (item._subcategory) return item._subcategory;
+	const tags = item.tags || [];
+	if (tags.some((t: string) => t.includes("纪录"))) return "documentary";
+	if (tags.some((t: string) => t.includes("动漫") || t.includes("动画"))) return "anime";
+	if (tags.some((t: string) => t.includes("电视剧") || t.includes("剧集"))) return "tv";
+	return "movie";
+}
+
+type TabKey = "all" | "movie" | "tv" | "anime" | "documentary" | "game";
+
+const tabConfig: { key: TabKey; i18nKey: I18nKey }[] = [
+	{ key: "all", i18nKey: I18nKey.moviesGamesTabAll },
+	{ key: "movie", i18nKey: I18nKey.moviesGamesTabMovie },
+	{ key: "tv", i18nKey: I18nKey.moviesGamesTabTV },
+	{ key: "anime", i18nKey: I18nKey.moviesGamesTabAnime },
+	{ key: "documentary", i18nKey: I18nKey.moviesGamesTabDocumentary },
+	{ key: "game", i18nKey: I18nKey.moviesGamesTabGame },
+];
+
+interface SectionData {
+	tabKey: string;
+	tabName: string;
+	tabCount: number;
+	items: MgItem[];
+	filters: { value: string; label: string; count: number }[];
+}
+
+const sections: SectionData[] = [];
+
+for (const tc of tabConfig) {
+	const items = tc.key === "all"
+		? mgItems
+		: mgItems.filter((item) => {
+			if (tc.key === "game") return item.subject_type === 4;
+			if (item.subject_type === 4) return false;
+			return getItemSubcategory(item) === tc.key;
+		});
+
+	if (tc.key !== "all" && items.length === 0) continue;
+
+	const statusCounts: Record<string, number> = {};
+	for (const item of items) {
+		const s = statusMap[item.type] || "unknown";
+		statusCounts[s] = (statusCounts[s] || 0) + 1;
+	}
+
+	const filters = [
+		{ value: "all", label: i18n(I18nKey.bangumiFilterAll), count: items.length },
+		{ value: "collect", label: i18n(I18nKey.bangumiFilterWatched), count: statusCounts.collect || 0 },
+		{ value: "doing", label: i18n(I18nKey.bangumiFilterWatching), count: statusCounts.doing || 0 },
+		{ value: "wish", label: i18n(I18nKey.bangumiFilterWish), count: statusCounts.wish || 0 },
+		{ value: "on_hold", label: i18n(I18nKey.bangumiFilterOnHold), count: statusCounts.on_hold || 0 },
+		{ value: "dropped", label: i18n(I18nKey.bangumiFilterDropped), count: statusCounts.dropped || 0 },
+	].filter((f) => f.value === "all" || f.count > 0);
+
+	sections.push({
+		tabKey: tc.key,
+		tabName: i18n(tc.i18nKey),
+		tabCount: items.length,
+		items,
+		filters,
+	});
+}
+
+const activeTab = sections[0]?.tabKey || "all";
+---
+
+<MainGridLayout title={i18n(I18nKey.moviesGamesTitle)} description={i18n(I18nKey.moviesGamesSubtitle)}>
+	<div class="mg-page-wrapper flex w-full overflow-hidden relative min-h-32">
+		<div data-pagefind-body class="card-base z-10 px-6 pt-8 pb-8 relative w-full">
+			<!-- Page header -->
+			<header class="mg-header relative w-full mb-8">
+				<div class="flex items-center gap-3 mb-4">
+					<div class="mg-icon flex items-center justify-center w-12 h-12 rounded-2xl bg-[var(--primary)]/10 dark:bg-[var(--primary)]/15 border border-[var(--primary)]/20 shadow-sm">
+						<Icon name="material-symbols:movie-outline-rounded" class="text-[1.4rem] text-[var(--primary)]" />
+					</div>
+					<div>
+						<h1 data-pagefind-meta="title" data-pagefind-weight="10" class="">
+							{i18n(I18nKey.moviesGamesTitle)}
+						</h1>
+					</div>
+				</div>
+				<p class="text-sm text-[var(--content-meta)] leading-relaxed pl-[3.5rem]">
+					{i18n(I18nKey.moviesGamesSubtitle)}
+				</p>
+				<p class="text-xs text-[var(--content-meta)] opacity-60 mt-1.5 pl-[3.5rem]">
+					{i18n(I18nKey.bangumiLastUpdated)} {buildTime}
+				</p>
+			</header>
+
+			{mgItems.length > 0 ? (
+				<>
+					<!-- Tab Navigation -->
+					<div class="mg-tabs-wrapper mb-6">
+						<nav class="flex gap-1 p-1 bg-[var(--btn-regular-bg)] dark:bg-[var(--card-bg)] rounded-xl border border-[var(--line-divider)] overflow-x-auto scrollbar-hide" aria-label="Tabs">
+							{sections.map((sec) => (
+								<button
+									class:list={[
+										"mg-tab flex items-center gap-1.5 whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex-shrink-0",
+										sec.tabKey === activeTab
+											? "bg-[var(--card-bg)] dark:bg-[var(--btn-regular-bg)] text-[var(--primary)] shadow-sm"
+											: "text-[var(--content-meta)] hover:text-[var(--deep-text)] hover:bg-[var(--btn-card-bg-hover)]",
+									]}
+									data-tab={sec.tabKey}
+									type="button"
+								>
+									<span>{sec.tabName}</span>
+									<span class:list={[
+										"text-[10px] font-semibold px-1.5 py-0.5 rounded-full tabular-nums",
+										sec.tabKey === activeTab
+											? "bg-[var(--primary)]/10 text-[var(--primary)]"
+											: "bg-[var(--btn-regular-bg)] text-[var(--content-meta)]",
+									]}>
+										{sec.tabCount}
+									</span>
+								</button>
+							))}
+						</nav>
+					</div>
+
+					<!-- Sections -->
+					{sections.map((sec) => (
+						<div class:list={["mg-section", { "hidden": sec.tabKey !== activeTab }]} data-section={sec.tabKey}>
+							{sec.items.length > 0 ? (
+								<>
+									<!-- Filters -->
+									<div class="mg-filter-wrapper flex flex-wrap gap-2 mb-5">
+										{sec.filters.map((filter) => (
+											<button
+												class:list={[
+													"mg-filter-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border flex-shrink-0",
+													filter.value === "all"
+														? "bg-[var(--primary)] text-white border-[var(--primary)] shadow-sm"
+														: "bg-[var(--card-bg)] text-[var(--content-meta)] border-[var(--line-divider)] hover:border-[var(--primary)]/30 hover:text-[var(--deep-text)]",
+												]}
+												data-filter={filter.value}
+												data-section={sec.tabKey}
+												type="button"
+											>
+												<span>{filter.label}</span>
+												<span class="text-[10px] font-semibold tabular-nums">({filter.count})</span>
+											</button>
+										))}
+									</div>
+
+									<!-- Grid -->
+									<div class="mg-grid grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-5">
+										{sec.items.map((item: MgItem) => (
+											<div
+												class="mg-item"
+												data-item-section={sec.tabKey}
+												data-item-status={statusMap[item.type] || "unknown"}
+											>
+												<MovieGameCard item={item as any} link={item.link} />
+											</div>
+										))}
+									</div>
+
+									<ClientPagination
+										totalItems={sec.items.length}
+										itemsPerPage={12}
+										itemsPerPageMobile={6}
+										currentPage={1}
+										sectionId={sec.tabKey}
+									/>
+								</>
+							) : (
+								<div class="flex flex-col items-center justify-center py-16 text-center">
+									<p class="text-sm text-[var(--content-meta)]">{i18n(I18nKey.moviesGamesNoData)}</p>
+								</div>
+							)}
+						</div>
+					))}
+				</>
+			) : (
+				<div class="flex flex-col items-center justify-center py-20 text-center">
+					<div class="inline-flex items-center justify-center w-14 h-14 bg-[var(--btn-regular-bg)] rounded-2xl mb-4 border border-[var(--line-divider)]">
+						<Icon name="material-symbols:movie-outline" class="w-7 h-7 text-[var(--content-meta)]" />
+					</div>
+					<h3 class="text-base font-medium text-[var(--deep-text)] dark:text-[var(--title-active)] mb-1.5">
+						{i18n(I18nKey.moviesGamesNoData)}
+					</h3>
+				</div>
+			)}
+		</div>
+	</div>
+<Comment customPath="/movies-games/" />
+</MainGridLayout>
+
+<style>
+	.mg-page-wrapper {
+		border-radius: var(--radius-large);
+	}
+
+	.mg-header {
+		animation: fadeSlideIn 0.4s ease-[var(--ease-standard)] both;
+	}
+
+	.mg-icon {
+		transition: transform 0.2s ease-[var(--ease-standard)];
+	}
+	.mg-icon:hover {
+		transform: scale(1.05);
+	}
+
+	@keyframes fadeSlideIn {
+		from { opacity: 0; transform: translateY(8px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.mg-section {
+		animation: fadeIn 0.3s ease-[var(--ease-standard)] both;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	.scrollbar-hide {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	.scrollbar-hide::-webkit-scrollbar {
+		display: none;
+	}
+
+	@media (max-width: 640px) {
+		.card-base {
+			padding-left: 1rem;
+			padding-right: 1rem;
+			padding-top: 1.5rem;
+			padding-bottom: 1.5rem;
+		}
+	}
+</style>
+
+<script is:inline>
+	function initMgTabs() {
+		var tabButtons = document.querySelectorAll('.mg-tab');
+		var sections = document.querySelectorAll('[data-section]');
+
+		tabButtons.forEach(function(button) {
+			var newButton = button.cloneNode(true);
+			if (button.parentNode) {
+				button.parentNode.replaceChild(newButton, button);
+			}
+		});
+
+		var newTabButtons = document.querySelectorAll('.mg-tab');
+
+		newTabButtons.forEach(function(button) {
+			button.addEventListener('click', function() {
+				var targetTab = this.dataset.tab;
+
+				newTabButtons.forEach(function(btn) {
+					btn.classList.remove('bg-[var(--card-bg)]', 'dark:bg-[var(--btn-regular-bg)]', 'text-[var(--primary)]', 'shadow-sm');
+					btn.classList.add('text-[var(--content-meta)]', 'hover:text-[var(--deep-text)]', 'hover:bg-[var(--btn-card-bg-hover)]');
+				});
+
+				this.classList.remove('text-[var(--content-meta)]', 'hover:text-[var(--deep-text)]', 'hover:bg-[var(--btn-card-bg-hover)]');
+				this.classList.add('bg-[var(--card-bg)]', 'dark:bg-[var(--btn-regular-bg)]', 'text-[var(--primary)]', 'shadow-sm');
+
+				sections.forEach(function(section) {
+					if (section.dataset.section === targetTab) {
+						section.classList.remove('hidden');
+					} else {
+						section.classList.add('hidden');
+					}
+				});
+			});
+		});
+	}
+
+	function initMgFilters() {
+		document.querySelectorAll('.mg-filter-btn').forEach(function(button) {
+			var newButton = button.cloneNode(true);
+			if (button.parentNode) {
+				button.parentNode.replaceChild(newButton, button);
+			}
+		});
+
+		document.querySelectorAll('.mg-filter-btn').forEach(function(button) {
+			button.addEventListener('click', function() {
+				var filter = this.dataset.filter;
+				var sid = this.dataset.section;
+
+				var sectionButtons = document.querySelectorAll('[data-section="' + sid + '"].mg-filter-btn');
+				sectionButtons.forEach(function(btn) {
+					btn.classList.remove('bg-[var(--primary)]', 'text-white', 'border-[var(--primary)]', 'shadow-sm');
+					btn.classList.add('bg-[var(--card-bg)]', 'text-[var(--content-meta)]', 'border-[var(--line-divider)]', 'hover:border-[var(--primary)]/30', 'hover:text-[var(--deep-text)]');
+				});
+
+				this.classList.remove('bg-[var(--card-bg)]', 'text-[var(--content-meta)]', 'border-[var(--line-divider)]', 'hover:border-[var(--primary)]/30', 'hover:text-[var(--deep-text)]');
+				this.classList.add('bg-[var(--primary)]', 'text-white', 'border-[var(--primary)]', 'shadow-sm');
+
+				var items = document.querySelectorAll('[data-item-section="' + sid + '"]');
+				items.forEach(function(item) {
+					var itemStatus = item.dataset.itemStatus;
+					if (filter === 'all' || itemStatus === filter) {
+						item.classList.remove('hidden');
+						item.style.display = 'block';
+					} else {
+						item.classList.add('hidden');
+						item.style.display = 'none';
+					}
+				});
+
+				var pagination = document.querySelector('[data-pagination-section="' + sid + '"]');
+				if (pagination) {
+					var visibleItems = document.querySelectorAll('[data-item-section="' + sid + '"]:not(.hidden)');
+					pagination.dispatchEvent(new CustomEvent('updatePagination', {
+						detail: { visibleCount: visibleItems.length }
+					}));
+				}
+			});
+		});
+	}
+
+	document.addEventListener('astro:page-load', function() { initMgTabs(); initMgFilters(); });
+	document.addEventListener('swup:contentReplaced', function() { initMgTabs(); initMgFilters(); });
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', function() { initMgTabs(); initMgFilters(); });
+	} else {
+		initMgTabs();
+		initMgFilters();
+	}
+</script>
