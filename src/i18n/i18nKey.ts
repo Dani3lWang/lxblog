@@ -86,6 +86,22 @@ enum I18nKey {
 	guestbook = "guestbook",
 	guestbookDescription = "guestbookDescription",
 	bangumi = "bangumi",
+	moments = "moments",
+
+	recentMoments = "recentMoments",
+	recentLife = "recentLife",
+	recentItems = "recentItems",
+
+	// 更新日志
+	changelog = "changelog",
+	changelogTitle = "changelogTitle",
+	changelogSubtitle = "changelogSubtitle",
+	changelogAll = "changelogAll",
+	changelogFeature = "changelogFeature",
+	changelogImprovement = "changelogImprovement",
+	changelogFix = "changelogFix",
+	changelogRemoval = "changelogRemoval",
+	changelogNoData = "changelogNoData",
 
 	// 番组计划筛选和状态文本
 	bangumiTitle = "bangumiTitle",
@@ -148,6 +164,33 @@ enum I18nKey {
 	bangumiLastUpdated = "bangumiLastUpdated",
 	bangumiUpdatedAt = "bangumiUpdatedAt",
 	bangumiDataStatic = "bangumiDataStatic",
+
+	// 书架页面
+	books = "books",
+	booksTitle = "booksTitle",
+	booksSubtitle = "booksSubtitle",
+	bookshelfReading = "bookshelfReading",
+	bookshelfRead = "bookshelfRead",
+	bookshelfWantRead = "bookshelfWantRead",
+	booksNoData = "booksNoData",
+
+	// 影视与游戏页面
+	moviesGames = "moviesGames",
+	moviesGamesTitle = "moviesGamesTitle",
+	moviesGamesSubtitle = "moviesGamesSubtitle",
+	moviesGamesTabAll = "moviesGamesTabAll",
+	moviesGamesTabMovie = "moviesGamesTabMovie",
+	moviesGamesTabTV = "moviesGamesTabTV",
+	moviesGamesTabAnime = "moviesGamesTabAnime",
+	moviesGamesTabDocumentary = "moviesGamesTabDocumentary",
+	moviesGamesTabGame = "moviesGamesTabGame",
+	moviesGamesNoData = "moviesGamesNoData",
+
+	// 音乐页面
+	musicPage = "musicPage",
+	musicPageTitle = "musicPageTitle",
+	musicPageSubtitle = "musicPageSubtitle",
+	musicPageNoData = "musicPageNoData",
 
 	// 追番
 	anime = "anime",

@@ -192,6 +192,52 @@ export const en: Translation = {
 	[Key.animeTypeDrama]: "Drama",
 	[Key.animeTypeConcert]: "Concert",
 
+	// Moments
+	[Key.moments]: "Moments",
+	[Key.recentMoments]: "Recent Moments",
+	[Key.recentLife]: "Recent Records",
+	[Key.recentItems]: "Recent Updates",
+
+	// Changelog
+	[Key.changelog]: "Changelog",
+	[Key.changelogTitle]: "Changelog",
+	[Key.changelogSubtitle]:
+		"Tracking feature iterations, bug fixes, and important changes",
+	[Key.changelogAll]: "All",
+	[Key.changelogFeature]: "Feature",
+	[Key.changelogImprovement]: "Improvement",
+	[Key.changelogFix]: "Fix",
+	[Key.changelogRemoval]: "Removal",
+	[Key.changelogNoData]: "No changelog entries yet",
+
+	// Bookshelf Page
+	[Key.books]: "Bookshelf",
+	[Key.booksTitle]: "My Bookshelf",
+	[Key.booksSubtitle]:
+		"Tracking my reading journey, sharing the beauty of books.",
+	[Key.bookshelfReading]: "Reading",
+	[Key.bookshelfRead]: "Read",
+	[Key.bookshelfWantRead]: "Want to Read",
+	[Key.booksNoData]: "No books on the shelf yet",
+
+	// Movies & Games Page
+	[Key.moviesGames]: "Movies & Games",
+	[Key.moviesGamesTitle]: "Movies & Games",
+	[Key.moviesGamesSubtitle]: "Movies, shows, and games I've enjoyed.",
+	[Key.moviesGamesTabAll]: "All",
+	[Key.moviesGamesTabMovie]: "Movies",
+	[Key.moviesGamesTabTV]: "TV Shows",
+	[Key.moviesGamesTabAnime]: "Anime",
+	[Key.moviesGamesTabDocumentary]: "Documentaries",
+	[Key.moviesGamesTabGame]: "Games",
+	[Key.moviesGamesNoData]: "No content yet",
+
+	// Music Page
+	[Key.musicPage]: "Music",
+	[Key.musicPageTitle]: "My Music",
+	[Key.musicPageSubtitle]: "Music I love, stories in melodies.",
+	[Key.musicPageNoData]: "No music entries yet",
+
 	// Pagination
 	[Key.paginationFirst]: "First",
 	[Key.paginationPrev]: "Previous",

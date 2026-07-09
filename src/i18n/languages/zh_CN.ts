@@ -188,6 +188,50 @@ export const zh_CN: Translation = {
 	[Key.animeTypeDrama]: "电视剧",
 	[Key.animeTypeConcert]: "演唱会",
 
+	// 动态
+	[Key.moments]: "动态",
+	[Key.recentMoments]: "最新动态",
+	[Key.recentLife]: "最新记录",
+	[Key.recentItems]: "最近更新",
+
+	// 更新日志
+	[Key.changelog]: "更新日志",
+	[Key.changelogTitle]: "更新日志",
+	[Key.changelogSubtitle]: "记录博客项目的功能迭代、问题修复与重要变更",
+	[Key.changelogAll]: "全部",
+	[Key.changelogFeature]: "功能新增",
+	[Key.changelogImprovement]: "功能优化",
+	[Key.changelogFix]: "问题修复",
+	[Key.changelogRemoval]: "功能删除",
+	[Key.changelogNoData]: "暂无更新记录",
+
+	// 书架页面
+	[Key.books]: "书架",
+	[Key.booksTitle]: "我的书架",
+	[Key.booksSubtitle]: "记录阅读历程，分享书中精彩。",
+	[Key.bookshelfReading]: "在读",
+	[Key.bookshelfRead]: "读过",
+	[Key.bookshelfWantRead]: "想读",
+	[Key.booksNoData]: "书架上还没有书籍",
+
+	// 影视与游戏页面
+	[Key.moviesGames]: "影视与游戏",
+	[Key.moviesGamesTitle]: "影视与游戏",
+	[Key.moviesGamesSubtitle]: "记录看过的影视作品和玩过的游戏。",
+	[Key.moviesGamesTabAll]: "全部",
+	[Key.moviesGamesTabMovie]: "电影",
+	[Key.moviesGamesTabTV]: "电视剧",
+	[Key.moviesGamesTabAnime]: "动漫",
+	[Key.moviesGamesTabDocumentary]: "纪录片",
+	[Key.moviesGamesTabGame]: "游戏",
+	[Key.moviesGamesNoData]: "暂无内容",
+
+	// 音乐页面
+	[Key.musicPage]: "音乐",
+	[Key.musicPageTitle]: "我的音乐",
+	[Key.musicPageSubtitle]: "记录喜欢的音乐，分享旋律中的故事。",
+	[Key.musicPageNoData]: "暂无音乐条目",
+
 	// 分页
 	[Key.paginationFirst]: "首页",
 	[Key.paginationPrev]: "上一页",

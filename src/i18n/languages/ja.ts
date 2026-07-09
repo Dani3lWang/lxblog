@@ -192,6 +192,50 @@ export const ja: Translation = {
 	[Key.animeTypeDrama]: "ドラマ",
 	[Key.animeTypeConcert]: "コンサート",
 
+	// 動態
+	[Key.moments]: "動態",
+	[Key.recentMoments]: "最新の動態",
+	[Key.recentLife]: "最新の記録",
+	[Key.recentItems]: "最新の更新",
+
+	// 更新ログ
+	[Key.changelog]: "更新ログ",
+	[Key.changelogTitle]: "更新ログ",
+	[Key.changelogSubtitle]: "ブログプロジェクトの機能追加、バグ修正、重要な変更を記録",
+	[Key.changelogAll]: "すべて",
+	[Key.changelogFeature]: "新機能",
+	[Key.changelogImprovement]: "改善",
+	[Key.changelogFix]: "修正",
+	[Key.changelogRemoval]: "削除",
+	[Key.changelogNoData]: "更新記録がありません",
+
+	// 本棚ページ
+	[Key.books]: "本棚",
+	[Key.booksTitle]: "私の本棚",
+	[Key.booksSubtitle]: "読書の記録、本の素晴らしさを共有。",
+	[Key.bookshelfReading]: "読書中",
+	[Key.bookshelfRead]: "読了",
+	[Key.bookshelfWantRead]: "読みたい",
+	[Key.booksNoData]: "本棚に本がありません",
+
+	// 映画・ゲームページ
+	[Key.moviesGames]: "映画・ゲーム",
+	[Key.moviesGamesTitle]: "映画・ゲーム",
+	[Key.moviesGamesSubtitle]: "観た映画やプレイしたゲームの記録。",
+	[Key.moviesGamesTabAll]: "全て",
+	[Key.moviesGamesTabMovie]: "映画",
+	[Key.moviesGamesTabTV]: "ドラマ",
+	[Key.moviesGamesTabAnime]: "アニメ",
+	[Key.moviesGamesTabDocumentary]: "ドキュメンタリー",
+	[Key.moviesGamesTabGame]: "ゲーム",
+	[Key.moviesGamesNoData]: "コンテンツがありません",
+
+	// 音楽ページ
+	[Key.musicPage]: "音楽",
+	[Key.musicPageTitle]: "私の音楽",
+	[Key.musicPageSubtitle]: "好きな音楽、メロディーの中の物語。",
+	[Key.musicPageNoData]: "音楽エントリがありません",
+
 	// ページネーション
 	[Key.paginationFirst]: "最初",
 	[Key.paginationPrev]: "前へ",

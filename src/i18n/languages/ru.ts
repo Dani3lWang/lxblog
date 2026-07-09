@@ -193,6 +193,52 @@ export const ru: Translation = {
 	[Key.animeTypeDrama]: "Сериал",
 	[Key.animeTypeConcert]: "Концерт",
 
+	// Моменты
+	[Key.moments]: "Моменты",
+	[Key.recentMoments]: "Последние моменты",
+	[Key.recentLife]: "Последние записи",
+	[Key.recentItems]: "Последние обновления",
+
+	// Журнал изменений
+	[Key.changelog]: "Журнал изменений",
+	[Key.changelogTitle]: "Журнал изменений",
+	[Key.changelogSubtitle]:
+		"Запись итераций функций, исправлений ошибок и важных изменений",
+	[Key.changelogAll]: "Все",
+	[Key.changelogFeature]: "Новая функция",
+	[Key.changelogImprovement]: "Улучшение",
+	[Key.changelogFix]: "Исправление",
+	[Key.changelogRemoval]: "Удаление",
+	[Key.changelogNoData]: "Записей в журнале пока нет",
+
+	// Книжная полка
+	[Key.books]: "Книжная полка",
+	[Key.booksTitle]: "Моя книжная полка",
+	[Key.booksSubtitle]: "Запись чтения, делюсь красотой книг.",
+	[Key.bookshelfReading]: "Читаю",
+	[Key.bookshelfRead]: "Прочитано",
+	[Key.bookshelfWantRead]: "Хочу прочитать",
+	[Key.booksNoData]: "На полке пока нет книг",
+
+	// Фильмы и игры
+	[Key.moviesGames]: "Фильмы и игры",
+	[Key.moviesGamesTitle]: "Фильмы и игры",
+	[Key.moviesGamesSubtitle]:
+		"Фильмы, сериалы и игры, которые мне понравились.",
+	[Key.moviesGamesTabAll]: "Все",
+	[Key.moviesGamesTabMovie]: "Фильмы",
+	[Key.moviesGamesTabTV]: "Сериалы",
+	[Key.moviesGamesTabAnime]: "Аниме",
+	[Key.moviesGamesTabDocumentary]: "Документальные",
+	[Key.moviesGamesTabGame]: "Игры",
+	[Key.moviesGamesNoData]: "Пока нет контента",
+
+	// Музыка
+	[Key.musicPage]: "Музыка",
+	[Key.musicPageTitle]: "Моя музыка",
+	[Key.musicPageSubtitle]: "Музыка, которую я люблю, истории в мелодиях.",
+	[Key.musicPageNoData]: "Пока нет музыкальных записей",
+
 	// Пагинация
 	[Key.paginationFirst]: "Первая",
 	[Key.paginationPrev]: "Предыдущая",
