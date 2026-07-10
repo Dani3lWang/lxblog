@@ -70,11 +70,8 @@ const clientSortedPlaces = sortedPlaces.map((p) => ({
 ---
 <MainGridLayout title='去过的地方' description='足迹地图与旅行记录'>
 	<div class='life-page flex w-full flex-col gap-5'>
-		<a href="/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
-			<span>←</span> 返回首页
-		</a>
 		<!-- 导航栏 -->
-		<LifeNavTabs homeHref="/" homeLabel="首页" homeIcon="material-symbols:home-outline-rounded" />
+		<LifeNavTabs mode="records" />
 		<section class='life-section card-base rounded-[var(--radius-large)] p-6' data-pagefind-body>
 			<h1 class='mb-2 text-3xl font-bold text-[var(--primary)]' data-pagefind-meta="title" data-pagefind-weight="10">🗺️ 去过的地方</h1>
 			<p class='text-sm text-[var(--content-meta)]'>在中国地图上标记你去过的城市。去过的地方会显示为红色区域覆盖，去的次数越多颜色越深。</p>

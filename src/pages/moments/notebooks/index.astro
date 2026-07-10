@@ -85,11 +85,8 @@ const thisMonthUpdates = sortedNotebooks.filter((item) =>
 
 <MainGridLayout title="笔记本" description="成长日记、学习复盘、灵感随笔">
 	<div class="diary-page flex w-full flex-col gap-6">
-		<a href="/moments/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
-			<span>←</span> 返回动态
-		</a>
 		<!-- 导航栏 -->
-		<LifeNavTabs homeHref="/moments/" homeLabel="动态" homeIcon="material-symbols:local-cafe" />
+		<LifeNavTabs mode="moments" />
 		<!-- 页面标题 -->
 		<section data-pagefind-body class="card-base relative overflow-hidden rounded-[var(--radius-large)] p-8">
 			<!-- 装饰元素 -->

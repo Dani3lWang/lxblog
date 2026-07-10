@@ -4,63 +4,85 @@ import { siteConfig } from "@/config";
 import { url } from "@/utils/url-utils";
 
 interface Props {
-	homeHref?: string;
-	homeLabel?: string;
-	homeIcon?: string;
+	mode: "moments" | "records";
 }
 
-const {
-	homeHref = "/moments/",
-	homeLabel = "动态",
-	homeIcon = "material-symbols:local-cafe",
-} = Astro.props;
+const { mode } = Astro.props;
 
-const allNavItems = [
-	{
-		label: "说说",
-		href: "/moments/shuoshuo/",
-		icon: "material-symbols:chat",
-		pageKey: "moments" as const,
+const modes = {
+	moments: {
+		homeHref: "/moments/",
+		homeLabel: "动态",
+		homeIcon: "material-symbols:local-cafe" as const,
+		items: [
+			{
+				label: "说说",
+				href: "/moments/shuoshuo/",
+				icon: "material-symbols:chat" as const,
+				pageKey: "moments" as const,
+			},
+			{
+				label: "相册",
+				href: "/moments/gallery/",
+				icon: "material-symbols:photo-library-outline-rounded" as const,
+				pageKey: "gallery" as const,
+			},
+			{
+				label: "笔记本",
+				href: "/moments/notebooks/",
+				icon: "material-symbols:book-outline" as const,
+				pageKey: "notebooks" as const,
+			},
+		],
 	},
-	{
-		label: "相册",
-		href: "/moments/gallery/",
-		icon: "material-symbols:photo-library-outline-rounded",
-		pageKey: "gallery" as const,
+	records: {
+		homeHref: "/",
+		homeLabel: "首页",
+		homeIcon: "material-symbols:home-outline-rounded" as const,
+		items: [
+			{
+				label: "规划",
+				href: "/routines/",
+				icon: "material-symbols:schedule-outline" as const,
+				pageKey: "routines" as const,
+			},
+			{
+				label: "足迹",
+				href: "/places/",
+				icon: "material-symbols:location-on-outline" as const,
+				pageKey: "places" as const,
+			},
+			{
+				label: "书架",
+				href: "/books/",
+				icon: "material-symbols:book" as const,
+				pageKey: "books" as const,
+			},
+			{
+				label: "影视与游戏",
+				href: "/movies-games/",
+				icon: "material-symbols:movie" as const,
+				pageKey: "moviesGames" as const,
+			},
+			{
+				label: "音乐",
+				href: "/music/",
+				icon: "material-symbols:library-music" as const,
+				pageKey: "musicPage" as const,
+			},
+			{
+				label: "更新日志",
+				href: "/changelog/",
+				icon: "material-symbols:update" as const,
+				pageKey: "changelog" as const,
+			},
+		],
 	},
-	{
-		label: "笔记本",
-		href: "/moments/notebooks/",
-		icon: "material-symbols:book-outline",
-		pageKey: "notebooks" as const,
-	},
-	{
-		label: "规划",
-		href: "/routines/",
-		icon: "material-symbols:schedule-outline",
-		pageKey: "routines" as const,
-	},
-	{
-		label: "足迹",
-		href: "/places/",
-		icon: "material-symbols:location-on-outline",
-		pageKey: "places" as const,
-	},
-	{
-		label: "音乐",
-		href: "/music/",
-		icon: "material-symbols:library-music",
-		pageKey: "musicPage" as const,
-	},
-	{
-		label: "更新日志",
-		href: "/changelog/",
-		icon: "material-symbols:update",
-		pageKey: "changelog" as const,
-	},
-];
+};
 
-const navItems = allNavItems.filter((item) => {
+const config = modes[mode];
+
+const navItems = config.items.filter((item) => {
 	const key = item.pageKey as keyof typeof siteConfig.pages;
 	return siteConfig.pages[key] !== false;
 });
@@ -69,13 +91,13 @@ const navItems = allNavItems.filter((item) => {
 <div class="nav-tabs-wrapper" id="life-nav-wrapper">
 	<div class="nav-container">
 		<a
-			href={url(homeHref)}
+			href={url(config.homeHref)}
 			class="nav-tab nav-tab-home"
-			data-category-name={homeLabel}
-			data-home-href={homeHref}
+			data-category-name={config.homeLabel}
+			data-home-href={config.homeHref}
 		>
-			<Icon name={homeIcon} class="tab-icon" />
-			<span class="tab-label">{homeLabel}</span>
+			<Icon name={config.homeIcon} class="tab-icon" />
+			<span class="tab-label">{config.homeLabel}</span>
 		</a>
 		<div class="nav-tabs-scroll" id="life-nav-tabs-scroll">
 			<div class="nav-tabs" id="life-nav-tabs">

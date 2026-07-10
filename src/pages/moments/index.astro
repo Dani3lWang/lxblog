@@ -1,5 +1,6 @@
 ---
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import LifeNavTabs from "@/components/pages/life/LifeNavTabs.astro";
 import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 import { siteConfig } from "@/config";
@@ -46,6 +47,8 @@ const navItems = [
 ---
 
 <MainGridLayout title="动态" description="生活动态、相册与留言板">
+	<LifeNavTabs mode="moments" />
+
 	<div class="moments-overview flex w-full flex-col gap-6">
 		<!-- 标题区 -->
 		<section class="hero-section card-base relative overflow-hidden rounded-[var(--radius-large)] p-6 md:p-8">

@@ -45,11 +45,8 @@ const totalEntries = entriesWithContent.length;
 
 <MainGridLayout title="日常规划" description="我的规划与思考">
 	<div class="routines-page flex w-full flex-col gap-5">
-		<a href="/" class="back-btn mb-2 inline-flex items-center gap-1 text-sm text-[var(--content-meta)] hover:text-[var(--primary)]">
-			<span>←</span> 返回首页
-		</a>
 		<!-- 导航栏 -->
-		<LifeNavTabs homeHref="/" homeLabel="首页" homeIcon="material-symbols:home-outline-rounded" />
+		<LifeNavTabs mode="records" />
 		<!-- 标题区 -->
 		<section class="hero-section card-base relative overflow-hidden rounded-[var(--radius-large)] p-6 md:p-8">
 			<div class="absolute -right-8 -top-8 h-48 w-48 rounded-full bg-[var(--primary)]/5 blur-3xl"></div>
