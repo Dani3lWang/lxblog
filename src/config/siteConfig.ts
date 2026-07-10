@@ -128,7 +128,7 @@ export const siteConfig: SiteConfig = {
 		places: true,
 	},
 
-	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航
+	// 分类导航栏开关，仅在首页、文章模块和关于模块显示
 	categoryBar: true,
 
 	// 归档页是否折叠非最新年份文章，禁用后默认展开全部年份

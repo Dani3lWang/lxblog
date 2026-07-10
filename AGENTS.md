@@ -108,6 +108,7 @@ const adapter = process.env.CF_WORKERS
 ```
 #banner-overlay-container
 #banner-dim-container
+#category-bar-wrapper
 #swup-container
 #left-sidebar-dynamic
 #right-sidebar-dynamic
