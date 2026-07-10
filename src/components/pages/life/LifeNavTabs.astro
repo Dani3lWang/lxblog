@@ -1,0 +1,349 @@
+---
+import { Icon } from "astro-icon/components";
+import { siteConfig } from "@/config";
+import { url } from "@/utils/url-utils";
+
+interface Props {
+	homeHref?: string;
+	homeLabel?: string;
+	homeIcon?: string;
+}
+
+const {
+	homeHref = "/moments/",
+	homeLabel = "动态",
+	homeIcon = "material-symbols:local-cafe",
+} = Astro.props;
+
+const allNavItems = [
+	{
+		label: "说说",
+		href: "/moments/shuoshuo/",
+		icon: "material-symbols:chat",
+		pageKey: "moments" as const,
+	},
+	{
+		label: "相册",
+		href: "/moments/gallery/",
+		icon: "material-symbols:photo-library-outline-rounded",
+		pageKey: "gallery" as const,
+	},
+	{
+		label: "留言板",
+		href: "/moments/guestbook/",
+		icon: "material-symbols:menu-book",
+		pageKey: "guestbook" as const,
+	},
+	{
+		label: "笔记本",
+		href: "/moments/notebooks/",
+		icon: "material-symbols:book-outline",
+		pageKey: "notebooks" as const,
+	},
+	{
+		label: "规划",
+		href: "/routines/",
+		icon: "material-symbols:schedule-outline",
+		pageKey: "routines" as const,
+	},
+	{
+		label: "足迹",
+		href: "/places/",
+		icon: "material-symbols:location-on-outline",
+		pageKey: "places" as const,
+	},
+	{
+		label: "书架",
+		href: "/books/",
+		icon: "material-symbols:book",
+		pageKey: "books" as const,
+	},
+	{
+		label: "影视与游戏",
+		href: "/movies-games/",
+		icon: "material-symbols:movie",
+		pageKey: "moviesGames" as const,
+	},
+	{
+		label: "音乐",
+		href: "/music/",
+		icon: "material-symbols:library-music",
+		pageKey: "musicPage" as const,
+	},
+	{
+		label: "更新日志",
+		href: "/changelog/",
+		icon: "material-symbols:update",
+		pageKey: "changelog" as const,
+	},
+];
+
+const navItems = allNavItems.filter((item) => {
+	const key = item.pageKey as keyof typeof siteConfig.pages;
+	return siteConfig.pages[key] !== false;
+});
+---
+
+<div class="nav-tabs-wrapper" id="life-nav-wrapper">
+	<div class="nav-container">
+		<a
+			href={url(homeHref)}
+			class="nav-tab nav-tab-home"
+			data-category-name={homeLabel}
+			data-home-href={homeHref}
+		>
+			<Icon name={homeIcon} class="tab-icon" />
+			<span class="tab-label">{homeLabel}</span>
+		</a>
+		<div class="nav-tabs-scroll" id="life-nav-tabs-scroll">
+			<div class="nav-tabs" id="life-nav-tabs">
+				{
+					navItems.map((item) => (
+						<a
+							href={url(item.href)}
+							class="nav-tab"
+							data-category-name={item.label}
+						>
+							<Icon name={item.icon} class="tab-icon" />
+							<span class="tab-label">{item.label}</span>
+						</a>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.nav-tabs-wrapper {
+		margin-bottom: 0;
+		overflow: hidden;
+		position: relative;
+	}
+	.nav-tabs-wrapper::before,
+	.nav-tabs-wrapper::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 32px;
+		z-index: 2;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.2s;
+	}
+	.nav-tabs-wrapper::before {
+		left: 0;
+		background: linear-gradient(to right, var(--card-bg), transparent);
+	}
+	.nav-tabs-wrapper::after {
+		right: 0;
+		background: linear-gradient(to left, var(--card-bg), transparent);
+	}
+	.nav-tabs-wrapper.show-left::before {
+		opacity: 1;
+	}
+	.nav-tabs-wrapper.show-right::after {
+		opacity: 1;
+	}
+
+	.nav-container {
+		display: flex;
+		align-items: center;
+		gap: 0;
+		background: var(--card-bg);
+		border: 1px solid var(--line-divider);
+		border-radius: 12px;
+		padding: 6px;
+	}
+
+	.nav-tab-home {
+		flex-shrink: 0;
+		background: var(--card-bg);
+	}
+
+	.nav-tabs-scroll {
+		flex: 1;
+		min-width: 0;
+		position: relative;
+		overflow: hidden;
+	}
+
+	.nav-tabs {
+		display: flex;
+		gap: 6px;
+		padding: 2px;
+		overflow-x: auto;
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+		-webkit-overflow-scrolling: touch;
+	}
+	.nav-tabs::-webkit-scrollbar {
+		display: none;
+	}
+
+	.nav-tab {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 6px 14px;
+		border-radius: 8px;
+		font-size: 14px;
+		font-weight: 500;
+		text-decoration: none;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+		background: transparent;
+		border: 1.5px solid var(--line-divider);
+		color: var(--btn-content);
+	}
+	.nav-tab:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+		background: transparent;
+	}
+	.nav-tab[data-active] {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: white;
+	}
+	.nav-tab[data-active]:hover {
+		opacity: 0.9;
+		transform: none;
+		box-shadow: none;
+	}
+	.nav-tab:active {
+		transform: scale(0.98);
+	}
+	.tab-icon {
+		font-size: 18px;
+	}
+
+	@media (max-width: 480px) {
+		.nav-tab {
+			padding: 6px 10px;
+			font-size: 13px;
+		}
+		.tab-icon {
+			font-size: 16px;
+		}
+	}
+</style>
+
+<script>
+	// @ts-nocheck
+	document.addEventListener("DOMContentLoaded", initNavTabs);
+	document.addEventListener("astro:page-load", initNavTabs);
+
+	function initNavTabs() {
+		const wrapper = document.getElementById("life-nav-wrapper");
+		const tabsScroll = document.getElementById("life-nav-tabs-scroll");
+		const tabs = document.getElementById("life-nav-tabs");
+
+		if (!wrapper || !tabsScroll || !tabs) return;
+		if (tabs.dataset.initialized) return;
+		tabs.dataset.initialized = "true";
+
+		function updateActiveNav() {
+			const pathname = window.location.pathname;
+			const navPills = tabs.querySelectorAll(".nav-tab:not(.nav-tab-home)");
+
+			navPills.forEach((pill) => {
+				pill.removeAttribute("data-active");
+				const href = pill.getAttribute("href");
+				if (href && pathname.startsWith(href)) {
+					pill.setAttribute("data-active", "");
+				}
+			});
+
+			const homeTab = tabs.querySelector(".nav-tab-home");
+			if (homeTab) {
+				homeTab.removeAttribute("data-active");
+				const homeHref = homeTab.getAttribute("data-home-href") || "/moments/";
+				const homeHrefNoSlash = homeHref.replace(/\/$/, "");
+				if (pathname === homeHref || pathname === homeHrefNoSlash) {
+					homeTab.setAttribute("data-active", "");
+				}
+			}
+		}
+
+		updateActiveNav();
+		document.addEventListener("swup:contentReplaced", updateActiveNav);
+
+		function scrollToActiveTab() {
+			const activeTab = tabs.querySelector(".nav-tab[data-active]");
+			if (activeTab) {
+				const scrollLeft =
+					activeTab.offsetLeft -
+					tabsScroll.offsetLeft -
+					(tabsScroll.clientWidth - activeTab.offsetWidth) / 2;
+				tabs.scrollTo({ left: Math.max(0, scrollLeft), behavior: "smooth" });
+			}
+		}
+
+		const originalUpdateActiveNav = updateActiveNav;
+		updateActiveNav = function () {
+			originalUpdateActiveNav();
+			scrollToActiveTab();
+		};
+
+		function updateScrollIndicators() {
+			const scrollLeft = tabs.scrollLeft;
+			const scrollWidth = tabs.scrollWidth;
+			const clientWidth = tabs.clientWidth;
+
+			wrapper.classList.toggle("show-left", scrollLeft > 10);
+			wrapper.classList.toggle(
+				"show-right",
+				scrollLeft < scrollWidth - clientWidth - 10,
+			);
+		}
+
+		tabs.addEventListener("scroll", updateScrollIndicators);
+		window.addEventListener("resize", updateScrollIndicators);
+		updateScrollIndicators();
+
+		// 使用导航栏容器监听滚轮事件，仅在可水平滚动时阻止默认行为，
+		// 避免切换 body overflow 导致滚动条消失引起的窗口抖动。
+		const navContainer = tabsScroll.closest(".nav-container");
+		if (navContainer) {
+			navContainer.addEventListener(
+				"wheel",
+				(e) => {
+					if (tabs.scrollWidth > tabs.clientWidth) {
+						e.preventDefault();
+						tabs.scrollLeft += e.deltaY + e.deltaX;
+						updateScrollIndicators();
+					}
+				},
+				{ passive: false },
+			);
+		}
+
+		let touchStartX = 0;
+		let touchScrollLeft = 0;
+
+		tabs.addEventListener(
+			"touchstart",
+			(e) => {
+				touchStartX = e.touches[0].pageX;
+				touchScrollLeft = tabs.scrollLeft;
+			},
+			{ passive: true },
+		);
+
+		tabs.addEventListener(
+			"touchmove",
+			(e) => {
+				const touchX = e.touches[0].pageX;
+				const walk = (touchStartX - touchX) * 1.5;
+				tabs.scrollLeft = touchScrollLeft + walk;
+				updateScrollIndicators();
+			},
+			{ passive: true },
+		);
+	}
+</script>
