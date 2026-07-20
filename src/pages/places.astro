@@ -153,7 +153,7 @@ const clientSortedPlaces = sortedPlaces.map((p) => ({
 		return fetch('/china-map.json')
 			.then(function(res) { return res.json(); })
 			.catch(function() {
-				return fetch('https://cdn.jsdelivr.net/npm/echarts@5.4.3/map/json/china.json').then(function(res) { return res.json(); });
+				return fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json').then(function(res) { return res.json(); });
 			});
 	}
 
