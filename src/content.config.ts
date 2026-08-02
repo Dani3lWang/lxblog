@@ -193,6 +193,39 @@ const albumCollection = defineCollection({
 		}),
 });
 
+const gameAchievementSchema = z.object({
+	name: z.string().default(""),
+	image: z.string().optional().default(""),
+	url: z.string().optional().default(""),
+	achieved: z.boolean().optional().default(false),
+	unlock_time: z.number().optional(),
+});
+
+const gameItemSchema = z.object({
+	name: z.string(),
+	hours: z.number().optional().default(0),
+	minutes: z.number().optional().default(0),
+	cover: z.string().optional().default(""),
+	last_played: z.string().optional().default(""),
+	store_url: z.string().optional().default(""),
+	earned_achievements: z.number().optional().default(0),
+	total_achievements: z.number().optional().default(0),
+	achievements: z.array(gameAchievementSchema).optional().default([]),
+	// Steam appid（同步脚本写入）
+	appid: z.number().optional(),
+});
+
+const gamesCollection = defineCollection({
+	loader: glob({ pattern: "**/*.json", base: "./src/content/games" }),
+	schema: z.object({
+		steam: z.array(gameItemSchema).optional().default([]),
+		switch: z.array(gameItemSchema).optional().default([]),
+		xbox: z.array(gameItemSchema).optional().default([]),
+		epic: z.array(gameItemSchema).optional().default([]),
+		playstation: z.array(gameItemSchema).optional().default([]),
+	}),
+});
+
 const changelogCollection = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/changelog" }),
 	schema: z.object({
@@ -213,5 +246,6 @@ export const collections = {
 	notebooks: notebooksCollection,
 	routines: routinesCollection,
 	album: albumCollection,
+	games: gamesCollection,
 	changelog: changelogCollection,
 };

@@ -116,6 +116,8 @@ export const siteConfig: SiteConfig = {
 		books: true,
 		// 影视与游戏页面开关
 		moviesGames: true,
+		// 游戏页面开关（平台游戏库：Steam/Switch/Xbox/Epic/PlayStation）
+		games: true,
 		// 音乐页面开关
 		musicPage: false,
 		// 更新日志页面开关
