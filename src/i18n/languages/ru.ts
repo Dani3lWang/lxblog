@@ -224,7 +224,8 @@ export const ru: Translation = {
 	// Страница фильмов и музыки
 	[Key.moviesGames]: "Фильмы и музыка",
 	[Key.moviesGamesTitle]: "Фильмы и музыка",
-	[Key.moviesGamesSubtitle]: "Фильмы, сериалы и музыка, которые мне понравились.",
+	[Key.moviesGamesSubtitle]:
+		"Фильмы, сериалы и музыка, которые мне понравились.",
 	[Key.moviesGamesTabAll]: "Все",
 	[Key.moviesGamesTabMovie]: "Фильмы",
 	[Key.moviesGamesTabTV]: "Сериалы",
