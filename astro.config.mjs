@@ -255,6 +255,9 @@ export default defineConfig({
 				if (pathname === "/movies-games/" && !siteConfig.pages.moviesGames) {
 					return false;
 				}
+				if (pathname === "/games/" && !siteConfig.pages.games) {
+					return false;
+				}
 				if (pathname === "/music/" && !siteConfig.pages.musicPage) {
 					return false;
 				}

@@ -85,7 +85,7 @@ interface MusicItem {
 }
 
 const mgItems: MgItem[] = customBangumi
-	.filter((item) => ["anime", "game", "real"].includes(item.data.category))
+	.filter((item) => ["anime", "real"].includes(item.data.category))
 	.map((item) => {
 		const { data, id } = item;
 		const imageSrc =
@@ -244,7 +244,6 @@ type TabKey =
 	| "tv"
 	| "anime"
 	| "documentary"
-	| "game"
 	| "music";
 
 const tabConfig: { key: TabKey; i18nKey: I18nKey }[] = [
@@ -253,7 +252,6 @@ const tabConfig: { key: TabKey; i18nKey: I18nKey }[] = [
 	{ key: "tv", i18nKey: I18nKey.moviesGamesTabTV },
 	{ key: "anime", i18nKey: I18nKey.moviesGamesTabAnime },
 	{ key: "documentary", i18nKey: I18nKey.moviesGamesTabDocumentary },
-	{ key: "game", i18nKey: I18nKey.moviesGamesTabGame },
 	...(musicItems.length > 0
 		? [{ key: "music" as TabKey, i18nKey: I18nKey.moviesGamesTabMusic }]
 		: []),
@@ -277,8 +275,6 @@ for (const tc of tabConfig) {
 			: tc.key === "music"
 				? musicItems
 				: mgItems.filter((item) => {
-						if (tc.key === "game") return item.subject_type === 4;
-						if (item.subject_type === 4) return false;
 						return getItemSubcategory(item) === tc.key;
 					});
 
