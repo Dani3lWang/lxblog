@@ -249,6 +249,17 @@ export const ja: Translation = {
 	[Key.musicPageTitle]: "私の音楽",
 	[Key.musicPageSubtitle]: "好きな音楽、メロディーの中の物語。",
 	[Key.musicPageNoData]: "音楽エントリがありません",
+	// 音楽ジャンル分類
+	[Key.musicGenreAll]: "すべて",
+	[Key.musicGenreRnBSoul]: "R&B/ソウル",
+	[Key.musicGenreHipHopRap]: "ヒップホップ/ラップ",
+	[Key.musicGenrePop]: "ポップ",
+	[Key.musicGenreIndieAlt]: "インディー/オルタナ",
+	[Key.musicGenreLatinWorld]: "ラテン/ワールド",
+	[Key.musicGenreFolk]: "フォーク",
+	[Key.musicGenreRock]: "ロック",
+	[Key.musicGenreElectronic]: "エレクトロニック",
+	[Key.musicGenreSoundtrack]: "サウンドトラック",
 
 	// ページネーション
 	[Key.paginationFirst]: "最初",

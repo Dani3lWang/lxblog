@@ -248,8 +248,19 @@ export const en: Translation = {
 	// Music Page
 	[Key.musicPage]: "Music",
 	[Key.musicPageTitle]: "My Music",
-	[Key.musicPageSubtitle]: "Music I love, stories in melodies.",
+	[Key.musicPageSubtitle]: "Music I love, and stories in the melodies.",
 	[Key.musicPageNoData]: "No music entries yet",
+	// Music genre categories
+	[Key.musicGenreAll]: "All",
+	[Key.musicGenreRnBSoul]: "R&B/Soul",
+	[Key.musicGenreHipHopRap]: "Hip-Hop/Rap",
+	[Key.musicGenrePop]: "Pop",
+	[Key.musicGenreIndieAlt]: "Indie/Alternative",
+	[Key.musicGenreLatinWorld]: "Latin/World",
+	[Key.musicGenreFolk]: "Folk",
+	[Key.musicGenreRock]: "Rock",
+	[Key.musicGenreElectronic]: "Electronic",
+	[Key.musicGenreSoundtrack]: "Soundtrack",
 
 	// Pagination
 	[Key.paginationFirst]: "First",

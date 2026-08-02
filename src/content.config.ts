@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { musicGenreIds } from "./config/musicGenreConfig";
 
 const postsCollection = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/posts" }),
@@ -76,6 +77,7 @@ const bangumiCollection = defineCollection({
 			published: z.date().optional(),
 			// Music-specific fields
 			artist: z.string().optional(),
+			genre: z.enum(musicGenreIds).optional(), // 音乐大类别（见 src/config/musicGenreConfig.ts）
 			audioUrl: z.string().optional(),
 			lrcUrl: z.string().optional(),
 			metingServer: z.string().optional(),

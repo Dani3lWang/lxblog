@@ -21,6 +21,7 @@ src/config/
 ├── galleryConfig.ts          # 相册配置
 ├── licenseConfig.ts          # 许可证配置
 ├── musicConfig.ts            # 音乐播放器配置
+├── musicGenreConfig.ts       # 音乐大类别分类标准（R&B/灵魂、说唱/嘻哈等 9 类）
 ├── navBarConfig.ts           # 导航栏配置（含 LinkPresets 链接预设）
 ├── pioConfig.ts              # 看板娘配置（Spine、Live2D）
 ├── plantumlConfig.ts         # PlantUML 图表配置
@@ -61,6 +62,7 @@ import { profileConfig } from "@/config/profileConfig";
 | `galleryConfig.ts` | 相册配置（相册列表、瀑布流列宽） |
 | `licenseConfig.ts` | 许可证配置（CC 协议等） |
 | `musicConfig.ts` | 音乐播放器配置（Meting API / 本地音乐） |
+| `musicGenreConfig.ts` | 音乐大类别分类标准（音乐页分类筛选，9 大类别） |
 | `navBarConfig.ts` | 导航栏配置（动态链接、LinkPresets 链接预设、搜索配置） |
 | `pioConfig.ts` | 看板娘配置（Spine 模型、Live2D 模型） |
 | `plantumlConfig.ts` | PlantUML 图表渲染配置 |

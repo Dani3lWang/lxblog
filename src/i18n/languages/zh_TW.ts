@@ -245,6 +245,17 @@ export const zh_TW: Translation = {
 	[Key.musicPageTitle]: "我的音樂",
 	[Key.musicPageSubtitle]: "記錄喜歡的音樂，分享旋律中的故事。",
 	[Key.musicPageNoData]: "暫無音樂條目",
+	// 音樂大類別分類
+	[Key.musicGenreAll]: "全部",
+	[Key.musicGenreRnBSoul]: "R&B/靈魂",
+	[Key.musicGenreHipHopRap]: "說唱/嘻哈",
+	[Key.musicGenrePop]: "流行",
+	[Key.musicGenreIndieAlt]: "獨立/另類",
+	[Key.musicGenreLatinWorld]: "拉丁/世界",
+	[Key.musicGenreFolk]: "民謠",
+	[Key.musicGenreRock]: "搖滾",
+	[Key.musicGenreElectronic]: "電子",
+	[Key.musicGenreSoundtrack]: "影視/遊戲原聲",
 
 	// 分頁
 	[Key.paginationFirst]: "首頁",

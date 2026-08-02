@@ -69,6 +69,7 @@ export { friendsPageConfig, getEnabledFriends } from "./friendsConfig"; // 友�
 export { galleryConfig } from "./galleryConfig"; // 相册配置
 export { gamesConfig } from "./gamesConfig"; // 游戏页配置
 export { licenseConfig } from "./licenseConfig"; // 许可证配置
+export { musicGenreCategories, musicGenreIds } from "./musicGenreConfig"; // 音乐大类别分类标准
 // 组件配置
 export { musicPlayerConfig } from "./musicConfig"; // 音乐播放器配置
 export { navBarConfig, navBarSearchConfig } from "./navBarConfig"; // 导航栏配置与搜索配置

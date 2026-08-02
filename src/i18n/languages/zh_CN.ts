@@ -243,6 +243,17 @@ export const zh_CN: Translation = {
 	[Key.musicPageTitle]: "我的音乐",
 	[Key.musicPageSubtitle]: "记录喜欢的音乐，分享旋律中的故事。",
 	[Key.musicPageNoData]: "暂无音乐条目",
+	// 音乐大类别分类
+	[Key.musicGenreAll]: "全部",
+	[Key.musicGenreRnBSoul]: "R&B/灵魂",
+	[Key.musicGenreHipHopRap]: "说唱/嘻哈",
+	[Key.musicGenrePop]: "流行",
+	[Key.musicGenreIndieAlt]: "独立/另类",
+	[Key.musicGenreLatinWorld]: "拉丁/世界",
+	[Key.musicGenreFolk]: "民谣",
+	[Key.musicGenreRock]: "摇滚",
+	[Key.musicGenreElectronic]: "电子",
+	[Key.musicGenreSoundtrack]: "影视/游戏原声",
 
 	// 分页
 	[Key.paginationFirst]: "首页",

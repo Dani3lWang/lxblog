@@ -203,6 +203,17 @@ enum I18nKey {
 	musicPageTitle = "musicPageTitle",
 	musicPageSubtitle = "musicPageSubtitle",
 	musicPageNoData = "musicPageNoData",
+	// 音乐大类别分类
+	musicGenreAll = "musicGenreAll",
+	musicGenreRnBSoul = "musicGenreRnBSoul",
+	musicGenreHipHopRap = "musicGenreHipHopRap",
+	musicGenrePop = "musicGenrePop",
+	musicGenreIndieAlt = "musicGenreIndieAlt",
+	musicGenreLatinWorld = "musicGenreLatinWorld",
+	musicGenreFolk = "musicGenreFolk",
+	musicGenreRock = "musicGenreRock",
+	musicGenreElectronic = "musicGenreElectronic",
+	musicGenreSoundtrack = "musicGenreSoundtrack",
 
 	// 追番
 	anime = "anime",

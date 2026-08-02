@@ -250,6 +250,17 @@ export const ru: Translation = {
 	[Key.musicPageTitle]: "Моя музыка",
 	[Key.musicPageSubtitle]: "Музыка, которую я люблю, истории в мелодиях.",
 	[Key.musicPageNoData]: "Пока нет музыкальных записей",
+	// Категории музыкальных жанров
+	[Key.musicGenreAll]: "Все",
+	[Key.musicGenreRnBSoul]: "R&B/Соул",
+	[Key.musicGenreHipHopRap]: "Хип-хоп/Рэп",
+	[Key.musicGenrePop]: "Поп",
+	[Key.musicGenreIndieAlt]: "Инди/Альтернатива",
+	[Key.musicGenreLatinWorld]: "Латино/Мир",
+	[Key.musicGenreFolk]: "Фолк",
+	[Key.musicGenreRock]: "Рок",
+	[Key.musicGenreElectronic]: "Электроника",
+	[Key.musicGenreSoundtrack]: "Саундтрек",
 
 	// Пагинация
 	[Key.paginationFirst]: "Первая",

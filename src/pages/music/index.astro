@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import { siteConfig, musicPlayerConfig } from "@/config";
+import { siteConfig, musicPlayerConfig, musicGenreCategories } from "@/config";
 import LifeNavTabs from "@/components/pages/life/LifeNavTabs.astro";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
@@ -36,11 +36,28 @@ const musicEntries = customBangumi
 			status: data.status,
 			comment: data.comment || "",
 			published: data.published?.toISOString() || new Date().toISOString(),
+			genre: data.genre || "",
 		};
 	})
 	.sort(
 		(a, b) => new Date(b.published).getTime() - new Date(a.published).getTime(),
 	);
+
+// 音乐大类别分类标准（来自 src/config/musicGenreConfig.ts）
+const genreLabels = new Map(
+	musicGenreCategories.map((c) => [c.id, i18n(c.i18nKey)]),
+);
+// 各分类的条目数量
+const genreCounts = new Map<string, number>();
+for (const item of musicEntries) {
+	if (!item.genre) continue;
+	genreCounts.set(item.genre, (genreCounts.get(item.genre) || 0) + 1);
+}
+const genreTabs = musicGenreCategories.map((c) => ({
+	id: c.id,
+	label: genreLabels.get(c.id) || c.label,
+	count: genreCounts.get(c.id) || 0,
+}));
 
 // Build playlist from entries that have audioUrl
 const collectionPlaylist = musicEntries
@@ -159,12 +176,32 @@ const getStatusText = (type: number) => {
 				<div class="collection-header">
 					<h2 class="collection-title">我的音乐收藏</h2>
 				</div>
+				{musicEntries.length > 0 && (
+					<div class="genre-filter" id="genre-filter" role="tablist" aria-label="音乐分类">
+						<button type="button" class="genre-chip active" data-genre="" role="tab" aria-selected="true">
+							{i18n(I18nKey.musicGenreAll)}
+							<span class="genre-chip-count">{musicEntries.length}</span>
+						</button>
+						{genreTabs.map((g) => (
+							<button
+								type="button"
+								class="genre-chip"
+								data-genre={g.id}
+								role="tab"
+								aria-selected="false"
+							>
+								{g.label}
+								{g.count > 0 && <span class="genre-chip-count">{g.count}</span>}
+							</button>
+						))}
+					</div>
+				)}
 				<div class="collection-grid" id="collection-grid">
 					{musicEntries.length > 0 ? (
 						musicEntries.map((item) => {
 							const playlistIdx = (item.audioUrl || item.metingId) ? (playlistIndexByTitle.get(item.title) ?? -1) : -1;
 							return (
-								<div class="music-card" data-playlist-index={playlistIdx} data-has-audio={(item.audioUrl || item.metingId) ? "1" : "0"}>
+								<div class="music-card" data-playlist-index={playlistIdx} data-has-audio={(item.audioUrl || item.metingId) ? "1" : "0"} data-genre={item.genre}>
 									<div class="music-card-cover">
 										<img src={item.image} alt={item.title} class="music-card-img" loading="lazy" />
 										<span class="music-card-status">{getStatusText(item.status)}</span>
@@ -178,6 +215,7 @@ const getStatusText = (type: number) => {
 										<div class="music-card-info">
 											<div class="music-card-title">{item.title}</div>
 											{item.artist && <div class="music-card-artist">{item.artist}</div>}
+											{item.genre && <div class="music-card-genre">{genreLabels.get(item.genre) || item.genre}</div>}
 										</div>
 										{(item.audioUrl || item.metingId) && (
 											<div class="music-card-play-overlay">
@@ -640,6 +678,66 @@ const getStatusText = (type: number) => {
 		color: var(--deep-text); margin: 0;
 	}
 	html.dark .collection-title { color: rgba(255,255,255,0.75); }
+
+	/* Genre filter */
+	.genre-filter {
+		display: flex;
+		gap: 8px;
+		overflow-x: auto;
+		padding-bottom: 4px;
+		margin-bottom: 16px;
+		scrollbar-width: none;
+		-webkit-overflow-scrolling: touch;
+	}
+	.genre-filter::-webkit-scrollbar { display: none; }
+	.genre-chip {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 5px 12px;
+		border-radius: 9999px;
+		border: 1px solid var(--line-divider);
+		background: var(--btn-regular-bg);
+		color: var(--btn-content);
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.4;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+	}
+	.genre-chip:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+	}
+	html.dark .genre-chip { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); }
+	.genre-chip.active {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: #fff;
+	}
+	html.dark .genre-chip.active { color: #fff; }
+	.genre-chip-count {
+		font-size: 10px;
+		opacity: 0.7;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Genre label on card */
+	.music-card-genre {
+		font-size: 10px;
+		font-weight: 600;
+		color: var(--primary);
+		margin-top: 3px;
+		letter-spacing: .03em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		text-shadow: 0 1px 3px rgba(0,0,0,.4);
+	}
+	html.dark .music-card-genre { color: #60a5fa; }
+
 	.collection-grid {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
@@ -710,6 +808,26 @@ const getStatusText = (type: number) => {
 
 	var lyricsScroll = document.getElementById('lyrics-scroll');
 	var collectionGrid = document.getElementById('collection-grid');
+	var genreFilter = document.getElementById('genre-filter');
+
+	// Genre filter — show/hide cards by data-genre
+	genreFilter?.addEventListener('click', function(e) {
+		var chip = e.target.closest('.genre-chip');
+		if (!chip || !collectionGrid) return;
+		var genre = chip.getAttribute('data-genre') || '';
+		var chips = genreFilter.querySelectorAll('.genre-chip');
+		for (var i = 0; i < chips.length; i++) {
+			var active = chips[i] === chip;
+			chips[i].classList.toggle('active', active);
+			chips[i].setAttribute('aria-selected', active ? 'true' : 'false');
+		}
+		var cards = collectionGrid.querySelectorAll('.music-card');
+		for (var j = 0; j < cards.length; j++) {
+			var cardGenre = cards[j].getAttribute('data-genre') || '';
+			var show = genre === '' || cardGenre === genre;
+			cards[j].style.display = show ? '' : 'none';
+		}
+	});
 
 	// Load content-collection playlist data (injected via define:vars)
 	var collectionPlaylist = JSON.parse(collectionPlaylistJson);
