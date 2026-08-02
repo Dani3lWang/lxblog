@@ -238,13 +238,7 @@ function getItemSubcategory(item: MgItem): string {
 	return "movie";
 }
 
-type TabKey =
-	| "all"
-	| "movie"
-	| "tv"
-	| "anime"
-	| "documentary"
-	| "music";
+type TabKey = "all" | "movie" | "tv" | "anime" | "documentary" | "music";
 
 const tabConfig: { key: TabKey; i18nKey: I18nKey }[] = [
 	{ key: "all", i18nKey: I18nKey.moviesGamesTabAll },

@@ -91,7 +91,8 @@ function readPlatformData(): PlatformData {
 }
 
 function writePlatformData(data: PlatformData) {
-	writeFileSync(DATA_FILE, `${JSON.stringify(data, null, 2)}\n`, "utf-8");
+	// 与 biome format（tab 缩进）保持一致
+	writeFileSync(DATA_FILE, `${JSON.stringify(data, null, "\t")}\n`, "utf-8");
 }
 
 async function fetchSteamApi(

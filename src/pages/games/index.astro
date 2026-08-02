@@ -87,7 +87,9 @@ for (const id of platformIds) {
 
 const defaultPlatform = gamesConfig.display.defaultPlatform;
 const activeTab =
-	sections.find((s) => s.id === defaultPlatform)?.id || sections[0]?.id || "all";
+	sections.find((s) => s.id === defaultPlatform)?.id ||
+	sections[0]?.id ||
+	"all";
 ---
 
 <MainGridLayout title={i18n(I18nKey.gamesTitle)} description={i18n(I18nKey.gamesSubtitle)}>
@@ -158,7 +160,6 @@ const activeTab =
 											>
 												<GameCard
 													game={game}
-													platform={game.platform}
 													platformIcon={platformMeta[game.platform].icon}
 													platformLabel={platformMeta[game.platform].label}
 													showAchievements={gamesConfig.display.showAchievements}

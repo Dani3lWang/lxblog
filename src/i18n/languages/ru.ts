@@ -236,7 +236,8 @@ export const ru: Translation = {
 	// Страница игр (библиотека по платформам)
 	[Key.games]: "Игры",
 	[Key.gamesTitle]: "Моя игровая библиотека",
-	[Key.gamesSubtitle]: "Игры, в которые я играл на разных платформах: время и прогресс достижений.",
+	[Key.gamesSubtitle]:
+		"Игры, в которые я играл на разных платформах: время и прогресс достижений.",
 	[Key.gamesTabAll]: "Все",
 	[Key.gamesPlaytime]: "Время в игре",
 	[Key.gamesLastPlayed]: "Последняя игра",

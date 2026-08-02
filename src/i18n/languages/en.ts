@@ -236,7 +236,8 @@ export const en: Translation = {
 	// Games Page (platform game library)
 	[Key.games]: "Games",
 	[Key.gamesTitle]: "My Game Library",
-	[Key.gamesSubtitle]: "Games I've played across platforms, with playtime and achievement progress.",
+	[Key.gamesSubtitle]:
+		"Games I've played across platforms, with playtime and achievement progress.",
 	[Key.gamesTabAll]: "All",
 	[Key.gamesPlaytime]: "Playtime",
 	[Key.gamesLastPlayed]: "Last played",

@@ -235,7 +235,8 @@ export const ja: Translation = {
 	// ゲームページ（プラットフォーム別ゲームライブラリ）
 	[Key.games]: "ゲーム",
 	[Key.gamesTitle]: "ゲームライブラリ",
-	[Key.gamesSubtitle]: "各プラットフォームでプレイしたゲームと、プレイ時間・実績の記録。",
+	[Key.gamesSubtitle]:
+		"各プラットフォームでプレイしたゲームと、プレイ時間・実績の記録。",
 	[Key.gamesTabAll]: "全て",
 	[Key.gamesPlaytime]: "プレイ時間",
 	[Key.gamesLastPlayed]: "最近プレイ",
