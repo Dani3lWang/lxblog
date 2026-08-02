@@ -220,9 +220,10 @@ export const ja: Translation = {
 	[Key.booksNoData]: "本棚に本がありません",
 
 	// 映画・ゲームページ
-	[Key.moviesGames]: "映画・ゲーム",
-	[Key.moviesGamesTitle]: "映画・ゲーム",
-	[Key.moviesGamesSubtitle]: "観た映画やプレイしたゲームの記録。",
+	// 映画・音楽ページ
+	[Key.moviesGames]: "映画・音楽",
+	[Key.moviesGamesTitle]: "映画・音楽",
+	[Key.moviesGamesSubtitle]: "観た映画や聴いた音楽の記録。",
 	[Key.moviesGamesTabAll]: "全て",
 	[Key.moviesGamesTabMovie]: "映画",
 	[Key.moviesGamesTabTV]: "ドラマ",

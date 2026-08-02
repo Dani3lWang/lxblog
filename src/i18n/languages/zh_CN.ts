@@ -214,10 +214,10 @@ export const zh_CN: Translation = {
 	[Key.bookshelfWantRead]: "想读",
 	[Key.booksNoData]: "书架上还没有书籍",
 
-	// 影视与游戏页面
-	[Key.moviesGames]: "影视与游戏",
-	[Key.moviesGamesTitle]: "影视与游戏",
-	[Key.moviesGamesSubtitle]: "记录看过的影视作品和玩过的游戏。",
+	// 影视和音乐页面
+	[Key.moviesGames]: "影视和音乐",
+	[Key.moviesGamesTitle]: "影视和音乐",
+	[Key.moviesGamesSubtitle]: "记录看过的影视作品和听过的音乐。",
 	[Key.moviesGamesTabAll]: "全部",
 	[Key.moviesGamesTabMovie]: "电影",
 	[Key.moviesGamesTabTV]: "电视剧",

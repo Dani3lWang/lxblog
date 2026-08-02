@@ -217,9 +217,10 @@ export const zh_TW: Translation = {
 	[Key.booksNoData]: "書架上還沒有書籍",
 
 	// 影視與遊戲頁面
-	[Key.moviesGames]: "影視與遊戲",
-	[Key.moviesGamesTitle]: "影視與遊戲",
-	[Key.moviesGamesSubtitle]: "記錄看過的影視作品和玩過的遊戲。",
+	// 影視和音樂頁面
+	[Key.moviesGames]: "影視和音樂",
+	[Key.moviesGamesTitle]: "影視和音樂",
+	[Key.moviesGamesSubtitle]: "記錄看過的影視作品和聽過的音樂。",
 	[Key.moviesGamesTabAll]: "全部",
 	[Key.moviesGamesTabMovie]: "電影",
 	[Key.moviesGamesTabTV]: "電視劇",

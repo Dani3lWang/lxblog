@@ -221,9 +221,10 @@ export const ru: Translation = {
 	[Key.booksNoData]: "На полке пока нет книг",
 
 	// Фильмы и игры
-	[Key.moviesGames]: "Фильмы и игры",
-	[Key.moviesGamesTitle]: "Фильмы и игры",
-	[Key.moviesGamesSubtitle]: "Фильмы, сериалы и игры, которые мне понравились.",
+	// Страница фильмов и музыки
+	[Key.moviesGames]: "Фильмы и музыка",
+	[Key.moviesGamesTitle]: "Фильмы и музыка",
+	[Key.moviesGamesSubtitle]: "Фильмы, сериалы и музыка, которые мне понравились.",
 	[Key.moviesGamesTabAll]: "Все",
 	[Key.moviesGamesTabMovie]: "Фильмы",
 	[Key.moviesGamesTabTV]: "Сериалы",

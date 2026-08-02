@@ -174,7 +174,7 @@ enum I18nKey {
 	bookshelfWantRead = "bookshelfWantRead",
 	booksNoData = "booksNoData",
 
-	// 影视与游戏页面
+	// 影视和音乐页面
 	moviesGames = "moviesGames",
 	moviesGamesTitle = "moviesGamesTitle",
 	moviesGamesSubtitle = "moviesGamesSubtitle",

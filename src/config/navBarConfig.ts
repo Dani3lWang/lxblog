@@ -77,13 +77,16 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		});
 	}
 
-	// 记录入口 - 书架、影视与游戏、音乐、更新日志、规划、足迹
+	// 记录入口 - 书架、影视和音乐、游戏、更新日志、规划、足迹
 	const recordChildren: NavBarLink[] = [];
 	if (siteConfig.pages.books) {
 		recordChildren.push(LinkPresets.Books);
 	}
 	if (siteConfig.pages.moviesGames) {
 		recordChildren.push(LinkPresets.MoviesGames);
+	}
+	if (siteConfig.pages.games) {
+		recordChildren.push(LinkPresets.Games);
 	}
 	if (siteConfig.pages.musicPage) {
 		recordChildren.push(LinkPresets.MusicPage);
@@ -103,11 +106,13 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			? "/books/"
 			: siteConfig.pages.moviesGames
 				? "/movies-games/"
-				: siteConfig.pages.musicPage
-					? "/music/"
-					: siteConfig.pages.routines
-						? "/routines/"
-						: "/places/";
+				: siteConfig.pages.games
+					? "/games/"
+					: siteConfig.pages.musicPage
+						? "/music/"
+						: siteConfig.pages.routines
+							? "/routines/"
+							: "/places/";
 
 		links.push({
 			name: "记录",
@@ -275,9 +280,14 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:book",
 	},
 	MoviesGames: {
-		name: "影视与游戏",
+		name: "影视和音乐",
 		url: "/movies-games/",
 		icon: "material-symbols:movie",
+	},
+	Games: {
+		name: "游戏",
+		url: "/games/",
+		icon: "material-symbols:sports-esports",
 	},
 	MusicPage: {
 		name: "音乐",

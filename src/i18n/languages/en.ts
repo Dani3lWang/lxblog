@@ -220,10 +220,10 @@ export const en: Translation = {
 	[Key.bookshelfWantRead]: "Want to Read",
 	[Key.booksNoData]: "No books on the shelf yet",
 
-	// Movies & Games Page
-	[Key.moviesGames]: "Movies & Games",
-	[Key.moviesGamesTitle]: "Movies & Games",
-	[Key.moviesGamesSubtitle]: "Movies, shows, and games I've enjoyed.",
+	// Movies & Music Page
+	[Key.moviesGames]: "Movies & Music",
+	[Key.moviesGamesTitle]: "Movies & Music",
+	[Key.moviesGamesSubtitle]: "Movies, shows, and music I've enjoyed.",
 	[Key.moviesGamesTabAll]: "All",
 	[Key.moviesGamesTabMovie]: "Movies",
 	[Key.moviesGamesTabTV]: "TV Shows",
