@@ -232,6 +232,17 @@ export const ja: Translation = {
 	[Key.moviesGamesTabMusic]: "音楽",
 	[Key.moviesGamesNoData]: "コンテンツがありません",
 
+	// ゲームページ（プラットフォーム別ゲームライブラリ）
+	[Key.games]: "ゲーム",
+	[Key.gamesTitle]: "ゲームライブラリ",
+	[Key.gamesSubtitle]: "各プラットフォームでプレイしたゲームと、プレイ時間・実績の記録。",
+	[Key.gamesTabAll]: "全て",
+	[Key.gamesPlaytime]: "プレイ時間",
+	[Key.gamesLastPlayed]: "最近プレイ",
+	[Key.gamesAchievements]: "実績",
+	[Key.gamesNoData]: "ゲームデータがありません",
+	[Key.gamesStoreLink]: "ストアリンク",
+
 	// 音楽ページ
 	[Key.musicPage]: "音楽",
 	[Key.musicPageTitle]: "私の音楽",

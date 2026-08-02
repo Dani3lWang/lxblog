@@ -233,6 +233,17 @@ export const en: Translation = {
 	[Key.moviesGamesTabMusic]: "Music",
 	[Key.moviesGamesNoData]: "No content yet",
 
+	// Games Page (platform game library)
+	[Key.games]: "Games",
+	[Key.gamesTitle]: "My Game Library",
+	[Key.gamesSubtitle]: "Games I've played across platforms, with playtime and achievement progress.",
+	[Key.gamesTabAll]: "All",
+	[Key.gamesPlaytime]: "Playtime",
+	[Key.gamesLastPlayed]: "Last played",
+	[Key.gamesAchievements]: "Achievements",
+	[Key.gamesNoData]: "No game data yet",
+	[Key.gamesStoreLink]: "Store link",
+
 	// Music Page
 	[Key.musicPage]: "Music",
 	[Key.musicPageTitle]: "My Music",

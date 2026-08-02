@@ -187,6 +187,17 @@ enum I18nKey {
 	moviesGamesTabMusic = "moviesGamesTabMusic",
 	moviesGamesNoData = "moviesGamesNoData",
 
+	// 游戏页面（平台游戏库）
+	games = "games",
+	gamesTitle = "gamesTitle",
+	gamesSubtitle = "gamesSubtitle",
+	gamesTabAll = "gamesTabAll",
+	gamesPlaytime = "gamesPlaytime",
+	gamesLastPlayed = "gamesLastPlayed",
+	gamesAchievements = "gamesAchievements",
+	gamesNoData = "gamesNoData",
+	gamesStoreLink = "gamesStoreLink",
+
 	// 音乐页面
 	musicPage = "musicPage",
 	musicPageTitle = "musicPageTitle",

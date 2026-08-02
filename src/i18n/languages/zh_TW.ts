@@ -229,6 +229,17 @@ export const zh_TW: Translation = {
 	[Key.moviesGamesTabMusic]: "音樂",
 	[Key.moviesGamesNoData]: "暫無內容",
 
+	// 遊戲頁面（平台遊戲庫）
+	[Key.games]: "遊戲",
+	[Key.gamesTitle]: "我的遊戲庫",
+	[Key.gamesSubtitle]: "記錄各平台玩過的遊戲，包含遊玩時長與成就進度。",
+	[Key.gamesTabAll]: "全部",
+	[Key.gamesPlaytime]: "遊玩時長",
+	[Key.gamesLastPlayed]: "最近遊玩",
+	[Key.gamesAchievements]: "成就",
+	[Key.gamesNoData]: "暫無遊戲數據",
+	[Key.gamesStoreLink]: "商店連結",
+
 	// 音樂頁面
 	[Key.musicPage]: "音樂",
 	[Key.musicPageTitle]: "我的音樂",

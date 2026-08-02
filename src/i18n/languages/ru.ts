@@ -233,6 +233,17 @@ export const ru: Translation = {
 	[Key.moviesGamesTabMusic]: "Музыка",
 	[Key.moviesGamesNoData]: "Пока нет контента",
 
+	// Страница игр (библиотека по платформам)
+	[Key.games]: "Игры",
+	[Key.gamesTitle]: "Моя игровая библиотека",
+	[Key.gamesSubtitle]: "Игры, в которые я играл на разных платформах: время и прогресс достижений.",
+	[Key.gamesTabAll]: "Все",
+	[Key.gamesPlaytime]: "Время в игре",
+	[Key.gamesLastPlayed]: "Последняя игра",
+	[Key.gamesAchievements]: "Достижения",
+	[Key.gamesNoData]: "Нет данных об играх",
+	[Key.gamesStoreLink]: "Магазин",
+
 	// Музыка
 	[Key.musicPage]: "Музыка",
 	[Key.musicPageTitle]: "Моя музыка",
