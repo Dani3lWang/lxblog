@@ -5,6 +5,8 @@ export type GamePlatformId =
 	| "epic"
 	| "playstation";
 
+// 游戏页配置类型。完整设置说明见 src/config/gamesConfig.ts
+// （含 game-platforms.json 数据格式与 Steam 同步启用步骤）
 export type GamesConfig = {
 	// 构建时自动同步配置（方案C）
 	sync: {
