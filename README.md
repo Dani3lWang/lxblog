@@ -243,6 +243,7 @@ src/
 │   ├── sidebarConfig.ts      # 侧边栏布局配置
 │   ├── navBarConfig.ts       # 导航栏配置
 │   ├── musicConfig.ts        # 音乐播放器配置
+│   ├── gamesConfig.ts        # 游戏模块配置（平台游戏库/Steam 同步）
 │   ├── pioConfig.ts          # 看板娘配置
 │   ├── adConfig.ts           # 广告配置
 │   ├── friendsConfig.ts      # 友链配置
@@ -251,6 +252,73 @@ src/
 │   └── coverImageConfig.ts  # 文章封面图配置
 ```
 
+
+## 🎮 游戏模块（平台游戏库）
+
+独立的游戏记录页面 `/games/`，按平台（Steam / Nintendo Switch / Xbox / Epic / PlayStation）展示游戏，支持游玩时长、最近游玩、成就进度等数据。影视与游戏页面（`/movies-games/`）已剥离游戏内容，专注影视和音乐。
+
+### 开启/关闭
+
+- 页面开关：`siteConfig.pages.games`（`src/config/siteConfig.ts`），关闭后 `/games/` 返回 404 并从 sitemap 剔除
+- 导航入口：顶部导航"记录"菜单与页面内记录 tab 栏自动跟随开关显示"游戏"
+
+### 数据文件
+
+所有游戏数据存放在 `src/content/games/game-platforms.json`（与 HEXO 博客的 `game-platforms.json` 结构兼容），顶层按平台分组：
+
+```json
+{
+  "steam": [
+    {
+      "name": "Counter-Strike 2",
+      "hours": 12.5,
+      "minutes": 750,
+      "cover": "https://.../header.jpg",
+      "last_played": "2026-07-30",
+      "store_url": "https://store.steampowered.com/app/730/",
+      "earned_achievements": 10,
+      "total_achievements": 30,
+      "achievements": [
+        { "name": "成就名称", "image": "https://.../icon.jpg", "achieved": true }
+      ],
+      "appid": 730
+    }
+  ],
+  "switch": [],
+  "xbox": [],
+  "epic": [],
+  "playstation": []
+}
+```
+
+- 平台 ID 固定为：`steam` / `switch` / `xbox` / `epic` / `playstation`
+- 字段均可选（`name` 必填）；`hours` 与 `minutes` 叠加计算总时长
+- 同步脚本只更新时长、成就等实时数据，会保留你手写的 `cover` 等字段
+- 空数组的平台在页面上不显示 tab
+
+### Steam 自动同步（可选）
+
+不配置也可手动维护 JSON；配置后构建前自动从 Steam API 拉取游戏库、游玩时长与成就：
+
+1. 到 <https://steamcommunity.com/dev/apikey> 申请 Steam Web API Key
+2. 在 `src/config/gamesConfig.ts` 的 `sync.steam` 填 `steamId` / `apiKey`，**或**使用环境变量（推荐，避免 Key 进仓库）：
+   ```powershell
+   $env:STEAM_ID="76561198xxxxxxxxxx"
+   $env:STEAM_API_KEY="xxxx"
+   ```
+3. 运行 `pnpm build`（自动同步）或 `pnpm sync-games`（仅手动同步）
+
+相关配置（`src/config/gamesConfig.ts`，文件内有完整注释说明）：
+
+- `sync.steam.enabled`：Steam 同步开关
+- `sync.steam.achievementFetchLimit`：成就抓取上限（只对最近游玩的前 N 款游戏抓取，0=关闭）
+- `sync.steam.excludeAppIds`：排除不想展示的游戏 appid
+- `display.defaultPlatform`：默认选中的平台（`all` 或平台 ID）
+- `display.sortBy`：排序方式（`lastPlayed` 最近游玩 / `hours` 时长 / `name` 名称）
+- `display.showAchievements`：是否显示成就进度条
+- `display.gamesPerPage`：每页游戏数量
+
+> Epic / Xbox / Switch 平台暂未实现自动同步，游戏需手动维护在 JSON 中（`sync.epic` / `sync.exophase` / `sync.switch` 为预留开关）。
 
 ## ⚙️ 文章 Frontmatter
 
@@ -290,6 +358,7 @@ comment: true    # 是否允许评论
 | `pnpm check`               | 检查代码中的错误                 |
 | `pnpm format`              | 使用Biome格式化您的代码                        |
 | `pnpm new-post <filename>` | 创建新文章                                   |
+| `pnpm sync-games`          | 手动触发 Steam 游戏数据同步（构建前也会自动执行） |
 | `pnpm astro ...`           | 执行 `astro add`, `astro check` 等指令    |
 | `pnpm astro --help`        | 显示 Astro CLI 帮助                        |
 
