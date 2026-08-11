@@ -125,9 +125,9 @@ export const siteConfig: SiteConfig = {
 		// 笔记本页面开关
 		notebooks: true,
 		// 规划页面开关
-		routines: true,
+		routines: false,
 		// 足迹页面开关
-		places: true,
+		places: false,
 	},
 
 	// 分类导航栏开关，仅在首页、文章模块和关于模块显示
