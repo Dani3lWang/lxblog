@@ -1,0 +1,236 @@
+---
+import { getCollection, render } from "astro:content";
+import Markdown from "@/components/common/Markdown.astro";
+import doubanRatings from "@/constants/douban-ratings.json";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { formatDateToYYYYMMDD } from "@/utils/date-utils";
+import { removeFileExtension } from "@/utils/url-utils";
+
+// 豆瓣评分缓存（scripts/generate-douban-ratings.ts 构建时生成）
+const doubanRatingsMap = doubanRatings as unknown as Record<
+	string,
+	{ rate: string; url: string; title?: string } | undefined
+>;
+
+export async function getStaticPaths() {
+	const bangumiEntries = await getCollection("bangumi", ({ data }) => {
+		return ["anime", "real", "music"].includes(data.category);
+	});
+	return bangumiEntries.map((entry) => ({
+		params: { slug: removeFileExtension(entry.id) },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const bannerPostMeta = {
+	title: entry.data.title,
+	published: entry.data.published || new Date(),
+};
+
+const subcategoryLabels: Record<string, string> = {
+	movie: i18n(I18nKey.moviesGamesTabMovie),
+	tv: i18n(I18nKey.moviesGamesTabTV),
+	anime: i18n(I18nKey.moviesGamesTabAnime),
+	documentary: i18n(I18nKey.moviesGamesTabDocumentary),
+};
+
+const categoryLabel =
+	entry.data.category === "music"
+		? i18n(I18nKey.moviesGamesTabMusic)
+		: (entry.data.subcategory && subcategoryLabels[entry.data.subcategory]) ||
+			(entry.data.category === "real" ? "影视" : "动漫");
+
+const getStatusText = (status: number) => {
+	switch (status) {
+		case 1:
+			return i18n(I18nKey.bangumiStatusWish);
+		case 2:
+			return i18n(I18nKey.bangumiStatusWatched);
+		case 3:
+			return i18n(I18nKey.bangumiStatusWatching);
+		case 4:
+			return i18n(I18nKey.bangumiStatusOnHold);
+		case 5:
+			return i18n(I18nKey.bangumiStatusDropped);
+		default:
+			return i18n(I18nKey.bangumiStatusUnknown);
+	}
+};
+
+const imageSrc =
+	typeof entry.data.image === "string"
+		? entry.data.image
+		: entry.data.image.src;
+
+const douban = entry.data.doubanId
+	? doubanRatingsMap[String(entry.data.doubanId)]
+	: undefined;
+---
+
+<MainGridLayout
+	title={entry.data.title}
+	headings={headings}
+	bannerPostMeta={bannerPostMeta}
+>
+	<div class="flex w-full rounded-(--radius-large) overflow-hidden relative mb-4">
+		<div data-pagefind-body class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
+			<!-- header -->
+			<div class="onload-animation flex gap-6 mb-6">
+				<div class="mg-cover-wrap shrink-0">
+					<img src={imageSrc} alt={entry.data.title} class="mg-cover-img" loading="lazy" />
+				</div>
+				<div class="min-w-0 flex-1">
+					<h1 data-pagefind-meta="title" data-pagefind-weight="10" class="">
+						{entry.data.title}
+					</h1>
+					{entry.data.category === "music" && entry.data.artist && (
+						<p class="mt-1 text-sm text-[var(--content-meta)]">{entry.data.artist}</p>
+					)}
+					<div class="mt-3 flex flex-wrap items-center gap-2">
+						<span class="mg-cat-pill">{categoryLabel}</span>
+						{douban && (
+							<a
+								class="mg-douban-pill"
+								href={douban.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								title={douban.title}
+							>
+								<svg class="mg-douban-star" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+								<span class="mg-douban-rate">{douban.rate}</span>
+								<span class="mg-douban-label">{i18n(I18nKey.moviesGamesDoubanRating)}</span>
+								<svg class="mg-douban-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
+							</a>
+						)}
+					</div>
+				</div>
+			</div>
+
+			<!-- metadata -->
+			<div class="onload-animation mb-6">
+				<div class="flex flex-wrap gap-4 text-neutral-500 dark:text-neutral-400 text-sm">
+					{entry.data.published && (
+						<div class="flex items-center gap-1">
+							<span>发布于: {formatDateToYYYYMMDD(entry.data.published)}</span>
+						</div>
+					)}
+					<div class="flex items-center gap-1">
+						<span>状态: {getStatusText(entry.data.status)}</span>
+					</div>
+					{entry.data.score && entry.data.score > 0 && (
+						<div class="flex items-center gap-1">
+							<span>评分: {entry.data.score}/10</span>
+						</div>
+					)}
+					{entry.data.tags && entry.data.tags.length > 0 && (
+						<div class="flex flex-wrap gap-2">
+							{entry.data.tags.map(tag => (
+								<span class="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 rounded text-xs">#{tag}</span>
+							))}
+						</div>
+					)}
+				</div>
+			</div>
+
+			{/* comment */}
+			{entry.data.comment && (
+				<div class="onload-animation mb-6">
+					<div class="mg-comment-block">
+						<p class="mg-comment-text">{entry.data.comment}</p>
+					</div>
+				</div>
+			)}
+
+			<Markdown class="mb-6 markdown-content onload-animation">
+				<Content />
+			</Markdown>
+		</div>
+	</div>
+</MainGridLayout>
+
+<style>
+	.mg-cover-wrap {
+		width: 8.5rem;
+		border-radius: var(--radius-medium);
+		overflow: hidden;
+		box-shadow: 0 4px 14px -4px rgba(0,0,0,.18);
+	}
+	.mg-cover-img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 2/3;
+		object-fit: cover;
+	}
+	.mg-cat-pill {
+		padding: 3px 12px;
+		border-radius: 9999px;
+		font-size: 12px;
+		font-weight: 600;
+		background: var(--primary);
+		color: #fff;
+	}
+	.mg-douban-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		padding: 4px 12px 4px 9px;
+		border-radius: 9999px;
+		background: rgba(0,0,0,.06);
+		border: 1px solid var(--line-divider);
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--deep-text);
+		text-decoration: none;
+		transition: border-color .2s ease, box-shadow .2s ease;
+	}
+	:global(html.dark) .mg-douban-pill {
+		background: rgba(255,255,255,.08);
+	}
+	.mg-douban-pill:hover {
+		border-color: var(--primary);
+		box-shadow: 0 0 0 1px var(--primary);
+	}
+	.mg-douban-star {
+		width: 13px;
+		height: 13px;
+		color: #fbbf24;
+		flex-shrink: 0;
+	}
+	.mg-douban-rate {
+		font-size: 13px;
+		font-weight: 800;
+		line-height: 1;
+	}
+	.mg-douban-label {
+		opacity: .7;
+		font-weight: 500;
+	}
+	.mg-douban-open {
+		width: 12px;
+		height: 12px;
+		opacity: .6;
+	}
+	.mg-comment-block {
+		padding: 12px 16px;
+		border-radius: var(--radius-medium);
+		background: var(--btn-regular-bg);
+		border-left: 3px solid var(--primary);
+	}
+	.mg-comment-text {
+		margin: 0;
+		font-size: 14px;
+		line-height: 1.8;
+		color: var(--deep-text);
+	}
+
+	@media (max-width: 640px) {
+		.mg-cover-wrap {
+			width: 6.5rem;
+		}
+	}
+</style>
