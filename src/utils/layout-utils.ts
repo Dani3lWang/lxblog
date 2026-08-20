@@ -79,6 +79,36 @@ export const isHomePage = (pathname: string): boolean => {
 	return false;
 };
 
+// 分类导航栏是否在当前路径显示
+// 仅在首页、文章模块（归档/分类/标签/文章详情）以及关于模块显示
+export const isCategoryBarVisible = (pathname: string): boolean => {
+	const baseUrl = import.meta.env.BASE_URL || "/";
+	const baseUrlNoSlash = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+	const relativePath =
+		baseUrlNoSlash && pathname.startsWith(baseUrlNoSlash)
+			? pathname.slice(baseUrlNoSlash.length)
+			: pathname;
+
+	// 首页及分页
+	if (isHomePage(pathname)) return true;
+	if (/^\/page\/\d+\/$/.test(relativePath)) return true;
+
+	// 文章模块
+	if (
+		relativePath === "/archive/" ||
+		relativePath.startsWith("/categories/") ||
+		relativePath.startsWith("/tags/") ||
+		relativePath.startsWith("/posts/")
+	) {
+		return true;
+	}
+
+	// 关于模块
+	if (relativePath === "/about/") return true;
+
+	return false;
+};
+
 // 获取横幅偏移量
 export const getBannerOffset = (position = "center"): string => {
 	const bannerOffsetByPosition = {

@@ -217,71 +217,78 @@ export const en: Translation = {
 	[Key.vndbLengthVeryLong]: "Very long",
 
 	// Anime Tracking - Bilibili
-	[Key.bilibili]: "Bilibili",
-	[Key.bilibiliSubtitle]: "My Bilibili follow list (anime + drama)",
-	[Key.bilibiliNotConfigured]: "Bilibili not configured",
-	[Key.bilibiliNotConfiguredDesc]:
-		"Configure bilibili.uid in src/config/siteConfig.ts",
 
 	// Anime Tracking - Shared components
-	[Key.animeTotal]: "Total",
-	[Key.animeAverageRating]: "Avg Rating",
-	[Key.animeSearch]: "Search anime...",
-	[Key.animeAllTypes]: "All",
-	[Key.animeTV]: "TV Anime",
-	[Key.animeMovie]: "Movie",
-	[Key.animeRatingDesc]: "Highest Rating",
-	[Key.animeRatingAsc]: "Lowest Rating",
-	[Key.animeDateDesc]: "Newest",
-	[Key.animeDateAsc]: "Oldest",
-	[Key.animeNoResults]: "No matching anime found",
-	[Key.animeLastUpdated]: "Data updated at",
-	[Key.animeEpStatus]: "Progress",
-	[Key.animeViewDetails]: "View Details",
-	[Key.animeBilibiliAvg]: "Bilibili Avg",
-	[Key.animeNoOverview]: "No synopsis available",
-	[Key.animeClose]: "Close",
-	[Key.animeSynopsis]: "Synopsis",
-	[Key.animeWatchNow]: "Watch Now",
-	[Key.animeAllWithCount]: "All ({count})",
-	[Key.animeTVWithCount]: "TV ({count})",
-	[Key.animeMovieWithCount]: "Movie ({count})",
-	[Key.animeTypeAnime]: "Anime",
-	[Key.animeTypeMovie]: "Movie",
-	[Key.animeTypeDocumentary]: "Documentary",
-	[Key.animeTypeChinese]: "Chinese Animation",
-	[Key.animeTypeDrama]: "Drama",
-	[Key.animeTypeConcert]: "Concert",
 
-	// MyAnimeList
-	[Key.mal]: "MyAnimeList",
-	[Key.malSubtitle]: "My anime and manga lists from MyAnimeList",
-	[Key.malCategoryAnime]: "Anime",
-	[Key.malCategoryManga]: "Manga",
-	[Key.malFilterAll]: "All",
-	[Key.malStatusWatching]: "Watching",
-	[Key.malStatusReading]: "Reading",
-	[Key.malStatusCompleted]: "Completed",
-	[Key.malStatusOnHold]: "On Hold",
-	[Key.malStatusDropped]: "Dropped",
-	[Key.malStatusPlanToWatch]: "Plan to Watch",
-	[Key.malStatusPlanToRead]: "Plan to Read",
-	[Key.malNoData]: "No Data",
-	[Key.malNoDataDescription]: "No items in this category",
-	[Key.malEmpty]: "No Data",
-	[Key.malEmptyReason]:
-		"Possible reasons: username does not exist, list is private, invalid Client ID, or network issue",
-	[Key.malFetchError]: "MyAnimeList Data Fetch Failed",
-	[Key.malFetchErrorDesc]:
-		"Failed to fetch data from MyAnimeList API during build. Please check the username and Client ID, and make sure the list is public.",
-	[Key.malNotConfigured]: "MyAnimeList Not Configured",
-	[Key.malNotConfiguredDesc]:
-		"Please configure your MyAnimeList username and Client ID in src/config/siteConfig.ts. The list must be public.",
-	[Key.malLastUpdated]: "Data updated at",
-	[Key.malSeasonWinter]: "Winter",
-	[Key.malSeasonSpring]: "Spring",
-	[Key.malSeasonSummer]: "Summer",
-	[Key.malSeasonFall]: "Fall",
+	// Moments
+	[Key.moments]: "Moments",
+	[Key.recentMoments]: "Recent Moments",
+	[Key.recentLife]: "Recent Records",
+	[Key.recentItems]: "Recent Updates",
+
+	// Changelog
+	[Key.changelog]: "Changelog",
+	[Key.changelogTitle]: "Changelog",
+	[Key.changelogSubtitle]:
+		"Tracking feature iterations, bug fixes, and important changes",
+	[Key.changelogAll]: "All",
+	[Key.changelogFeature]: "Feature",
+	[Key.changelogImprovement]: "Improvement",
+	[Key.changelogFix]: "Fix",
+	[Key.changelogRemoval]: "Removal",
+	[Key.changelogNoData]: "No changelog entries yet",
+
+	// Bookshelf Page
+	[Key.books]: "Bookshelf",
+	[Key.booksTitle]: "My Bookshelf",
+	[Key.booksSubtitle]:
+		"Tracking my reading journey, sharing the beauty of books.",
+	[Key.bookshelfReading]: "Reading",
+	[Key.bookshelfRead]: "Read",
+	[Key.bookshelfWantRead]: "Want to Read",
+	[Key.booksNoData]: "No books on the shelf yet",
+
+	// Movies & Music Page
+	[Key.moviesGames]: "Movies & Music",
+	[Key.moviesGamesTitle]: "Movies & Music",
+	[Key.moviesGamesSubtitle]: "Movies, shows, and music I've enjoyed.",
+	[Key.moviesGamesTabAll]: "All",
+	[Key.moviesGamesTabMovie]: "Movies",
+	[Key.moviesGamesTabTV]: "TV Shows",
+	[Key.moviesGamesTabAnime]: "Anime",
+	[Key.moviesGamesTabDocumentary]: "Documentaries",
+	[Key.moviesGamesTabGame]: "Games",
+	[Key.moviesGamesTabMusic]: "Music",
+	[Key.moviesGamesNoData]: "No content yet",
+
+	// Games Page (platform game library)
+	[Key.games]: "Games",
+	[Key.gamesTitle]: "My Game Library",
+	[Key.gamesSubtitle]:
+		"Games I've played across platforms, with playtime and achievement progress.",
+	[Key.gamesTabAll]: "All",
+	[Key.gamesPlaytime]: "Playtime",
+	[Key.gamesLastPlayed]: "Last played",
+	[Key.gamesAchievements]: "Achievements",
+	[Key.gamesNoData]: "No game data yet",
+	[Key.gamesStoreLink]: "Store link",
+
+	// Music Page
+	[Key.musicPage]: "Music",
+	[Key.musicPageTitle]: "My Music",
+	[Key.musicPageSubtitle]: "Music I love, and stories in the melodies.",
+	[Key.musicPageNoData]: "No music entries yet",
+	// Music genre categories
+	[Key.musicGenreAll]: "All",
+	[Key.musicGenreRnBSoul]: "R&B/Soul",
+	[Key.musicGenreHipHopRap]: "Hip-Hop/Rap",
+	[Key.musicGenrePop]: "Pop",
+	[Key.musicGenreIndieAlt]: "Indie/Alternative",
+	[Key.musicGenreLatinWorld]: "Latin/World",
+	[Key.musicGenreFolk]: "Folk",
+	[Key.musicGenreRock]: "Rock",
+	[Key.musicGenreElectronic]: "Electronic",
+	[Key.musicGenreSoundtrack]: "Soundtrack",
 
 	// Pagination
 	[Key.paginationFirst]: "First",

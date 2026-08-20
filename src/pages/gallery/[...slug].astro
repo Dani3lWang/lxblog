@@ -1,0 +1,25 @@
+---
+import { galleryConfig } from "@/config";
+
+export function getStaticPaths() {
+	return galleryConfig.albums.map((album) => ({
+		params: { slug: album.id },
+	}));
+}
+
+const { slug } = Astro.params;
+const target = `/moments/gallery/${slug}/`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="refresh" content={`0; url=${target}`} />
+		<link rel="canonical" href={target} />
+		<title>页面已移动</title>
+	</head>
+	<body>
+		<p>此相册已迁移至 <a href={target}>{target}</a>，正在跳转…</p>
+	</body>
+</html>

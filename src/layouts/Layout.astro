@@ -644,6 +644,16 @@ const siteLang = lang.replace("_", "-");
 
     <!-- Tab 代码块交互 -->
     <CodeGroupManager />
+
+    <!-- 页面级 tab 交互全局初始化（mg-tabs / games-tabs / music-cards） -->
+    <!-- Swup 导航后新页面 inline script 不执行，统一在此注册监听 -->
+    <script>
+      import { initPageTabs } from "@/utils/page-tabs";
+
+      document.addEventListener("DOMContentLoaded", initPageTabs);
+      document.addEventListener("astro:page-load", initPageTabs);
+      document.addEventListener("swup:contentReplaced", initPageTabs);
+    </script>
   </body>
 </html>
 

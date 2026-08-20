@@ -11,30 +11,50 @@ export type {
 	BooknavGroup,
 	BooknavItem,
 	BooknavPageConfig,
+	CalendarConfig,
 	CommentConfig,
 	CoverImageConfig,
 	DisplaySettingsConfig,
 	DynamicConfig,
 	ExpressiveCodeConfig,
+	Favicon,
 	FooterConfig,
+	FriendLink,
+	FriendsPageConfig,
 	GalleryAlbum,
 	GalleryConfig,
+	GamePlatformId,
+	GamesConfig,
+	ImageFormat,
+	LIGHT_DARK_MODE,
 	LicenseConfig,
+	Live2DWidgetConfig,
 	MermaidConfig,
+	MobileBottomComponentConfig,
 	MusicPlayerConfig,
 	NavBarConfig,
+	NavBarLink,
+	NavBarSearchConfig,
 	PlantUMLConfig,
+	PluginCollapsibleConfig,
+	PluginLanguageBadgeConfig,
 	ProfileConfig,
+	ResponsiveImageLayout,
 	SakuraConfig,
 	SidebarLayoutConfig,
 	SiteConfig,
+	SiteInfoConfig,
+	SpineModelConfig,
 	SponsorConfig,
 	SponsorItem,
 	SponsorMethod,
+	WALLPAPER_MODE,
 	WidgetComponentConfig,
 	WidgetComponentType,
 	WidgetSpecificConfig,
 } from "../types/config";
+// NavBarSearchMethod 是 enum(值 + 类型),走值导出
+export { NavBarSearchMethod } from "../types/config";
 export type {
 	BuiltinFontProvider,
 	CustomFontProvider,
@@ -57,10 +77,12 @@ export { fontConfig, fontsList } from "./fontConfig"; // 字体配置
 export { footerConfig } from "./footerConfig"; // 页脚配置
 export { friendsPageConfig, getEnabledFriends } from "./friendsConfig"; // 友链配置
 export { galleryConfig } from "./galleryConfig"; // 相册配置
+export { gamesConfig } from "./gamesConfig"; // 游戏页配置
 export { licenseConfig } from "./licenseConfig"; // 许可证配置
 // 组件配置
 export { mermaidConfig } from "./mermaidConfig"; // Mermaid 图表配置
 export { musicPlayerConfig } from "./musicConfig"; // 音乐播放器配置
+export { musicGenreCategories, musicGenreIds } from "./musicGenreConfig"; // 音乐大类别分类标准
 export { navBarConfig, navBarSearchConfig } from "./navBarConfig"; // 导航栏配置与搜索配置
 export { live2dWidgetConfig, spineModelConfig } from "./pioConfig"; // 看板娘配置
 export { plantumlConfig } from "./plantumlConfig"; // PlantUML 图表配置
@@ -69,4 +91,4 @@ export { profileConfig } from "./profileConfig"; // 用户资料配置
 export { sidebarLayoutConfig } from "./sidebarConfig"; // 侧边栏布局配置
 // 核心配置
 export { siteConfig } from "./siteConfig"; // 站点基础配置
-export { sponsorConfig } from "./sponsorConfig"; // 打赏配置
+export { sponsorConfig } from "./sponsorConfig"; // 赞助配置

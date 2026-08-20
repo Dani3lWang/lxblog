@@ -1,0 +1,152 @@
+---
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+import ImageWrapper from "@/components/common/ImageWrapper.astro";
+import LifeNavTabs from "@/components/pages/life/LifeNavTabs.astro";
+import { galleryConfig, profileConfig, siteConfig } from "@/config";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { formatDynamicDate } from "@/utils/date-utils";
+import {
+	dynamicAnchor,
+	dynamicPlainText,
+	dynamicSlug,
+} from "@/utils/dynamic-utils";
+import { url } from "@/utils/url-utils";
+
+const dynamics = await getCollection("dynamic");
+const sortedDynamics = dynamics.sort(
+	(a, b) => b.data.published.getTime() - a.data.published.getTime(),
+);
+const latestDynamics = sortedDynamics.slice(0, 3);
+
+const albums = galleryConfig.albums.slice(0, 3);
+
+const navItems = [
+	{
+		name: "动态",
+		description: "记录生活点滴",
+		url: "/dynamic/",
+		icon: "material-symbols:dynamic-feed",
+		color: "#06b6d4",
+		count: sortedDynamics.length,
+		enabled: siteConfig.pages.dynamic,
+	},
+	{
+		name: "相册",
+		description: "照片与回忆",
+		url: "/moments/gallery/",
+		icon: "material-symbols:photo-library-outline-rounded",
+		color: "#ec4899",
+		count: albums.length,
+		enabled: siteConfig.pages.gallery,
+	},
+	{
+		name: "留言板",
+		description: "留下你的想法",
+		url: "/moments/guestbook/",
+		icon: "material-symbols:menu-book",
+		color: "#10b981",
+		count: 0,
+		enabled: siteConfig.pages.guestbook,
+	},
+].filter((item) => item.enabled);
+---
+
+<MainGridLayout title="动态" description="生活动态、相册与留言板">
+	<LifeNavTabs mode="moments" />
+
+	<div class="moments-overview flex w-full flex-col gap-6">
+		<!-- 标题区 -->
+		<section class="hero-section card-base relative overflow-hidden rounded-[var(--radius-large)] p-6 md:p-8">
+			<div class="absolute -right-8 -top-8 h-48 w-48 rounded-full bg-[var(--primary)]/5 blur-3xl"></div>
+			<div class="absolute -bottom-8 -left-8 h-64 w-64 rounded-full bg-[var(--primary)]/5 blur-3xl"></div>
+			<div class="relative">
+				<h1 class="text-3xl font-bold text-[var(--text-color)] mb-2">
+					☕ 动态
+				</h1>
+				<p class="max-w-2xl text-sm text-[var(--content-meta)] md:text-base">
+					记录生活中的点点滴滴，分享瞬间与回忆。
+				</p>
+			</div>
+		</section>
+
+		<!-- 子模块入口 -->
+		<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+			{navItems.map((item) => (
+				<a
+					href={url(item.url)}
+					class="moment-nav-card group card-base rounded-[var(--radius-large)] p-6 transition-colors hover:border-[var(--primary)]/40 hover:bg-[var(--btn-plain-bg-hover)]"
+				>
+					<div class="flex items-start justify-between mb-4">
+						<div
+							class="h-12 w-12 rounded-[var(--radius-large)] flex items-center justify-center text-2xl"
+							style={`background: color-mix(in srgb, ${item.color} 14%, transparent); color: ${item.color}`}
+						>
+							<Icon name={item.icon} />
+						</div>
+						<span class="text-2xl font-bold text-[var(--primary)]">{item.count}</span>
+					</div>
+					<h3 class="text-lg font-bold text-[var(--text-color)] group-hover:text-[var(--primary)] transition-colors">
+						{item.name}
+					</h3>
+					<p class="text-sm text-[var(--content-meta)]">{item.description}</p>
+				</a>
+			))}
+		</section>
+
+		<!-- 最新动态 -->
+		{latestDynamics.length > 0 && (
+			<section class="card-base rounded-[var(--radius-large)] p-6">
+				<div class="flex items-center justify-between mb-4">
+					<h2 class="text-xl font-bold text-[var(--text-color)]">最新动态</h2>
+					<a href={url("/dynamic/")} class="text-sm text-[var(--primary)] hover:underline">
+						查看全部
+					</a>
+				</div>
+				<div class="space-y-3.5">
+					{latestDynamics.map((dynamic) => (
+						<a
+							href={url(`/dynamic/#${dynamicAnchor(dynamicSlug(dynamic.id))}`)}
+							class="dynamic-preview group block rounded-[var(--radius-large)] border border-[var(--line-divider)] p-4 transition-colors hover:border-[var(--primary)]/40 hover:bg-[var(--btn-plain-bg-hover)]"
+						>
+							<div class="flex items-center gap-3">
+								<div class="h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-[var(--primary)]">
+									<ImageWrapper
+										src={profileConfig.avatar || ""}
+										alt={profileConfig.name}
+										widths={[88]}
+										sizes="44px"
+										loading="lazy"
+										fadeIn={false}
+									/>
+								</div>
+								<div class="min-w-0 flex-1">
+									<div class="flex items-baseline justify-between gap-2">
+										<strong class="truncate text-sm font-semibold text-[var(--text-color)] transition-colors group-hover:text-[var(--primary)]">
+											{profileConfig.name}
+										</strong>
+										<time
+											datetime={dynamic.data.published.toISOString()}
+											class="shrink-0 text-xs text-[var(--content-meta)]"
+										>
+											{formatDynamicDate(dynamic.data.published)}
+										</time>
+									</div>
+									<p class="mt-1 line-clamp-2 text-sm leading-[1.6] text-[var(--text-color)]">
+										{dynamicPlainText(dynamic).slice(0, 120) || "（无内容）"}
+									</p>
+								</div>
+							</div>
+						</a>
+					))}
+				</div>
+			</section>
+		)}
+	</div>
+</MainGridLayout>
+
+<style>
+	.moment-nav-card {
+		border: 1px solid var(--line-divider);
+	}
+</style>

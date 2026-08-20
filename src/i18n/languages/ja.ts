@@ -215,72 +215,77 @@ export const ja: Translation = {
 	[Key.vndbLengthLong]: "長い",
 	[Key.vndbLengthVeryLong]: "非常に長い",
 
-	// 追番 - Bilibili
-	[Key.bilibili]: "Bilibili",
-	[Key.bilibiliSubtitle]: "私のBilibili追番・追劇リスト",
-	[Key.bilibiliNotConfigured]: "Bilibiliデータソースが未設定",
-	[Key.bilibiliNotConfiguredDesc]:
-		"src/config/siteConfig.ts で bilibili.uid を設定してください",
 
-	// 追番 - 共通コンポーネント
-	[Key.animeTotal]: "合計",
-	[Key.animeAverageRating]: "平均評価",
-	[Key.animeSearch]: "アニメを検索...",
-	[Key.animeAllTypes]: "すべて",
-	[Key.animeTV]: "TV アニメ",
-	[Key.animeMovie]: "映画",
-	[Key.animeRatingDesc]: "評価が高い順",
-	[Key.animeRatingAsc]: "評価が低い順",
-	[Key.animeDateDesc]: "新しい順",
-	[Key.animeDateAsc]: "古い順",
-	[Key.animeNoResults]: "一致するアニメが見つかりません",
-	[Key.animeLastUpdated]: "データ更新",
-	[Key.animeEpStatus]: "進捗",
-	[Key.animeViewDetails]: "詳細を見る",
-	[Key.animeBilibiliAvg]: "Bilibili 平均",
-	[Key.animeNoOverview]: "あらすじなし",
-	[Key.animeClose]: "閉じる",
-	[Key.animeSynopsis]: "あらすじ",
-	[Key.animeWatchNow]: "今すぐ視聴",
-	[Key.animeAllWithCount]: "すべて ({count})",
-	[Key.animeTVWithCount]: "TV ({count})",
-	[Key.animeMovieWithCount]: "映画 ({count})",
-	[Key.animeTypeAnime]: "アニメ",
-	[Key.animeTypeMovie]: "映画",
-	[Key.animeTypeDocumentary]: "ドキュメンタリー",
-	[Key.animeTypeChinese]: "中国アニメ",
-	[Key.animeTypeDrama]: "ドラマ",
-	[Key.animeTypeConcert]: "コンサート",
 
-	// MyAnimeList
-	[Key.mal]: "MyAnimeList",
-	[Key.malSubtitle]: "私の MyAnimeList アニメ・マンガリスト",
-	[Key.malCategoryAnime]: "アニメ",
-	[Key.malCategoryManga]: "マンガ",
-	[Key.malFilterAll]: "すべて",
-	[Key.malStatusWatching]: "視聴中",
-	[Key.malStatusReading]: "読んでいる",
-	[Key.malStatusCompleted]: "見た",
-	[Key.malStatusOnHold]: "保留",
-	[Key.malStatusDropped]: "中断",
-	[Key.malStatusPlanToWatch]: "見たい",
-	[Key.malStatusPlanToRead]: "読みたい",
-	[Key.malNoData]: "データなし",
-	[Key.malNoDataDescription]: "このカテゴリに項目がありません",
-	[Key.malEmpty]: "データなし",
-	[Key.malEmptyReason]:
-		"考えられる理由：ユーザー名が存在しない、リストが非公開、Client ID が無効、またはネットワーク接続の問題",
-	[Key.malFetchError]: "MyAnimeList データ取得失敗",
-	[Key.malFetchErrorDesc]:
-		"ビルド時に MyAnimeList API からのデータ取得に失敗しました。ユーザー名と Client ID を確認し、リストが公開であることを確認してください。",
-	[Key.malNotConfigured]: "MyAnimeList が未設定です",
-	[Key.malNotConfiguredDesc]:
-		"src/config/siteConfig.ts で MyAnimeList のユーザー名と Client ID を設定してください（リストは公開にする必要があります）",
-	[Key.malLastUpdated]: "データ更新",
-	[Key.malSeasonWinter]: "冬",
-	[Key.malSeasonSpring]: "春",
-	[Key.malSeasonSummer]: "夏",
-	[Key.malSeasonFall]: "秋",
+	// 動態
+	[Key.moments]: "動態",
+	[Key.recentMoments]: "最新の動態",
+	[Key.recentLife]: "最新の記録",
+	[Key.recentItems]: "最新の更新",
+
+	// 更新ログ
+	[Key.changelog]: "更新ログ",
+	[Key.changelogTitle]: "更新ログ",
+	[Key.changelogSubtitle]:
+		"ブログプロジェクトの機能追加、バグ修正、重要な変更を記録",
+	[Key.changelogAll]: "すべて",
+	[Key.changelogFeature]: "新機能",
+	[Key.changelogImprovement]: "改善",
+	[Key.changelogFix]: "修正",
+	[Key.changelogRemoval]: "削除",
+	[Key.changelogNoData]: "更新記録がありません",
+
+	// 本棚ページ
+	[Key.books]: "本棚",
+	[Key.booksTitle]: "私の本棚",
+	[Key.booksSubtitle]: "読書の記録、本の素晴らしさを共有。",
+	[Key.bookshelfReading]: "読書中",
+	[Key.bookshelfRead]: "読了",
+	[Key.bookshelfWantRead]: "読みたい",
+	[Key.booksNoData]: "本棚に本がありません",
+
+	// 映画・ゲームページ
+	// 映画・音楽ページ
+	[Key.moviesGames]: "映画・音楽",
+	[Key.moviesGamesTitle]: "映画・音楽",
+	[Key.moviesGamesSubtitle]: "観た映画や聴いた音楽の記録。",
+	[Key.moviesGamesTabAll]: "全て",
+	[Key.moviesGamesTabMovie]: "映画",
+	[Key.moviesGamesTabTV]: "ドラマ",
+	[Key.moviesGamesTabAnime]: "アニメ",
+	[Key.moviesGamesTabDocumentary]: "ドキュメンタリー",
+	[Key.moviesGamesTabGame]: "ゲーム",
+	[Key.moviesGamesTabMusic]: "音楽",
+	[Key.moviesGamesNoData]: "コンテンツがありません",
+
+	// ゲームページ（プラットフォーム別ゲームライブラリ）
+	[Key.games]: "ゲーム",
+	[Key.gamesTitle]: "ゲームライブラリ",
+	[Key.gamesSubtitle]:
+		"各プラットフォームでプレイしたゲームと、プレイ時間・実績の記録。",
+	[Key.gamesTabAll]: "全て",
+	[Key.gamesPlaytime]: "プレイ時間",
+	[Key.gamesLastPlayed]: "最近プレイ",
+	[Key.gamesAchievements]: "実績",
+	[Key.gamesNoData]: "ゲームデータがありません",
+	[Key.gamesStoreLink]: "ストアリンク",
+
+	// 音楽ページ
+	[Key.musicPage]: "音楽",
+	[Key.musicPageTitle]: "私の音楽",
+	[Key.musicPageSubtitle]: "好きな音楽、メロディーの中の物語。",
+	[Key.musicPageNoData]: "音楽エントリがありません",
+	// 音楽ジャンル分類
+	[Key.musicGenreAll]: "すべて",
+	[Key.musicGenreRnBSoul]: "R&B/ソウル",
+	[Key.musicGenreHipHopRap]: "ヒップホップ/ラップ",
+	[Key.musicGenrePop]: "ポップ",
+	[Key.musicGenreIndieAlt]: "インディー/オルタナ",
+	[Key.musicGenreLatinWorld]: "ラテン/ワールド",
+	[Key.musicGenreFolk]: "フォーク",
+	[Key.musicGenreRock]: "ロック",
+	[Key.musicGenreElectronic]: "エレクトロニック",
+	[Key.musicGenreSoundtrack]: "サウンドトラック",
 
 	// ページネーション
 	[Key.paginationFirst]: "最初",

@@ -217,71 +217,79 @@ export const ru: Translation = {
 	[Key.vndbLengthVeryLong]: "Очень длинная",
 
 	// Отслеживание аниме - Bilibili
-	[Key.bilibili]: "Bilibili",
-	[Key.bilibiliSubtitle]: "Мой список Bilibili (аниме и сериалы)",
-	[Key.bilibiliNotConfigured]: "Источник данных Bilibili не настроен",
-	[Key.bilibiliNotConfiguredDesc]:
-		"Настройте bilibili.uid в src/config/siteConfig.ts",
 
 	// Отслеживание аниме - общие компоненты
-	[Key.animeTotal]: "Всего",
-	[Key.animeAverageRating]: "Средний рейтинг",
-	[Key.animeSearch]: "Поиск аниме...",
-	[Key.animeAllTypes]: "Все",
-	[Key.animeTV]: "TV Аниме",
-	[Key.animeMovie]: "Фильм",
-	[Key.animeRatingDesc]: "По рейтингу ↓",
-	[Key.animeRatingAsc]: "По рейтингу ↑",
-	[Key.animeDateDesc]: "Сначала новые",
-	[Key.animeDateAsc]: "Сначала старые",
-	[Key.animeNoResults]: "Аниме не найдено",
-	[Key.animeLastUpdated]: "Данные обновлены",
-	[Key.animeEpStatus]: "Прогресс",
-	[Key.animeViewDetails]: "Подробнее",
-	[Key.animeBilibiliAvg]: "Bilibili ср.",
-	[Key.animeNoOverview]: "Нет описания",
-	[Key.animeClose]: "Закрыть",
-	[Key.animeSynopsis]: "Описание",
-	[Key.animeWatchNow]: "Смотреть",
-	[Key.animeAllWithCount]: "Все ({count})",
-	[Key.animeTVWithCount]: "ТВ ({count})",
-	[Key.animeMovieWithCount]: "Фильм ({count})",
-	[Key.animeTypeAnime]: "Аниме",
-	[Key.animeTypeMovie]: "Фильм",
-	[Key.animeTypeDocumentary]: "Документальный",
-	[Key.animeTypeChinese]: "Китайское аниме",
-	[Key.animeTypeDrama]: "Сериал",
-	[Key.animeTypeConcert]: "Концерт",
 
-	// MyAnimeList
-	[Key.mal]: "MyAnimeList",
-	[Key.malSubtitle]: "Мои списки аниме и манги из MyAnimeList",
-	[Key.malCategoryAnime]: "Аниме",
-	[Key.malCategoryManga]: "Манга",
-	[Key.malFilterAll]: "Все",
-	[Key.malStatusWatching]: "Смотрю",
-	[Key.malStatusReading]: "Читаю",
-	[Key.malStatusCompleted]: "Просмотрено",
-	[Key.malStatusOnHold]: "Отложено",
-	[Key.malStatusDropped]: "Брошено",
-	[Key.malStatusPlanToWatch]: "Хочу посмотреть",
-	[Key.malStatusPlanToRead]: "Хочу прочитать",
-	[Key.malNoData]: "Нет данных",
-	[Key.malNoDataDescription]: "В этой категории нет элементов",
-	[Key.malEmpty]: "Нет данных",
-	[Key.malEmptyReason]:
-		"Возможные причины: имя пользователя не существует, список закрыт, неверный Client ID или проблема с сетью",
-	[Key.malFetchError]: "Ошибка загрузки данных MyAnimeList",
-	[Key.malFetchErrorDesc]:
-		"Не удалось загрузить данные из MyAnimeList API при сборке. Проверьте имя пользователя и Client ID, а также убедитесь, что список открыт.",
-	[Key.malNotConfigured]: "MyAnimeList не настроен",
-	[Key.malNotConfiguredDesc]:
-		"Укажите имя пользователя и Client ID MyAnimeList в src/config/siteConfig.ts (список должен быть открытым)",
-	[Key.malLastUpdated]: "Данные обновлены",
-	[Key.malSeasonWinter]: "Зима",
-	[Key.malSeasonSpring]: "Весна",
-	[Key.malSeasonSummer]: "Лето",
-	[Key.malSeasonFall]: "Осень",
+	// Моменты
+	[Key.moments]: "Моменты",
+	[Key.recentMoments]: "Последние моменты",
+	[Key.recentLife]: "Последние записи",
+	[Key.recentItems]: "Последние обновления",
+
+	// Журнал изменений
+	[Key.changelog]: "Журнал изменений",
+	[Key.changelogTitle]: "Журнал изменений",
+	[Key.changelogSubtitle]:
+		"Запись итераций функций, исправлений ошибок и важных изменений",
+	[Key.changelogAll]: "Все",
+	[Key.changelogFeature]: "Новая функция",
+	[Key.changelogImprovement]: "Улучшение",
+	[Key.changelogFix]: "Исправление",
+	[Key.changelogRemoval]: "Удаление",
+	[Key.changelogNoData]: "Записей в журнале пока нет",
+
+	// Книжная полка
+	[Key.books]: "Книжная полка",
+	[Key.booksTitle]: "Моя книжная полка",
+	[Key.booksSubtitle]: "Запись чтения, делюсь красотой книг.",
+	[Key.bookshelfReading]: "Читаю",
+	[Key.bookshelfRead]: "Прочитано",
+	[Key.bookshelfWantRead]: "Хочу прочитать",
+	[Key.booksNoData]: "На полке пока нет книг",
+
+	// Фильмы и игры
+	// Страница фильмов и музыки
+	[Key.moviesGames]: "Фильмы и музыка",
+	[Key.moviesGamesTitle]: "Фильмы и музыка",
+	[Key.moviesGamesSubtitle]:
+		"Фильмы, сериалы и музыка, которые мне понравились.",
+	[Key.moviesGamesTabAll]: "Все",
+	[Key.moviesGamesTabMovie]: "Фильмы",
+	[Key.moviesGamesTabTV]: "Сериалы",
+	[Key.moviesGamesTabAnime]: "Аниме",
+	[Key.moviesGamesTabDocumentary]: "Документальные",
+	[Key.moviesGamesTabGame]: "Игры",
+	[Key.moviesGamesTabMusic]: "Музыка",
+	[Key.moviesGamesNoData]: "Пока нет контента",
+
+	// Страница игр (библиотека по платформам)
+	[Key.games]: "Игры",
+	[Key.gamesTitle]: "Моя игровая библиотека",
+	[Key.gamesSubtitle]:
+		"Игры, в которые я играл на разных платформах: время и прогресс достижений.",
+	[Key.gamesTabAll]: "Все",
+	[Key.gamesPlaytime]: "Время в игре",
+	[Key.gamesLastPlayed]: "Последняя игра",
+	[Key.gamesAchievements]: "Достижения",
+	[Key.gamesNoData]: "Нет данных об играх",
+	[Key.gamesStoreLink]: "Магазин",
+
+	// Музыка
+	[Key.musicPage]: "Музыка",
+	[Key.musicPageTitle]: "Моя музыка",
+	[Key.musicPageSubtitle]: "Музыка, которую я люблю, истории в мелодиях.",
+	[Key.musicPageNoData]: "Пока нет музыкальных записей",
+	// Категории музыкальных жанров
+	[Key.musicGenreAll]: "Все",
+	[Key.musicGenreRnBSoul]: "R&B/Соул",
+	[Key.musicGenreHipHopRap]: "Хип-хоп/Рэп",
+	[Key.musicGenrePop]: "Поп",
+	[Key.musicGenreIndieAlt]: "Инди/Альтернатива",
+	[Key.musicGenreLatinWorld]: "Латино/Мир",
+	[Key.musicGenreFolk]: "Фолк",
+	[Key.musicGenreRock]: "Рок",
+	[Key.musicGenreElectronic]: "Электроника",
+	[Key.musicGenreSoundtrack]: "Саундтрек",
 
 	// Пагинация
 	[Key.paginationFirst]: "Первая",

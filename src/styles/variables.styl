@@ -27,11 +27,19 @@
   
   --deep-text: oklch(0.25 0.02 var(--hue))
   --title-active: oklch(0.6 0.1 var(--hue))
-  
+
   --line-divider: rgba(0, 0, 0, 0.08)
   --line-color: rgba(0, 0, 0, 0.1)
   --meta-divider: rgba(0, 0, 0, 0.2)
   --content-meta: rgba(0, 0, 0, 0.7)
+
+  /* 生活模块与动态页面补充变量 */
+  --text-color: var(--deep-text)
+  --bg-color: var(--page-bg)
+  --border: var(--line-divider)
+  --content-text: var(--deep-text)
+  --radius-base: var(--radius-lg)
+  --life-border: unquote('color-mix(in srgb, var(--line-divider) 86%, transparent)')
   
   --inline-code-bg: var(--btn-regular-bg)
   --inline-code-color: var(--btn-content)
@@ -109,7 +117,15 @@
   --line-color: rgba(255, 255, 255, 0.1)
   --meta-divider: rgba(255, 255, 255, 0.2)
   --content-meta: rgba(255, 255, 255, 0.6)
-  
+
+  /* 生活模块与动态页面补充变量 - 暗色主题 */
+  --text-color: rgba(255, 255, 255, 0.9)
+  --bg-color: var(--page-bg)
+  --border: var(--line-divider)
+  --content-text: rgba(255, 255, 255, 0.85)
+  --radius-base: var(--radius-lg)
+  --life-border: unquote('color-mix(in srgb, var(--line-divider) 86%, transparent)')
+
   --muted: oklch(0.25 0.015 var(--hue))
   --selection-bg: oklch(0.40 0.08 var(--hue))
   --codeblock-bg: oklch(0.17 0.015 var(--hue))

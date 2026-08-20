@@ -11,7 +11,7 @@ const pages = resolvePageToggles({
 	// ── 社交 (Social) ──────────────────────────────────
 
 	// 友链页面开关
-	friends: true,
+	friends: false,
 	// 留言板页面开关，需要配置评论系统
 	guestbook: true,
 
@@ -23,19 +23,36 @@ const pages = resolvePageToggles({
 	gallery: true,
 	// 书签导航页面开关
 	booknav: true,
-	// 哔哩哔哩追番页面开关
-	bilibili: false,
 	// 番组计划页面开关
 	bangumi: false,
 	// VNDB页面开关
 	vndb: false,
-	// MyAnimeList页面开关
-	mal: false,
+
+	// ── 记录 (Records) ──────────────────────────────────
+
+	// 说说/记录模块页面开关
+	moments: true,
+	// 书架页面开关
+	books: true,
+	// 影视和音乐页面开关
+	moviesGames: true,
+	// 游戏页面开关（平台游戏库：Steam/Switch/Xbox/Epic/PlayStation）
+	games: true,
+	// 音乐页面开关
+	musicPage: false,
+	// 更新日志页面开关
+	changelog: true,
+	// 笔记本页面开关
+	notebooks: true,
+	// 规划页面开关
+	routines: false,
+	// 足迹页面开关
+	places: false,
 
 	// ── 关于 (About) ──────────────────────────────────
 
 	// 打赏页面开关
-	sponsor: true,
+	sponsor: false,
 });
 
 export const siteConfig: SiteConfig = {
@@ -46,11 +63,10 @@ export const siteConfig: SiteConfig = {
 	subtitle: "Demo site",
 
 	// 站点 URL
-	site_url: "https://firefly.cuteleaf.cn",
+	site_url: "https://lovelongxin.me",
 
 	// 站点描述
-	description:
-		"Firefly 是一款基于 Astro 框架和 Fuwari 模板开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。",
+	description: "",
 
 	// 站点关键词
 	keywords: [
@@ -127,15 +143,14 @@ export const siteConfig: SiteConfig = {
 	},
 
 	// 站点开始日期，用于统计运行天数
-	siteStartDate: "2025-01-01",
+	siteStartDate: "2026-06-04",
 
 	// 站点时区（IANA 时区字符串），用于格式化bangumi、rss里的构建日期时间等等..
 	// 示例："Asia/Shanghai", "UTC", 如果为空，则按照构建服务器的时区进行时区转换
 	timezone: "Asia/Shanghai",
 
-	// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
-
-	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航
+	
+	// 分类导航栏开关，仅在首页、文章模块和关于模块显示
 	categoryBar: true,
 
 	// 分类导航栏按钮样式
@@ -237,12 +252,6 @@ export const siteConfig: SiteConfig = {
 		generateOgImages: false,
 	},
 
-	// ── Bilibili配置 ──────────────────────────────────
-	bilibili: {
-		// 你的 Bilibili 用户 UID
-		uid: "38932988",
-	},
-
 	// ── 番组计划bangumi配置 ──────────────────────────────────
 	bangumi: {
 		// Bangumi用户ID
@@ -285,20 +294,6 @@ export const siteConfig: SiteConfig = {
 		blurNsfw: true,
 	},
 
-	// ── MyAnimeList配置 ──────────────────────────────────
-	mal: {
-		// MyAnimeList 用户名（列表需为公开状态，私密列表无法读取）
-		username: "cuteleaf",
-		// MyAnimeList Client ID，在 https://myanimelist.net/apiconfig 注册免费应用后获取
-		clientId: "	0ef34371450f9c6c809deaadec6aa8f3",
-		// MAL API 地址
-		apiUrl: "https://api.myanimelist.net/v2",
-		// 动画条目详情页地址，末尾需要带 /
-		animeBaseUrl: "https://myanimelist.net/anime/",
-		// 漫画条目详情页地址，末尾需要带 /
-		mangaBaseUrl: "https://myanimelist.net/manga/",
-	},
-
 	// ── 图像优化配置 ──────────────────────────────────
 	// 图像优化压缩只保留avif或webp
 	// 响应式图像是为在不同设备上提高性能而调整的图像。这些图像可以调整大小以适应其容器，并且可以根据访问者的屏幕尺寸和分辨率以不同的大小提供。
@@ -313,12 +308,9 @@ export const siteConfig: SiteConfig = {
 		// 图片压缩质量 (1-100)，值越低体积越小但质量越差，推荐 70-85
 		quality: 85,
 		// 为特定域名的图片添加 referrerpolicy="no-referrer" 属性
-		// 支持通配符 *，例如：["i0.hdslb.com", "*.bilibili.com"]
+		// 支持通配符 *，例如：["*.example.com"]
 		// 可解决指定域名图片加载时的 403 问题（如防盗链图片）
 		noReferrerDomains: [
-			"*.hdslb.com",
-			"*.bilibili.com",
-			"*.myanimelist.net",
 			"*.vndb.org",
 		],
 	},

@@ -1,0 +1,150 @@
+---
+interface Props {
+	title: string;
+	current: number;
+	previous?: number;
+	unit?: string;
+	format?: "number" | "percent" | "duration";
+	trendLabel?: string;
+}
+
+const {
+	title,
+	current,
+	previous,
+	unit = "",
+	format = "number",
+	trendLabel,
+} = Astro.props;
+
+const formatValue = (val: number) => {
+	switch (format) {
+		case "percent":
+			return val.toFixed(1) + "%";
+		case "duration":
+			return val.toFixed(1) + unit;
+		default:
+			return val.toLocaleString() + unit;
+	}
+};
+
+const change = previous !== undefined ? current - previous : 0;
+const changePercent =
+	previous !== undefined && previous !== 0
+		? ((change / previous) * 100).toFixed(1)
+		: null;
+const isPositive = change > 0;
+const isNegative = change < 0;
+---
+
+<div class="compare-card">
+	<div class="compare-header">
+		<span class="compare-title">{title}</span>
+		{trendLabel && <span class="trend-badge">{trendLabel}</span>}
+	</div>
+	<div class="compare-main">
+		<span class="compare-current">{formatValue(current)}</span>
+		{previous !== undefined && (
+			<div
+				class:list={["compare-change", isPositive && "up", isNegative && "down"]}
+			>
+				{isPositive && "↑"}
+				{isNegative && "↓"}
+				{changePercent !== null ? (
+					<span>{Math.abs(parseFloat(changePercent))}%</span>
+				) : (
+					<span>{formatValue(Math.abs(change))}</span>
+				)}
+				<span class="change-label">vs 上期</span>
+			</div>
+		)}
+	</div>
+	{previous !== undefined && (
+		<div class="compare-previous">上期: {formatValue(previous)}</div>
+	)}
+</div>
+
+<style>
+	.compare-card {
+		padding: 1rem;
+		border: 1px solid var(--life-border);
+		border-radius: var(--radius-large);
+		background: var(--card-bg);
+		transition: all 0.2s ease;
+	}
+
+	.compare-card:hover {
+		border-color: var(--primary);
+		transform: translateY(-2px);
+	}
+
+	.compare-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.5rem;
+	}
+
+	.compare-title {
+		font-size: 0.75rem;
+		color: var(--content-meta);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.trend-badge {
+		font-size: 0.65rem;
+		padding: 0.2rem 0.5rem;
+		background: color-mix(in srgb, var(--primary) 15%, transparent);
+		color: var(--primary);
+		border-radius: 9999px;
+		font-weight: 600;
+	}
+
+	.compare-main {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.compare-current {
+		font-size: 1.75rem;
+		font-weight: 700;
+		color: var(--text-color);
+		letter-spacing: -0.02em;
+	}
+
+	.compare-change {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		padding: 0.2rem 0.5rem;
+		border-radius: 0.375rem;
+	}
+
+	.compare-change.up {
+		color: #22c55e;
+		background: color-mix(in srgb, #22c55e 12%, transparent);
+	}
+
+	.compare-change.down {
+		color: #ef4444;
+		background: color-mix(in srgb, #ef4444 12%, transparent);
+	}
+
+	.change-label {
+		font-size: 0.7rem;
+		font-weight: 400;
+		opacity: 0.8;
+	}
+
+	.compare-previous {
+		margin-top: 0.5rem;
+		font-size: 0.7rem;
+		color: var(--content-meta);
+		opacity: 0.7;
+	}
+</style>

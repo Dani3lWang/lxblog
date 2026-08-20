@@ -85,10 +85,17 @@ export type SiteConfig = {
 		guestbook: boolean; // 留言板页面开关
 		bangumi: boolean;
 		vndb: boolean;
-		mal: boolean; // MyAnimeList 页面开关
 		gallery: boolean; // 相册页面开关
-		bilibili: boolean; // 哔哩哔哩追番页面开关
 		dynamic: boolean; // 动态页面开关
+		moments: boolean; // 动态页面开关
+		books: boolean; // 书架页面开关
+		moviesGames: boolean; // 影视和音乐页面开关
+		games: boolean; // 游戏页面开关（平台游戏库）
+		musicPage: boolean; // 音乐页面开关
+		changelog: boolean; // 更新日志页面开关
+		notebooks: boolean; // 笔记本页面开关
+		routines: boolean; // 规划页面开关
+		places: boolean; // 足迹页面开关
 	};
 
 	// 分类导航栏开关
@@ -186,20 +193,6 @@ export type SiteConfig = {
 		blurNsfw?: boolean; // 对Nsfw的游戏封面模糊化，默认为true
 	};
 
-	// MyAnimeList 配置
-	mal?: {
-		username?: string; // MyAnimeList 用户名，列表需为公开状态
-		clientId?: string; // MyAnimeList Client ID，从 https://myanimelist.net/apiconfig 注册免费应用后获取
-		apiUrl?: string; // MAL API 地址
-		animeBaseUrl?: string; // 动画条目详情页地址，末尾需要带 /
-		mangaBaseUrl?: string; // 漫画条目详情页地址，末尾需要带 /
-	};
-
-	// Bilibili 配置
-	bilibili?: {
-		uid?: string; // Bilibili 用户 UID
-	};
-
 	// 分页配置
 	pagination: {
 		postsPerPage: number; // 每页显示的文章数量
@@ -222,7 +215,7 @@ export type SiteConfig = {
 		/**
 		 * 为特定域名的图片添加 referrerpolicy="no-referrer" 属性
 		 * 开启后可解决指定域名图片加载时的 403 问题（如防盗链图片）
-		 * 示例：["i0.hdslb.com", "*.bilibili.com"] 支持通配符 *
+		 * 示例：["*.example.com"] 支持通配符 *
 		 * 仅影响匹配域名的图片标签，不影响其他链接的 referrer 行为
 		 */
 		noReferrerDomains?: string[];

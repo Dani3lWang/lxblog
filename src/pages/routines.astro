@@ -1,0 +1,245 @@
+---
+// @ts-nocheck
+import { getCollection, render } from "astro:content";
+import { Icon } from "astro-icon/components";
+import LifeNavTabs from "@/components/pages/life/LifeNavTabs.astro";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { url } from "@/utils/url-utils";
+
+const routinesEntries = await getCollection("routines");
+
+// 过滤掉 README 文件
+const filteredEntries = routinesEntries.filter(
+	(entry) => !entry.id.toLowerCase().includes("readme"),
+);
+
+// 按更新时间排序（最新的在前），没有更新时间的排最后
+const sortedEntries = [...filteredEntries].sort((a, b) => {
+	const aTime = a.data.updatedAt?.getTime() || 0;
+	const bTime = b.data.updatedAt?.getTime() || 0;
+	return bTime - aTime;
+});
+
+// 获取最后更新时间（最新更新的那条）
+const lastUpdated = sortedEntries.find((e) => e.data.updatedAt)?.data.updatedAt;
+
+// 渲染每个条目的正文内容
+const entriesWithContent = await Promise.all(
+	sortedEntries.map(async (entry) => {
+		const { Content } = await render(entry);
+		return {
+			...entry,
+			Content,
+			name: entry.data.name || "未命名",
+			time: entry.data.time || "",
+			description: entry.data.description || "",
+			icon: entry.data.icon || "📋",
+			color: entry.data.color || "var(--primary)",
+		};
+	}),
+);
+
+// 统计
+const totalEntries = entriesWithContent.length;
+---
+
+<MainGridLayout title="日常规划" description="我的规划与思考">
+	<div class="routines-page flex w-full flex-col gap-5">
+		<!-- 导航栏 -->
+		<LifeNavTabs mode="records" />
+		<!-- 标题区 -->
+		<section class="hero-section card-base relative overflow-hidden rounded-[var(--radius-large)] p-6 md:p-8">
+			<div class="absolute -right-8 -top-8 h-48 w-48 rounded-full bg-[var(--primary)]/5 blur-3xl"></div>
+			<div class="absolute -bottom-8 -left-8 h-64 w-64 rounded-full bg-emerald-500/5 blur-3xl"></div>
+			<div class="relative">
+				<h1 data-pagefind-meta="title" data-pagefind-weight="10" class="">
+					📋 日常规划
+				</h1>
+				<p class="max-w-2xl text-sm text-[var(--content-meta)] md:text-base">
+					记录和规划生活中的各项事务，包括习惯养成、目标设定、行动方案等。
+				</p>
+			</div>
+
+			<!-- 统计 -->
+			<div class="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3">
+				<div class="stat-card">
+					<div class="text-xs text-[var(--content-meta)]">规划数量</div>
+					<div class="mt-1 text-2xl font-bold text-[var(--primary)]">{totalEntries}</div>
+					<div class="mt-1 text-xs text-[var(--content-meta)]">篇</div>
+				</div>
+				<div class="stat-card">
+					<div class="text-xs text-[var(--content-meta)]">最后更新</div>
+					<div class="mt-1 text-lg font-bold text-emerald-500">
+						{lastUpdated?.toLocaleDateString("zh-CN") || "暂无"}
+					</div>
+					<div class="mt-1 text-xs text-[var(--content-meta)]">最近</div>
+				</div>
+				<div class="stat-card md:col-span-1 col-span-2">
+					<div class="text-xs text-[var(--content-meta)]">说明</div>
+					<div class="mt-1 text-sm font-medium text-[var(--text-color)]">记录和规划生活中的各项事务</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 规划内容列表 -->
+		<section data-pagefind-body class="card-base rounded-[var(--radius-large)] p-6">
+			<h2 class="mb-6 flex items-center gap-2 text-xl font-bold text-[var(--text-color)]">
+				<span>📝</span> 规划内容
+			</h2>
+
+			{totalEntries === 0 ? (
+				<div class="rounded-xl border border-[var(--line-divider)] bg-[var(--card-bg)] p-8 text-center">
+					<div class="text-5xl mb-4">📋</div>
+					<p class="text-[var(--content-meta)]">还没有日常规划</p>
+				</div>
+			) : (
+				<div class="space-y-6">
+					{entriesWithContent.map((entry, index) => (
+						<article class="routine-article group rounded-xl border border-[var(--line-divider)] bg-[var(--card-bg)] p-6 transition-all hover:border-[var(--primary)]/30 hover:shadow-lg hover:shadow-[var(--primary)]/5">
+							<!-- 文章头部 -->
+							<header class="mb-4 flex items-start gap-4">
+								<div 
+									class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl transition-transform group-hover:scale-110"
+									style={`background: color-mix(in srgb, ${entry.color} 15%, transparent);`}
+								>
+									{entry.icon}
+								</div>
+								<div class="flex-1 min-w-0">
+									<div class="flex flex-wrap items-center gap-2">
+										<h3 class="text-xl font-bold text-[var(--text-color)] group-hover:text-[var(--primary)]">
+											{entry.name}
+										</h3>
+										{entry.time && (
+											<span 
+												class="shrink-0 rounded-full px-3 py-1 text-xs font-medium"
+												style={`background: color-mix(in srgb, ${entry.color} 15%, transparent); color: ${entry.color};`}
+											>
+												{entry.time}
+											</span>
+										)}
+									</div>
+									{entry.description && (
+										<p class="mt-1 text-sm text-[var(--content-meta)]">
+											{entry.description}
+										</p>
+									)}
+									<div class="mt-2 flex items-center gap-3 text-xs text-[var(--content-meta)]">
+										<span>#{index + 1}</span>
+										{entry.data.updatedAt && (
+											<span>更新于 {entry.data.updatedAt.toLocaleDateString("zh-CN")}</span>
+										)}
+									</div>
+								</div>
+							</header>
+
+							<!-- 文章正文 -->
+							<div class="routine-content prose prose-sm max-w-none dark:prose-invert">
+								<entry.Content />
+							</div>
+						</article>
+					))}
+				</div>
+			)}
+		</section>
+
+	</div>
+</MainGridLayout>
+
+<style>
+	.routines-page {
+		--routines-border: color-mix(in srgb, var(--line-divider) 86%, transparent);
+	}
+
+	.stat-card {
+		border: 1px solid var(--routines-border);
+		background: linear-gradient(140deg, color-mix(in srgb, var(--primary) 9%, transparent) 0%, transparent 45%), var(--card-bg);
+		padding: 1rem;
+		border-radius: var(--radius-base);
+	}
+
+	.stat-card > div:first-child {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.02em;
+		opacity: 0.9;
+	}
+
+	.routine-article {
+		transition: all 0.25s ease;
+	}
+
+	/* 正文内容样式 */
+	.routine-content {
+		color: var(--text-color);
+		line-height: 1.8;
+	}
+
+	.routine-content :global(h1),
+	.routine-content :global(h2),
+	.routine-content :global(h3) {
+		color: var(--text-color);
+		font-weight: 600;
+		margin-top: 1.5em;
+		margin-bottom: 0.5em;
+	}
+
+	.routine-content :global(h1) { font-size: 1.25rem; }
+	.routine-content :global(h2) { font-size: 1.125rem; }
+	.routine-content :global(h3) { font-size: 1rem; }
+
+	.routine-content :global(p) {
+		margin-bottom: 1em;
+	}
+
+	.routine-content :global(ul),
+	.routine-content :global(ol) {
+		padding-left: 1.5em;
+		margin-bottom: 1em;
+	}
+
+	.routine-content :global(li) {
+		margin-bottom: 0.5em;
+	}
+
+	.routine-content :global(strong) {
+		color: var(--primary);
+		font-weight: 600;
+	}
+
+	.routine-content :global(code) {
+		background: var(--btn-regular-bg);
+		padding: 0.125em 0.375em;
+		border-radius: 0.25rem;
+		font-size: 0.875em;
+	}
+
+	.routine-content :global(blockquote) {
+		border-left: 3px solid var(--primary);
+		padding-left: 1em;
+		margin-left: 0;
+		color: var(--content-meta);
+		font-style: italic;
+	}
+
+	.routine-content :global(hr) {
+		border: none;
+		border-top: 1px solid var(--line-divider);
+		margin: 1.5em 0;
+	}
+
+	:global(html.dark) .stat-card {
+		background: linear-gradient(140deg, color-mix(in srgb, var(--primary) 12%, transparent) 0%, transparent 46%), color-mix(in srgb, var(--card-bg) 84%, #000);
+	}
+
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+
+	@media (max-width: 640px) {
+		.stat-card {
+			padding: 0.75rem;
+		}
+	}
+
+</style>

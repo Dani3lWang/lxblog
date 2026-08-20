@@ -1,0 +1,187 @@
+2026-07-06T08:31:52.964Z	Initializing build environment...
+2026-07-06T08:31:57.542Z	Success: Finished initializing build environment
+2026-07-06T08:31:58.326Z	Cloning repository...
+2026-07-06T08:32:05.846Z	Detected the following tools from environment: pnpm@9.14.4, nodejs@22.16.0
+2026-07-06T08:32:07.411Z	Installing project dependencies: pnpm install --frozen-lockfile
+2026-07-06T08:32:08.240Z	Lockfile is up to date, resolution step is skipped
+2026-07-06T08:32:08.355Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-07-06T08:32:08.568Z	Packages: +1161
+2026-07-06T08:32:08.568Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-07-06T08:32:09.358Z	Progress: resolved 1161, reused 0, downloaded 16, added 0
+2026-07-06T08:32:10.369Z	Progress: resolved 1161, reused 0, downloaded 73, added 58
+2026-07-06T08:32:11.370Z	Progress: resolved 1161, reused 0, downloaded 151, added 141
+2026-07-06T08:32:12.374Z	Progress: resolved 1161, reused 0, downloaded 213, added 203
+2026-07-06T08:32:13.374Z	Progress: resolved 1161, reused 0, downloaded 234, added 221
+2026-07-06T08:32:14.377Z	Progress: resolved 1161, reused 0, downloaded 235, added 221
+2026-07-06T08:32:15.376Z	Progress: resolved 1161, reused 0, downloaded 239, added 226
+2026-07-06T08:32:16.377Z	Progress: resolved 1161, reused 0, downloaded 354, added 338
+2026-07-06T08:32:17.382Z	Progress: resolved 1161, reused 0, downloaded 422, added 411
+2026-07-06T08:32:18.384Z	Progress: resolved 1161, reused 0, downloaded 471, added 457
+2026-07-06T08:32:19.387Z	Progress: resolved 1161, reused 0, downloaded 573, added 566
+2026-07-06T08:32:20.384Z	Progress: resolved 1161, reused 0, downloaded 762, added 752
+2026-07-06T08:32:21.387Z	Progress: resolved 1161, reused 0, downloaded 902, added 898
+2026-07-06T08:32:22.389Z	Progress: resolved 1161, reused 0, downloaded 922, added 920
+2026-07-06T08:32:23.396Z	Progress: resolved 1161, reused 0, downloaded 964, added 963
+2026-07-06T08:32:24.397Z	Progress: resolved 1161, reused 0, downloaded 996, added 996
+2026-07-06T08:32:25.397Z	Progress: resolved 1161, reused 0, downloaded 1043, added 1043
+2026-07-06T08:32:26.397Z	Progress: resolved 1161, reused 0, downloaded 1044, added 1043
+2026-07-06T08:32:27.397Z	Progress: resolved 1161, reused 0, downloaded 1062, added 1057
+2026-07-06T08:32:28.398Z	Progress: resolved 1161, reused 0, downloaded 1077, added 1062
+2026-07-06T08:32:29.399Z	Progress: resolved 1161, reused 0, downloaded 1159, added 1158
+2026-07-06T08:32:29.431Z	Progress: resolved 1161, reused 0, downloaded 1161, added 1161, done
+2026-07-06T08:32:29.963Z	.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+2026-07-06T08:32:29.971Z	.../sharp@0.34.5/node_modules/sharp install$ node install/check.js || npm run build
+2026-07-06T08:32:29.971Z	.../node_modules/workerd postinstall$ node install.js
+2026-07-06T08:32:29.972Z	.../.pnpm/swup@4.8.2/node_modules/swup postinstall$ opencollective-postinstall || true
+2026-07-06T08:32:30.055Z	.../node_modules/workerd postinstall$ node install.js
+2026-07-06T08:32:30.113Z	.../node_modules/workerd postinstall: Done
+2026-07-06T08:32:30.115Z	.../.pnpm/swup@4.8.2/node_modules/swup postinstall: Done
+2026-07-06T08:32:30.119Z	.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+2026-07-06T08:32:33.289Z	.../node_modules/workerd postinstall: Done
+2026-07-06T08:32:33.316Z	.../sharp@0.34.5/node_modules/sharp install: Done
+2026-07-06T08:32:34.024Z	
+2026-07-06T08:32:34.024Z	dependencies:
+2026-07-06T08:32:34.024Z	+ @astrojs/check 0.9.9
+2026-07-06T08:32:34.024Z	+ @astrojs/cloudflare 14.0.2
+2026-07-06T08:32:34.024Z	+ @astrojs/compiler-rs 0.3.0
+2026-07-06T08:32:34.024Z	+ @astrojs/markdown-remark 7.2.0
+2026-07-06T08:32:34.024Z	+ @astrojs/markdown-satteri 0.3.2
+2026-07-06T08:32:34.024Z	+ @astrojs/mdx 7.0.0
+2026-07-06T08:32:34.024Z	+ @astrojs/rss 4.0.19
+2026-07-06T08:32:34.025Z	+ @astrojs/sitemap 3.7.3
+2026-07-06T08:32:34.025Z	+ @astrojs/svelte 9.0.0
+2026-07-06T08:32:34.025Z	+ @expressive-code/plugin-collapsible-sections 0.43.1
+2026-07-06T08:32:34.025Z	+ @expressive-code/plugin-line-numbers 0.43.1
+2026-07-06T08:32:34.025Z	+ @fancyapps/ui 6.1.14
+2026-07-06T08:32:34.025Z	+ @fontsource-variable/jetbrains-mono 5.2.8
+2026-07-06T08:32:34.025Z	+ @iconify-json/fa7-brands 1.2.2
+2026-07-06T08:32:34.025Z	+ @iconify-json/fa7-regular 1.2.3
+2026-07-06T08:32:34.025Z	+ @iconify-json/fa7-solid 1.2.4
+2026-07-06T08:32:34.025Z	+ @iconify-json/material-symbols 1.2.79
+2026-07-06T08:32:34.025Z	+ @iconify-json/mingcute 1.2.7
+2026-07-06T08:32:34.025Z	+ @iconify-json/simple-icons 1.2.86
+2026-07-06T08:32:34.025Z	+ @iconify/utils 3.1.3
+2026-07-06T08:32:34.025Z	+ @napi-rs/wasm-runtime 1.1.5
+2026-07-06T08:32:34.025Z	+ @swup/astro 1.8.0
+2026-07-06T08:32:34.025Z	+ @tailwindcss/typography 0.5.20
+2026-07-06T08:32:34.025Z	+ astro 7.0.4
+2026-07-06T08:32:34.025Z	+ astro-expressive-code 0.43.1
+2026-07-06T08:32:34.025Z	+ astro-icon 1.1.5
+2026-07-06T08:32:34.025Z	+ ci-info 4.4.0
+2026-07-06T08:32:34.025Z	+ dayjs 1.11.21
+2026-07-06T08:32:34.025Z	+ expressive-code-collapsible 0.1.0
+2026-07-06T08:32:34.025Z	+ expressive-code-language-badge 1.1.0
+2026-07-06T08:32:34.025Z	+ glob 11.1.0
+2026-07-06T08:32:34.025Z	+ hastscript 9.0.1
+2026-07-06T08:32:34.025Z	+ katex 0.17.0
+2026-07-06T08:32:34.025Z	+ l2d-widget 0.1.0
+2026-07-06T08:32:34.025Z	+ mdast-util-to-string 4.0.0
+2026-07-06T08:32:34.025Z	+ pagefind 1.5.2
+2026-07-06T08:32:34.025Z	+ pako 2.1.0
+2026-07-06T08:32:34.025Z	+ qrcode 1.5.4
+2026-07-06T08:32:34.025Z	+ reading-time 1.5.0
+2026-07-06T08:32:34.026Z	+ rehype-autolink-headings 7.1.0
+2026-07-06T08:32:34.026Z	+ rehype-callouts 2.2.0
+2026-07-06T08:32:34.026Z	+ rehype-components 0.3.0
+2026-07-06T08:32:34.026Z	+ rehype-katex 7.0.1
+2026-07-06T08:32:34.026Z	+ rehype-slug 6.0.0
+2026-07-06T08:32:34.026Z	+ remark-admonition-to-blockquote-callout 1.0.0
+2026-07-06T08:32:34.026Z	+ remark-directive 3.0.1
+2026-07-06T08:32:34.026Z	+ remark-math 6.0.0
+2026-07-06T08:32:34.026Z	+ remark-sectionize 2.1.0
+2026-07-06T08:32:34.026Z	+ sanitize-html 2.17.5
+2026-07-06T08:32:34.026Z	+ satori 0.26.0
+2026-07-06T08:32:34.026Z	+ satteri 0.9.1
+2026-07-06T08:32:34.026Z	+ sharp 0.35.2
+2026-07-06T08:32:34.026Z	+ stylus 0.64.0
+2026-07-06T08:32:34.026Z	+ svelte 5.56.3
+2026-07-06T08:32:34.026Z	+ typescript 5.9.3
+2026-07-06T08:32:34.026Z	+ unist-util-visit 5.1.0
+2026-07-06T08:32:34.026Z	+ wrangler 4.102.0
+2026-07-06T08:32:34.026Z	
+2026-07-06T08:32:34.026Z	devDependencies:
+2026-07-06T08:32:34.026Z	+ @astrojs/ts-plugin 1.10.9
+2026-07-06T08:32:34.026Z	+ @biomejs/biome 2.5.0
+2026-07-06T08:32:34.026Z	+ @iconify-json/mdi 1.2.3
+2026-07-06T08:32:34.026Z	+ @iconify-json/svg-spinners 1.2.4
+2026-07-06T08:32:34.026Z	+ @tailwindcss/vite 4.3.1
+2026-07-06T08:32:34.026Z	+ @types/hast 3.0.4
+2026-07-06T08:32:34.026Z	+ @types/mdast 4.0.4
+2026-07-06T08:32:34.027Z	+ @types/qrcode 1.5.6
+2026-07-06T08:32:34.027Z	+ @types/sanitize-html 2.16.1
+2026-07-06T08:32:34.027Z	+ postcss-import 16.1.1
+2026-07-06T08:32:34.027Z	+ postcss-nesting 14.0.0
+2026-07-06T08:32:34.027Z	+ subset-font 2.5.0
+2026-07-06T08:32:34.027Z	+ tailwindcss 4.3.1
+2026-07-06T08:32:34.027Z	+ tsx 4.22.4
+2026-07-06T08:32:34.027Z	
+2026-07-06T08:32:34.060Z	Done in 26.4s
+2026-07-06T08:32:34.241Z	Executing user build command: pnpm run build
+2026-07-06T08:32:34.699Z	
+2026-07-06T08:32:34.699Z	> firefly@6.13.5 build /opt/buildhome/repo
+2026-07-06T08:32:34.699Z	> node scripts/generate-icons.js && npx tsx scripts/generate-lqips.ts && astro build && npx tsx scripts/subset-fonts.ts && pagefind --site dist
+2026-07-06T08:32:34.699Z	
+2026-07-06T08:32:34.801Z	🔍 扫描源文件中的图标使用...
+2026-07-06T08:32:34.802Z	
+2026-07-06T08:32:34.805Z	📁 找到 21 个源文件
+2026-07-06T08:32:34.805Z	
+2026-07-06T08:32:34.807Z	🎨 发现 21 个不同的图标:
+2026-07-06T08:32:34.807Z	
+2026-07-06T08:32:34.807Z	   fa7-solid: 3 个图标
+2026-07-06T08:32:34.808Z	   material-symbols: 16 个图标
+2026-07-06T08:32:34.808Z	   mdi: 1 个图标
+2026-07-06T08:32:34.808Z	   svg-spinners: 1 个图标
+2026-07-06T08:32:34.808Z	
+2026-07-06T08:32:34.921Z	✅ 成功加载 21 个图标
+2026-07-06T08:32:34.930Z	
+2026-07-06T08:32:34.930Z	📝 已生成: /opt/buildhome/repo/src/constants/icons.ts
+2026-07-06T08:32:34.931Z	📦 文件大小: 12.00 KB
+2026-07-06T08:32:34.931Z	
+2026-07-06T08:32:35.811Z	Loaded 19 existing entries from src/constants/lqips.json
+2026-07-06T08:32:35.829Z	Found 20 images, 1 new to process.
+2026-07-06T08:32:35.841Z	Processing 1/1...
+2026-07-06T08:32:35.841Z	Done! Processed 1/1 new images. Total: 20. Output: src/constants/lqips.json
+2026-07-06T08:32:42.068Z	08:32:42 [content] Syncing content
+2026-07-06T08:32:42.071Z	08:32:42 [WARN] [glob-loader] The base directory "/opt/buildhome/repo/src/content/posts/" does not exist.
+2026-07-06T08:32:42.160Z	08:32:42 [content] Synced content
+2026-07-06T08:32:42.162Z	08:32:42 [types] Generated 1.07s
+2026-07-06T08:32:42.163Z	08:32:42 [build] output: "static"
+2026-07-06T08:32:42.163Z	08:32:42 [build] mode: "static"
+2026-07-06T08:32:42.163Z	08:32:42 [build] directory: /opt/buildhome/repo/dist/
+2026-07-06T08:32:42.166Z	08:32:42 [build] Collecting build info...
+2026-07-06T08:32:42.168Z	08:32:42 [build] ✓ Completed in 1.32s.
+2026-07-06T08:32:42.168Z	08:32:42 [build] Building static entrypoints...
+2026-07-06T08:32:47.617Z	08:32:47 [assets] Copying fonts (22 files)...
+2026-07-06T08:32:47.713Z	08:32:47 [ERROR] [vite] ✗ Build failed in 5.32s
+2026-07-06T08:32:47.943Z	[builtin:vite-transform] Encountered diff marker
+2026-07-06T08:32:47.943Z	    ╭─[ src/config/wakenConfig.ts:31:1 ]
+2026-07-06T08:32:47.943Z	    │
+2026-07-06T08:32:47.943Z	 31 │ <<<<<<< HEAD
+2026-07-06T08:32:47.944Z	    │ ───┬───  
+2026-07-06T08:32:47.944Z	    │    ╰───── between this marker and `=======` is the code that we're merging into
+2026-07-06T08:32:47.944Z	    │ 
+2026-07-06T08:32:47.944Z	 47 │ =======
+2026-07-06T08:32:47.944Z	    │ ───┬───  
+2026-07-06T08:32:47.944Z	    │    ╰───── between this marker and `>>>>>>>` is the incoming code
+2026-07-06T08:32:47.944Z	    │ 
+2026-07-06T08:32:47.944Z	 79 │ >>>>>>> 0880362f (Add Waken-wa integration and docs)
+2026-07-06T08:32:47.945Z	    │ ───┬───  
+2026-07-06T08:32:47.945Z	    │    ╰───── this marker concludes the conflict region
+2026-07-06T08:32:47.945Z	    │ 
+2026-07-06T08:32:47.945Z	    │ Help: Conflict markers indicate that a merge was started but could not be completed due to merge conflicts.
+2026-07-06T08:32:47.945Z	    │       To resolve a conflict, keep only the code you want and then delete the lines containing conflict markers.
+2026-07-06T08:32:47.945Z	    │       If you're having merge conflicts after pulling new code, the top section is the code you already had and the bottom section is the remote code.
+2026-07-06T08:32:47.945Z	    │       If you're in the middle of a rebase, the top section is the code being rebased onto and the bottom section is the code coming from the current commit being rebased.
+2026-07-06T08:32:47.947Z	    │       If you have nested conflicts, resolve the outermost conflict first.
+2026-07-06T08:32:47.948Z	────╯
+2026-07-06T08:32:47.948Z	
+2026-07-06T08:32:47.949Z	  Location:
+2026-07-06T08:32:47.949Z	        ╭─[ src/config/wakenConfig.ts ]:31:1
+2026-07-06T08:32:47.949Z	  Stack trace:
+2026-07-06T08:32:47.949Z	    at aggregateBindingErrorsIntoJsError (file:///opt/buildhome/repo/node_modules/.pnpm/rolldown@1.1.2/node_modules/rolldown/dist/shared/error-T-E9reEy.mjs:48:18)
+2026-07-06T08:32:47.950Z	    at #build (file:///opt/buildhome/repo/node_modules/.pnpm/rolldown@1.1.2/node_modules/rolldown/dist/shared/rolldown-build-DDMH4mGm.mjs:3256:34)
+2026-07-06T08:32:47.950Z	    at async Object.build (file:///opt/buildhome/repo/node_modules/.pnpm/vite@8.1.0_@types+node@25.9.1_esbuild@0.28.1_jiti@2.7.0_stylus@0.64.0_terser@5.46.0_tsx@4.22.4_yaml@2.9.0/node_modules/vite/dist/node/chunks/node.js:32997:19)
+2026-07-06T08:32:47.955Z	    at async Object.buildApp (file:///opt/buildhome/repo/node_modules/.pnpm/vite@8.1.0_@types+node@25.9.1_esbuild@0.28.1_jiti@2.7.0_stylus@0.64.0_terser@5.46.0_tsx@4.22.4_yaml@2.9.0/node_modules/vite/dist/node/chunks/node.js:32989:6)
+2026-07-06T08:32:47.955Z	    at async viteBuild (file:///opt/buildhome/repo/node_modules/.pnpm/astro@7.0.4_@astrojs+markdown-remark@7.2.0_@emnapi+core@1.9.1_@emnapi+runtime@1.9.1_@types+no_ukkerfm2roaat7q7kz5wzfjsby/node_modules/astro/dist/core/build/static-build.js:68:3)
+2026-07-06T08:32:48.031Z	 ELIFECYCLE  Command failed with exit code 1.
+2026-07-06T08:32:48.062Z	Failed: error occurred while running build command

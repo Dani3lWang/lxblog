@@ -1,0 +1,285 @@
+---
+interface HeatmapData {
+	date: string;
+	count: number;
+}
+
+interface Props {
+	data: HeatmapData[];
+	label: string;
+	weeks?: number;
+}
+
+const { data, label, weeks = 20 } = Astro.props;
+
+// 构建日期到次数的映射
+const countMap = new Map<string, number>();
+data.forEach((item) => {
+	countMap.set(item.date, item.count);
+});
+
+// 计算最大次数（用于颜色计算）
+const maxCount = Math.max(...data.map((d) => d.count), 1);
+
+// 生成最近 N 周的日期数据
+const getDateRange = () => {
+	const result: { date: string; dayOfWeek: number; count: number }[] = [];
+	const today = new Date();
+
+	// 计算起始日期：从今天往前 weeks 周
+	const startDate = new Date(today);
+	startDate.setDate(startDate.getDate() - (weeks * 7 - 1));
+
+	// 调整到周日
+	const startDay = startDate.getDay();
+	startDate.setDate(startDate.getDate() - startDay);
+
+	const current = new Date(startDate);
+	const endDate = new Date(today);
+
+	while (current <= endDate) {
+		const dateStr = current.toISOString().split("T")[0];
+		result.push({
+			date: dateStr,
+			dayOfWeek: current.getDay(),
+			count: countMap.get(dateStr) || 0,
+		});
+		current.setDate(current.getDate() + 1);
+	}
+
+	return result;
+};
+
+const dateRange = getDateRange();
+
+// 按周分组
+const weekGroups: { date: string; dayOfWeek: number; count: number }[][] = [];
+for (let i = 0; i < dateRange.length; i += 7) {
+	weekGroups.push(dateRange.slice(i, i + 7));
+}
+
+// 获取颜色等级
+const getColorLevel = (count: number): number => {
+	if (count === 0) return 0;
+	const ratio = count / maxCount;
+	if (ratio <= 0.25) return 1;
+	if (ratio <= 0.5) return 2;
+	if (ratio <= 0.75) return 3;
+	return 4;
+};
+
+// 统计数据
+const totalDays = dateRange.filter((d) => d.count > 0).length;
+const totalCheckins = data.reduce((acc, d) => acc + d.count, 0);
+const avgPerDay = totalDays > 0 ? (totalCheckins / totalDays).toFixed(1) : "0";
+---
+
+<div class="activity-heatmap">
+	<div class="heatmap-header">
+		<span class="heatmap-label">{label}</span>
+		<div class="heatmap-stats">
+			<span class="stat-item">
+				<span class="stat-value">{totalCheckins}</span>
+				<span class="stat-text">次打卡</span>
+			</span>
+			<span class="stat-separator">|</span>
+			<span class="stat-item">
+				<span class="stat-value">{totalDays}</span>
+				<span class="stat-text">天活跃</span>
+			</span>
+			<span class="stat-separator">|</span>
+			<span class="stat-item">
+				<span class="stat-value">{avgPerDay}</span>
+				<span class="stat-text">平均/天</span>
+			</span>
+		</div>
+	</div>
+
+	<div class="heatmap-container">
+		<div class="heatmap-grid">
+			{weekGroups.map((week) => (
+				<div class="heatmap-week">
+					{week.map((day) => (
+						<div
+							class={`heatmap-cell level-${getColorLevel(day.count)}`}
+							data-date={day.date}
+							data-count={day.count}
+							title={`${day.date}: ${day.count} 次打卡`}
+						/>
+					))}
+				</div>
+			))}
+		</div>
+
+		<div class="heatmap-legend">
+			<span class="legend-label">少</span>
+			<div class="legend-cells">
+				<div class="heatmap-cell level-0" title="无打卡" />
+				<div class="heatmap-cell level-1" title="少量" />
+				<div class="heatmap-cell level-2" title="中等" />
+				<div class="heatmap-cell level-3" title="较多" />
+				<div class="heatmap-cell level-4" title="很多" />
+			</div>
+			<span class="legend-label">多</span>
+		</div>
+	</div>
+
+	<div class="heatmap-months">
+		{weekGroups
+			.filter((_, i) => i % 4 === 0)
+			.map((week, i) => (
+				<span class="month-label" style={`grid-column: ${i * 4 + 1}`}>
+					{new Date(week[0].date).toLocaleDateString("zh-CN", { month: "short" })}
+				</span>
+			))}
+	</div>
+</div>
+
+<style>
+	.activity-heatmap {
+		padding: 1rem;
+		overflow-x: auto;
+	}
+
+	.heatmap-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.heatmap-label {
+		font-size: 0.75rem;
+		color: var(--content-meta);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.heatmap-stats {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.75rem;
+	}
+
+	.stat-item {
+		display: flex;
+		align-items: baseline;
+		gap: 0.25rem;
+	}
+
+	.stat-value {
+		font-weight: 700;
+		color: var(--text-color);
+	}
+
+	.stat-text {
+		color: var(--content-meta);
+	}
+
+	.stat-separator {
+		color: var(--line-divider);
+	}
+
+	.heatmap-container {
+		position: relative;
+	}
+
+	.heatmap-grid {
+		display: flex;
+		gap: 3px;
+	}
+
+	.heatmap-week {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+	}
+
+	.heatmap-cell {
+		width: 12px;
+		height: 12px;
+		border-radius: 2px;
+		transition: transform 0.15s ease;
+	}
+
+	.heatmap-cell:hover {
+		transform: scale(1.3);
+	}
+
+	/* 颜色等级 - 根据主题颜色计算 */
+	.heatmap-cell.level-0 {
+		background: color-mix(in srgb, var(--text-color) 8%, transparent);
+	}
+
+	.heatmap-cell.level-1 {
+		background: color-mix(in srgb, var(--primary) 25%, transparent);
+	}
+
+	.heatmap-cell.level-2 {
+		background: color-mix(in srgb, var(--primary) 50%, transparent);
+	}
+
+	.heatmap-cell.level-3 {
+		background: color-mix(in srgb, var(--primary) 75%, transparent);
+	}
+
+	.heatmap-cell.level-4 {
+		background: var(--primary);
+	}
+
+	.heatmap-legend {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: 0.75rem;
+		justify-content: flex-end;
+	}
+
+	.legend-label {
+		font-size: 0.65rem;
+		color: var(--content-meta);
+	}
+
+	.legend-cells {
+		display: flex;
+		gap: 2px;
+	}
+
+	.legend-cells .heatmap-cell {
+		cursor: default;
+	}
+
+	.legend-cells .heatmap-cell:hover {
+		transform: none;
+	}
+
+	.heatmap-months {
+		display: grid;
+		margin-top: 0.25rem;
+		padding-left: 0;
+	}
+
+	.month-label {
+		font-size: 0.65rem;
+		color: var(--content-meta);
+	}
+
+	/* 暗色主题适配 */
+	:global(html.dark) .heatmap-cell.level-0 {
+		background: color-mix(in srgb, var(--text-color) 20%, transparent);
+	}
+
+	@media (max-width: 640px) {
+		.heatmap-cell {
+			width: 10px;
+			height: 10px;
+		}
+
+		.heatmap-stats {
+			font-size: 0.65rem;
+		}
+	}
+</style>

@@ -22,15 +22,18 @@ export type { FontSelectionConfig } from "./fontConfig";
 export type { FooterConfig } from "./footerConfig";
 export type { FriendLink, FriendsPageConfig } from "./friendsConfig";
 export type { GalleryAlbum, GalleryConfig } from "./galleryConfig";
+export type { GamePlatformId, GamesConfig } from "./gamesConfig";
 export type { LicenseConfig } from "./licenseConfig";
 export type { MermaidConfig } from "./mermaidConfig";
 export type { MusicPlayerConfig } from "./musicConfig";
+export type { MusicGenreCategory } from "./musicGenreConfig";
 export type {
 	NavBarConfig,
 	NavBarLink,
 	NavBarSearchConfig,
-	NavBarSearchMethod,
 } from "./navBarConfig";
+// NavBarSearchMethod 是 enum(值 + 类型),需要走非 type 的 re-export
+export { NavBarSearchMethod } from "./navBarConfig";
 export type { Live2DWidgetConfig, SpineModelConfig } from "./pioConfig";
 export type { PlantUMLConfig } from "./plantumlConfig";
 export type { ProfileConfig } from "./profileConfig";

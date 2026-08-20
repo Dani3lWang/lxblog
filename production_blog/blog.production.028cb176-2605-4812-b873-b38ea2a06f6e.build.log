@@ -1,0 +1,150 @@
+2026-06-29T15:03:23.595Z	Initializing build environment...
+2026-06-29T15:03:51.966Z	Success: Finished initializing build environment
+2026-06-29T15:03:53.938Z	Cloning repository...
+2026-06-29T15:04:01.979Z	Detected the following tools from environment: pnpm@9.14.4, nodejs@22.16.0
+2026-06-29T15:04:03.568Z	Installing project dependencies: pnpm install --frozen-lockfile
+2026-06-29T15:04:04.436Z	Lockfile is up to date, resolution step is skipped
+2026-06-29T15:04:04.537Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-06-29T15:04:04.746Z	Packages: +1171
+2026-06-29T15:04:04.747Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-06-29T15:04:05.539Z	Progress: resolved 1171, reused 0, downloaded 14, added 0
+2026-06-29T15:04:06.541Z	Progress: resolved 1171, reused 0, downloaded 62, added 48
+2026-06-29T15:04:07.550Z	Progress: resolved 1171, reused 0, downloaded 142, added 131
+2026-06-29T15:04:08.551Z	Progress: resolved 1171, reused 0, downloaded 168, added 155
+2026-06-29T15:04:09.553Z	Progress: resolved 1171, reused 0, downloaded 172, added 161
+2026-06-29T15:04:10.553Z	Progress: resolved 1171, reused 0, downloaded 219, added 209
+2026-06-29T15:04:11.554Z	Progress: resolved 1171, reused 0, downloaded 291, added 277
+2026-06-29T15:04:12.558Z	Progress: resolved 1171, reused 0, downloaded 445, added 435
+2026-06-29T15:04:13.558Z	Progress: resolved 1171, reused 0, downloaded 537, added 528
+2026-06-29T15:04:14.566Z	Progress: resolved 1171, reused 0, downloaded 716, added 705
+2026-06-29T15:04:15.567Z	Progress: resolved 1171, reused 0, downloaded 926, added 919
+2026-06-29T15:04:16.568Z	Progress: resolved 1171, reused 0, downloaded 931, added 919
+2026-06-29T15:04:18.206Z	Progress: resolved 1171, reused 0, downloaded 932, added 919
+2026-06-29T15:04:19.207Z	Progress: resolved 1171, reused 0, downloaded 968, added 955
+2026-06-29T15:04:20.209Z	Progress: resolved 1171, reused 0, downloaded 1090, added 1086
+2026-06-29T15:04:21.209Z	Progress: resolved 1171, reused 0, downloaded 1120, added 1109
+2026-06-29T15:04:22.210Z	Progress: resolved 1171, reused 0, downloaded 1139, added 1128
+2026-06-29T15:04:24.686Z	Progress: resolved 1171, reused 0, downloaded 1140, added 1128
+2026-06-29T15:04:25.680Z	Progress: resolved 1171, reused 0, downloaded 1143, added 1139
+2026-06-29T15:04:26.699Z	Progress: resolved 1171, reused 0, downloaded 1155, added 1141
+2026-06-29T15:04:27.704Z	Progress: resolved 1171, reused 0, downloaded 1170, added 1155
+2026-06-29T15:04:27.823Z	Progress: resolved 1171, reused 0, downloaded 1171, added 1171, done
+2026-06-29T15:04:28.314Z	.../sharp@0.34.5/node_modules/sharp install$ node install/check.js || npm run build
+2026-06-29T15:04:28.315Z	.../.pnpm/swup@4.8.2/node_modules/swup postinstall$ opencollective-postinstall || true
+2026-06-29T15:04:28.316Z	.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+2026-06-29T15:04:28.317Z	.../node_modules/workerd postinstall$ node install.js
+2026-06-29T15:04:28.415Z	.../node_modules/workerd postinstall$ node install.js
+2026-06-29T15:04:28.461Z	.../.pnpm/swup@4.8.2/node_modules/swup postinstall: Done
+2026-06-29T15:04:28.503Z	.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+2026-06-29T15:04:29.755Z	.../node_modules/workerd postinstall: Done
+2026-06-29T15:04:30.975Z	.../node_modules/workerd postinstall: Done
+2026-06-29T15:04:30.991Z	.../sharp@0.34.5/node_modules/sharp install: Done
+2026-06-29T15:04:31.605Z	
+2026-06-29T15:04:31.606Z	dependencies:
+2026-06-29T15:04:31.606Z	+ @astrojs/check 0.9.9
+2026-06-29T15:04:31.606Z	+ @astrojs/cloudflare 14.0.0
+2026-06-29T15:04:31.606Z	+ @astrojs/compiler-rs 0.2.2
+2026-06-29T15:04:31.607Z	+ @astrojs/markdown-remark 7.2.0
+2026-06-29T15:04:31.607Z	+ @astrojs/markdown-satteri 0.3.2
+2026-06-29T15:04:31.607Z	+ @astrojs/mdx 7.0.0
+2026-06-29T15:04:31.607Z	+ @astrojs/rss 4.0.18
+2026-06-29T15:04:31.607Z	+ @astrojs/sitemap 3.7.3
+2026-06-29T15:04:31.607Z	+ @astrojs/svelte 9.0.0
+2026-06-29T15:04:31.607Z	+ @expressive-code/plugin-collapsible-sections 0.43.1
+2026-06-29T15:04:31.607Z	+ @expressive-code/plugin-line-numbers 0.43.1
+2026-06-29T15:04:31.607Z	+ @fancyapps/ui 6.1.14
+2026-06-29T15:04:31.607Z	+ @fontsource-variable/jetbrains-mono 5.2.8
+2026-06-29T15:04:31.607Z	+ @iconify-json/fa7-brands 1.2.2
+2026-06-29T15:04:31.607Z	+ @iconify-json/fa7-regular 1.2.3
+2026-06-29T15:04:31.607Z	+ @iconify-json/fa7-solid 1.2.4
+2026-06-29T15:04:31.607Z	+ @iconify-json/material-symbols 1.2.79
+2026-06-29T15:04:31.607Z	+ @iconify-json/mingcute 1.2.7
+2026-06-29T15:04:31.607Z	+ @iconify-json/simple-icons 1.2.86
+2026-06-29T15:04:31.608Z	+ @iconify/utils 3.1.3
+2026-06-29T15:04:31.608Z	+ @napi-rs/wasm-runtime 1.1.5
+2026-06-29T15:04:31.608Z	+ @swup/astro 1.8.0
+2026-06-29T15:04:31.608Z	+ @tailwindcss/typography 0.5.20
+2026-06-29T15:04:31.608Z	+ astro 7.0.2
+2026-06-29T15:04:31.608Z	+ astro-expressive-code 0.43.1
+2026-06-29T15:04:31.608Z	+ astro-icon 1.1.5
+2026-06-29T15:04:31.608Z	+ ci-info 4.4.0
+2026-06-29T15:04:31.608Z	+ dayjs 1.11.21
+2026-06-29T15:04:31.608Z	+ expressive-code-collapsible 0.1.0
+2026-06-29T15:04:31.608Z	+ expressive-code-language-badge 1.1.0
+2026-06-29T15:04:31.608Z	+ glob 11.1.0
+2026-06-29T15:04:31.608Z	+ hastscript 9.0.1
+2026-06-29T15:04:31.608Z	+ katex 0.17.0
+2026-06-29T15:04:31.608Z	+ l2d-widget 0.1.0
+2026-06-29T15:04:31.608Z	+ mdast-util-to-string 4.0.0
+2026-06-29T15:04:31.608Z	+ pagefind 1.5.2
+2026-06-29T15:04:31.608Z	+ pako 2.1.0
+2026-06-29T15:04:31.608Z	+ qrcode 1.5.4
+2026-06-29T15:04:31.608Z	+ reading-time 1.5.0
+2026-06-29T15:04:31.608Z	+ rehype-autolink-headings 7.1.0
+2026-06-29T15:04:31.608Z	+ rehype-callouts 2.2.0
+2026-06-29T15:04:31.609Z	+ rehype-components 0.3.0
+2026-06-29T15:04:31.609Z	+ rehype-katex 7.0.1
+2026-06-29T15:04:31.609Z	+ rehype-slug 6.0.0
+2026-06-29T15:04:31.609Z	+ remark-admonition-to-blockquote-callout 1.0.0
+2026-06-29T15:04:31.609Z	+ remark-directive 3.0.1
+2026-06-29T15:04:31.609Z	+ remark-math 6.0.0
+2026-06-29T15:04:31.609Z	+ remark-sectionize 2.1.0
+2026-06-29T15:04:31.609Z	+ sanitize-html 2.17.5
+2026-06-29T15:04:31.609Z	+ satori 0.26.0
+2026-06-29T15:04:31.609Z	+ satteri 0.9.1
+2026-06-29T15:04:31.609Z	+ sharp 0.35.2
+2026-06-29T15:04:31.609Z	+ stylus 0.64.0
+2026-06-29T15:04:31.609Z	+ svelte 5.56.3
+2026-06-29T15:04:31.609Z	+ typescript 5.9.3
+2026-06-29T15:04:31.609Z	+ unist-util-visit 5.1.0
+2026-06-29T15:04:31.609Z	+ wrangler 4.102.0
+2026-06-29T15:04:31.609Z	
+2026-06-29T15:04:31.609Z	devDependencies:
+2026-06-29T15:04:31.609Z	+ @astrojs/ts-plugin 1.10.9
+2026-06-29T15:04:31.609Z	+ @biomejs/biome 2.5.0
+2026-06-29T15:04:31.609Z	+ @iconify-json/mdi 1.2.3
+2026-06-29T15:04:31.609Z	+ @iconify-json/svg-spinners 1.2.4
+2026-06-29T15:04:31.609Z	+ @tailwindcss/vite 4.3.1
+2026-06-29T15:04:31.609Z	+ @types/hast 3.0.4
+2026-06-29T15:04:31.609Z	+ @types/mdast 4.0.4
+2026-06-29T15:04:31.609Z	+ @types/qrcode 1.5.6
+2026-06-29T15:04:31.609Z	+ @types/sanitize-html 2.16.1
+2026-06-29T15:04:31.609Z	+ postcss-import 16.1.1
+2026-06-29T15:04:31.610Z	+ postcss-nesting 14.0.0
+2026-06-29T15:04:31.610Z	+ subset-font 2.5.0
+2026-06-29T15:04:31.610Z	+ tailwindcss 4.3.1
+2026-06-29T15:04:31.610Z	+ tsx 4.22.4
+2026-06-29T15:04:31.610Z	
+2026-06-29T15:04:31.635Z	Done in 27.8s
+2026-06-29T15:04:31.812Z	Executing user build command: pnpm run build
+2026-06-29T15:04:32.375Z	
+2026-06-29T15:04:32.375Z	> firefly@6.13.2 build /opt/buildhome/repo
+2026-06-29T15:04:32.375Z	> node scripts/generate-icons.js && npx tsx scripts/generate-lqips.ts && astro build && npx tsx scripts/subset-fonts.ts && pagefind --site dist
+2026-06-29T15:04:32.375Z	
+2026-06-29T15:04:32.481Z	🔍 扫描源文件中的图标使用...
+2026-06-29T15:04:32.481Z	
+2026-06-29T15:04:32.486Z	📁 找到 21 个源文件
+2026-06-29T15:04:32.486Z	
+2026-06-29T15:04:32.491Z	🎨 发现 21 个不同的图标:
+2026-06-29T15:04:32.491Z	
+2026-06-29T15:04:32.495Z	   fa7-solid: 3 个图标
+2026-06-29T15:04:32.497Z	   material-symbols: 16 个图标
+2026-06-29T15:04:32.497Z	   mdi: 1 个图标
+2026-06-29T15:04:32.497Z	   svg-spinners: 1 个图标
+2026-06-29T15:04:32.497Z	
+2026-06-29T15:04:32.624Z	✅ 成功加载 21 个图标
+2026-06-29T15:04:32.634Z	
+2026-06-29T15:04:32.634Z	📝 已生成: /opt/buildhome/repo/src/constants/icons.ts
+2026-06-29T15:04:32.634Z	📦 文件大小: 12.00 KB
+2026-06-29T15:04:32.634Z	
+2026-06-29T15:04:33.720Z	Loaded 19 existing entries from src/constants/lqips.json
+2026-06-29T15:04:33.741Z	Found 20 images, 1 new to process.
+2026-06-29T15:04:33.753Z	Processing 1/1...
+2026-06-29T15:04:33.753Z	Done! Processed 1/1 new images. Total: 20. Output: src/constants/lqips.json
+2026-06-29T15:04:38.461Z	[astro] Unable to load your Astro config
+2026-06-29T15:04:38.461Z	
+2026-06-29T15:04:38.711Z	Failed to load url ./wakenConfig (resolved id: ./wakenConfig) in /opt/buildhome/repo/src/config/index.ts. Does the file exist?
+2026-06-29T15:04:38.713Z	  Stack trace:
+2026-06-29T15:04:38.714Z	    at loadAndTransform (file:///opt/buildhome/repo/node_modules/.pnpm/vite@8.1.0_@types+node@25.9.1_esbuild@0.28.1_jiti@2.7.0_stylus@0.64.0_terser@5.46.0_tsx@4.22.4_yaml@2.9.0/node_modules/vite/dist/node/chunks/node.js:19714:31)
+2026-06-29T15:04:38.755Z	 ELIFECYCLE  Command failed with exit code 1.
+2026-06-29T15:04:38.782Z	Failed: error occurred while running build command
