@@ -1,0 +1,532 @@
+---
+// @ts-nocheck
+import { getCollection, render } from "astro:content";
+import { Icon } from "astro-icon/components";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+
+export async function getStaticPaths() {
+	const allEntries = await getCollection("notebooks");
+	const paths = [];
+
+	for (const entry of allEntries) {
+		const normalizedId = entry.id.replace(/\\/g, "/");
+		// 排除 README.md
+		if (normalizedId === "readme" || normalizedId === "readme.md") {
+			continue;
+		}
+		const isIndexFile =
+			/\/(_index|_index\.md|_index\.json)?$/.test(normalizedId) &&
+			(normalizedId.endsWith("_index") || normalizedId.includes("/_index."));
+		const isNotebookRoot =
+			normalizedId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) ||
+			normalizedId.match(/^([^/]+)\/_index$/);
+
+		if (!isIndexFile || !isNotebookRoot) {
+			continue;
+		}
+
+		const folderName = isNotebookRoot[1];
+
+		const folderEntries = allEntries.filter((item) => {
+			const itemId = item.id.replace(/\\/g, "/");
+			return (
+				itemId.startsWith(`${folderName}/`) &&
+				!/^([^/]+)\/(_index|_index\.md|_index\.json)$/.test(itemId) &&
+				itemId !== `${folderName}/_index` &&
+				itemId !== `${folderName}/_index.md` &&
+				itemId !== `${folderName}/_index.json`
+			);
+		});
+
+		const sortedEntries = [...folderEntries].sort((a, b) => {
+			const aTime = a.data.date instanceof Date ? a.data.date.getTime() : 0;
+			const bTime = b.data.date instanceof Date ? b.data.date.getTime() : 0;
+			return bTime - aTime;
+		});
+
+		paths.push({
+			params: { slug: folderName },
+			props: {
+				entry,
+				entries: folderEntries,
+				sortedEntries,
+				isNotebookIndex: true,
+			},
+		});
+
+		for (const item of folderEntries) {
+			const itemId = item.id.replace(/\\/g, "/");
+			const itemSlug = itemId.split("/").pop()?.replace(/\.md$/, "") || "";
+			paths.push({
+				params: { slug: `${folderName}/${itemSlug}` },
+				props: {
+					entry,
+					item,
+					isNotebookIndex: false,
+				},
+			});
+		}
+	}
+
+	return paths;
+}
+
+const { entry, entries, sortedEntries, item, isNotebookIndex } = Astro.props;
+const slug = Astro.params.slug as string;
+const normalizedEntryId = entry.id.replace(/\\/g, "/");
+const isNotebookRootMatch =
+	normalizedEntryId.match(/^([^/]+)\/(_index|_index\.md|_index\.json)$/) ||
+	normalizedEntryId.match(/^([^/]+)\/_index$/);
+const folderName = isNotebookRootMatch
+	? isNotebookRootMatch[1]
+	: normalizedEntryId.split("/")[0];
+---
+
+{isNotebookIndex ? (
+	<MainGridLayout title={entry.data.name || "笔记本"} description={entry.data.summary || "笔记本记录"}>
+		<div class="diary-entry-page">
+			<!-- 返回链接 -->
+			<a href="/moments/notebooks/" class="diary-back-link">
+				<Icon name="material-symbols:arrow-back-rounded" class="text-lg" />
+				<span>返回日记本列表</span>
+			</a>
+
+			<!-- 日记本封面卡片 -->
+			<section class="diary-book-cover relative overflow-hidden rounded-2xl p-8" style="background: linear-gradient(135deg, var(--card-bg) 0%, color-mix(in srgb, var(--primary) 8%, var(--card-bg)) 100%); border: 1px solid var(--line-divider);">
+				<!-- 装饰 -->
+				<div class="absolute inset-0 opacity-5">
+					<div class="absolute top-4 right-4 text-9xl">📔</div>
+				</div>
+				<div class="absolute -left-4 top-0 bottom-0 w-6 rounded-l-xl" style="background: linear-gradient(to right, var(--primary), color-mix(in srgb, var(--primary) 70%, black));"></div>
+
+				<div class="relative pl-8">
+					<!-- 标签 -->
+					<div class="flex items-center gap-2 mb-4">
+						<span class="px-3 py-1 rounded-full text-sm font-medium" style="background: color-mix(in srgb, var(--primary) 15%, transparent); color: var(--primary);">
+							📔 日记本
+						</span>
+					</div>
+
+					<!-- 标题 -->
+					<h1 data-pagefind-meta="title" data-pagefind-weight="10" class="">
+						{entry.data.name || "我的日记本"}
+					</h1>
+
+					<!-- 描述 -->
+					<p class="text-lg text-[var(--content-meta)] mb-6 max-w-xl">
+						{entry.data.summary || "记录生活点滴，留住美好回忆"}
+					</p>
+
+					<!-- 统计 -->
+					<div class="flex items-center gap-6">
+						<div class="flex items-center gap-2">
+							<Icon name="material-symbols:article-outline" style="color: var(--primary);" />
+							<span class="text-sm text-[var(--content-meta)]">{entries.length} 篇日记</span>
+						</div>
+						<div class="flex items-center gap-2">
+							<Icon name="material-symbols:calendar-today" style="color: var(--primary);" />
+							<span class="text-sm text-[var(--content-meta)]">
+								{sortedEntries[0]?.data.date instanceof Date ? `最近 ${sortedEntries[0].data.date.toISOString().split("T")[0]}` : "暂无记录"}
+							</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- 日记条目列表 -->
+			<section class="diary-entries-section">
+				<h2 class="diary-section-title">
+					<Icon name="material-symbols:edit-note" class="text-xl" style="color: var(--primary);" />
+					日记目录
+				</h2>
+
+				{sortedEntries.length === 0 ? (
+					<div class="diary-empty-entries">
+						<div class="text-5xl mb-4">📝</div>
+						<p class="text-[var(--content-meta)]">还没有日记内容</p>
+						<p class="text-sm text-[var(--content-meta)] opacity-70 mt-2">
+							在 <code class="px-1.5 py-0.5 rounded bg-[var(--btn-regular-bg)] font-mono">moments/notebooks/{folderName}/</code> 下添加 md 文件即可
+						</p>
+					</div>
+				) : (
+					<div class="diary-entries-list">
+								{sortedEntries.map((noteItem, index) => {
+							const noteItemId = noteItem.id.replace(/\\/g, "/");
+							const fileName = noteItemId.split("/").pop()?.replace(/\.md$/, "") || "未命名";
+							const itemSlug = fileName;
+							const entryName = noteItem.data.name || noteItem.data.title || "";
+							const content = noteItem.body ? noteItem.body.split("\n").filter(line => !line.trim().startsWith("---")).join("\n").trim() : "";
+							const preview = content.slice(0, 100) + (content.length > 100 ? "..." : "");
+							const displayTitle = entryName || fileName;
+
+							return (
+								<a
+									href={`/moments/notebooks/${folderName}/${itemSlug}/`}
+									class="diary-entry-item group"
+								>
+									<!-- 页码装饰 -->
+									<div class="diary-entry-page-num">
+										<span class="font-medium text-sm" style="color: var(--primary);">{index + 1}</span>
+									</div>
+
+									<!-- 内容 -->
+									<div class="diary-entry-content">
+										<div class="flex items-start justify-between gap-4 mb-2">
+											<div>
+												<span class="diary-entry-date">
+													{noteItem.data.date instanceof Date ? noteItem.data.date.toISOString().split("T")[0] : "未填写日期"}
+												</span>
+												<h3 class="diary-entry-title group-hover:text-[var(--primary)]">
+													{displayTitle}
+												</h3>
+											</div>
+											<Icon name="material-symbols:chevron-right-rounded" class="diary-entry-arrow" style="color: var(--primary);" />
+										</div>
+
+										{preview && (
+											<p class="diary-entry-preview">
+												{preview}
+											</p>
+										)}
+									</div>
+
+									<!-- 翻页装饰线 -->
+									<div class="diary-entry-line"></div>
+								</a>
+							);
+						})}
+					</div>
+				)}
+			</section>
+		</div>
+	</MainGridLayout>
+) : (
+	<MainGridLayout title={item.data.name || item.data.title || "日记"}>
+		<div class="diary-detail-page">
+			<!-- 返回链接 -->
+			<a href={`/moments/notebooks/${folderName}/`} class="diary-back-link">
+				<Icon name="material-symbols:arrow-back-rounded" class="text-lg" />
+				<span>返回 {entry.data.name || "日记本"}</span>
+			</a>
+
+			<!-- 日记内容卡片 -->
+			<article class="diary-paper">
+				<!-- 日记纸张装饰 -->
+				<div class="diary-paper-decoration"></div>
+
+				<header class="diary-paper-header">
+					<!-- 日期 -->
+					<div class="diary-date-badge">
+						<span class="diary-date-month">
+							{item.data.date instanceof Date ? (item.data.date.toLocaleDateString("zh-CN", { month: "short" })) : "月"}
+						</span>
+						<span class="diary-date-day">
+							{item.data.date instanceof Date ? item.data.date.getDate() : ""}
+						</span>
+						<span class="diary-date-weekday">
+							{item.data.date instanceof Date ? (item.data.date.toLocaleDateString("zh-CN", { weekday: "long" })) : ""}
+						</span>
+					</div>
+
+					<!-- 标题 -->
+					<h1 class="diary-paper-title">
+						{item.data.name || item.data.title || item.id.replace(/\\/g, "/").split("/").pop()?.replace(/\.md$/, "") || "无标题"}
+					</h1>
+
+					<!-- 标签 -->
+					{item.data.tags && item.data.tags.length > 0 && (
+						<div class="diary-tags">
+							{item.data.tags.map((tag: string) => (
+								<span class="diary-tag">#{tag}</span>
+							))}
+						</div>
+					)}
+				</header>
+
+				<!-- 日记内容 -->
+				<div class="diary-paper-content prose dark:prose-invert max-w-none">
+					{item.body ? (
+						item.body.split("\n").filter(line => !line.trim().startsWith("---")).join("\n").trim()
+					) : "（无内容）"}
+				</div>
+
+				<!-- 日记底部装饰 -->
+				<footer class="diary-paper-footer">
+					<div class="diary-paper-lines"></div>
+					<span class="diary-paper-end">— 完 —</span>
+				</footer>
+			</article>
+		</div>
+	</MainGridLayout>
+)}
+
+<style>
+	/* 通用样式 */
+	.diary-back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		margin-bottom: 1.5rem;
+		border-radius: 9999px;
+		background: var(--card-bg);
+		border: 1px solid var(--line-divider);
+		color: var(--content-meta);
+		font-size: 0.875rem;
+		text-decoration: none;
+		transition: all 0.2s ease;
+	}
+
+	.diary-back-link:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+	}
+
+	/* 条目列表区域 */
+	.diary-entries-section {
+		margin-top: 2rem;
+	}
+
+	.diary-section-title {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--text-color);
+		margin-bottom: 1.5rem;
+	}
+
+	/* 空状态 */
+	.diary-empty-entries {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 3rem;
+		background: var(--card-bg);
+		border: 2px dashed var(--line-divider);
+		border-radius: var(--radius-3xl);
+	}
+
+	/* 日记条目列表 */
+	.diary-entries-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	/* 日记条目卡片 */
+	.diary-entry-item {
+		position: relative;
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1.5rem;
+		background: var(--card-bg);
+		border: 1px solid var(--line-divider);
+		border-radius: 0;
+		text-decoration: none;
+		transition: all 0.2s ease;
+	}
+
+	.diary-entry-item:first-child {
+		border-radius: var(--radius-large) var(--radius-large) 0 0;
+	}
+
+	.diary-entry-item:last-child {
+		border-radius: 0 0 var(--radius-large) var(--radius-large);
+	}
+
+	.diary-entry-item:only-child {
+		border-radius: var(--radius-large);
+	}
+
+	.diary-entry-item:not(:first-child) {
+		border-top: none;
+	}
+
+	.diary-entry-item:hover {
+		background: color-mix(in srgb, var(--primary) 5%, var(--card-bg));
+	}
+
+	/* 页码 */
+	.diary-entry-page-num {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--primary) 15%, transparent);
+		border: 2px solid var(--primary);
+		flex-shrink: 0;
+	}
+
+	/* 条目内容 */
+	.diary-entry-content {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.diary-entry-date {
+		display: inline-block;
+		font-size: 0.75rem;
+		color: var(--content-meta);
+		margin-bottom: 0.25rem;
+	}
+
+	.diary-entry-title {
+		font-size: 1.125rem;
+		font-weight: 600;
+		color: var(--text-color);
+		margin: 0;
+	}
+
+	.diary-entry-preview {
+		font-size: 0.875rem;
+		color: var(--content-meta);
+		line-height: 1.5;
+		margin-top: 0.5rem;
+	}
+
+	.diary-entry-arrow {
+		opacity: 0;
+		transform: translateX(-4px);
+		transition: all 0.2s ease;
+		flex-shrink: 0;
+	}
+
+	.diary-entry-item:hover .diary-entry-arrow {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	/* 翻页装饰线 */
+	.diary-entry-line {
+		position: absolute;
+		left: 5rem;
+		right: 5rem;
+		bottom: 0;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--line-divider), transparent);
+	}
+
+	/* ===== 日记详情页 ===== */
+	.diary-detail-page {
+		max-width: 3xl;
+		margin: 0 auto;
+	}
+
+	/* 日记纸张 */
+	.diary-paper {
+		position: relative;
+		background: var(--card-bg);
+		border-radius: var(--radius-large);
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px var(--line-divider);
+		overflow: hidden;
+		padding: 2rem 2.5rem;
+	}
+
+	/* 纸张装饰 */
+	.diary-paper-decoration {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 4px;
+		background: linear-gradient(to right, var(--primary), color-mix(in srgb, var(--primary) 70%, transparent), var(--primary));
+	}
+
+	/* 纸张头部 */
+	.diary-paper-header {
+		margin-bottom: 2rem;
+		padding-bottom: 1.5rem;
+		border-bottom: 2px dashed var(--line-divider);
+	}
+
+	/* 日期徽章 */
+	.diary-date-badge {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.diary-date-month {
+		font-size: 0.875rem;
+		color: var(--content-meta);
+		text-transform: uppercase;
+	}
+
+	.diary-date-day {
+		font-size: 3rem;
+		font-weight: 700;
+		color: var(--primary);
+		line-height: 1;
+	}
+
+	.diary-date-weekday {
+		font-size: 0.875rem;
+		color: var(--content-meta);
+	}
+
+	/* 日记标题 */
+	.diary-paper-title {
+		font-size: 1.75rem;
+		font-weight: 700;
+		color: var(--text-color);
+		margin: 0 0 1rem 0;
+		line-height: 1.3;
+	}
+
+	/* 标签 */
+	.diary-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.diary-tag {
+		padding: 0.25rem 0.75rem;
+		background: color-mix(in srgb, var(--primary) 15%, transparent);
+		border-radius: 9999px;
+		font-size: 0.75rem;
+		color: var(--primary);
+	}
+
+	/* 日记内容 */
+	.diary-paper-content {
+		font-size: 1rem;
+		line-height: 1.8;
+		color: var(--content);
+	}
+
+	/* 日记底部 */
+	.diary-paper-footer {
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		text-align: center;
+	}
+
+	.diary-paper-lines {
+		width: 100%;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--line-divider), transparent);
+		margin-bottom: 1rem;
+	}
+
+	.diary-paper-end {
+		font-size: 0.875rem;
+		color: var(--content-meta);
+		font-style: italic;
+	}
+
+	/* 行数限制 */
+	.line-clamp-2 {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+</style>

@@ -72,6 +72,16 @@ export default defineConfig({
 	base: "/",
 	trailingSlash: "always",
 
+	redirects: {
+		"/gallery/": "/moments/gallery/",
+		"/guestbook/": "/moments/guestbook/",
+		"/life/": "/moments/",
+		"/life/notebooks/": "/moments/notebooks/",
+		"/life/routines/": "/routines/",
+		"/life/places/": "/places/",
+		"/moments/shuoshuo/": "/dynamic/",
+	},
+
 	// 字体配置 - 只加载实际使用的字体，跳过未引用的以加快构建
 	fonts: (() => {
 		// 禁用字体功能时直接返回空数组，跳过 Astro Font API 集成
@@ -125,6 +135,7 @@ export default defineConfig({
 			containers: [
 				"#banner-overlay-container",
 				"#banner-dim-container",
+				"#category-bar-wrapper",
 				"#swup-container",
 				"#left-sidebar-dynamic",
 				"#right-sidebar-dynamic",
@@ -254,16 +265,10 @@ export default defineConfig({
 				if (pathname === "/booknav/" && !siteConfig.pages.booknav) {
 					return false;
 				}
-				if (pathname === "/bilibili/" && !siteConfig.pages.bilibili) {
-					return false;
-				}
 				if (pathname === "/bangumi/" && !siteConfig.pages.bangumi) {
 					return false;
 				}
 				if (pathname === "/vndb/" && !siteConfig.pages.vndb) {
-					return false;
-				}
-				if (pathname === "/myanimelist/" && !siteConfig.pages.mal) {
 					return false;
 				}
 				// 动态页评论嵌入页：评论关闭时重定向到 /404/，不应进 sitemap
@@ -278,6 +283,43 @@ export default defineConfig({
 				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) {
 					return false;
 				}
+				if (pathname === "/moments/" && !siteConfig.pages.moments) {
+					return false;
+				}
+				if (pathname === "/moments/shuoshuo/" && !siteConfig.pages.moments) {
+					return false;
+				}
+				if (pathname === "/moments/gallery/" && !siteConfig.pages.gallery) {
+					return false;
+				}
+				if (pathname === "/moments/guestbook/" && !siteConfig.pages.guestbook) {
+					return false;
+				}
+				if (pathname === "/moments/notebooks/" && !siteConfig.pages.notebooks) {
+					return false;
+				}
+				if (pathname === "/routines/" && !siteConfig.pages.routines) {
+					return false;
+				}
+				if (pathname === "/places/" && !siteConfig.pages.places) {
+					return false;
+				}
+				if (pathname === "/books/" && !siteConfig.pages.books) {
+					return false;
+				}
+				if (pathname === "/movies-games/" && !siteConfig.pages.moviesGames) {
+					return false;
+				}
+				if (pathname === "/games/" && !siteConfig.pages.games) {
+					return false;
+				}
+				if (pathname === "/music/" && !siteConfig.pages.musicPage) {
+					return false;
+				}
+				if (pathname === "/changelog/" && !siteConfig.pages.changelog) {
+					return false;
+				}
+
 				return true;
 			},
 		}),

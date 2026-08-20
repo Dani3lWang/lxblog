@@ -1,0 +1,101 @@
+---
+interface Props {
+	value: number;
+	max?: number;
+	label: string;
+	sublabel?: string;
+	color?: string;
+	size?: string;
+}
+
+const {
+	value,
+	max = 100,
+	label,
+	sublabel,
+	color = "var(--primary)",
+	size = "120px",
+} = Astro.props;
+
+const percentage = Math.min(100, Math.round((value / max) * 100));
+const radius = 46;
+const circumference = 2 * Math.PI * radius;
+const offset = circumference - (percentage / 100) * circumference;
+---
+
+<div class="ring-progress" style={`--size: ${size}; --color: ${color};`}>
+	<svg viewBox="0 0 100 100">
+		<circle class="ring-bg" cx="50" cy="50" r={radius} />
+		<circle
+			class="ring-fill"
+			cx="50"
+			cy="50"
+			r={radius}
+			stroke-dasharray={circumference}
+			stroke-dashoffset={offset}
+		/>
+	</svg>
+	<div class="ring-content">
+		<span class="ring-value">{percentage}%</span>
+		<span class="ring-label">{label}</span>
+		{sublabel && <span class="ring-sublabel">{sublabel}</span>}
+	</div>
+</div>
+
+<style>
+	.ring-progress {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+		width: var(--size);
+	}
+
+	svg {
+		width: 100%;
+		transform: rotate(-90deg);
+	}
+
+	.ring-bg,
+	.ring-fill {
+		fill: none;
+		stroke-width: 8;
+	}
+
+	.ring-bg {
+		stroke: color-mix(in srgb, var(--color) 20%, transparent);
+	}
+
+	.ring-fill {
+		stroke: var(--color);
+		stroke-linecap: round;
+		transition: stroke-dashoffset 1s ease-out;
+	}
+
+	.ring-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		margin-top: -1.8rem;
+	}
+
+	.ring-value {
+		font-size: 1.25rem;
+		font-weight: 700;
+		color: var(--text-color);
+	}
+
+	.ring-label {
+		font-size: 0.75rem;
+		color: var(--content-meta);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.ring-sublabel {
+		font-size: 0.7rem;
+		color: var(--content-meta);
+		opacity: 0.7;
+	}
+</style>

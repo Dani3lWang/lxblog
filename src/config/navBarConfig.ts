@@ -3,7 +3,8 @@ import {
 	type NavBarLink,
 	type NavBarSearchConfig,
 	NavBarSearchMethod,
-} from "../types/navBarConfig";
+} from "../types/config";
+import { siteConfig } from "./siteConfig";
 
 // ============================================================================
 // 导航栏配置 - 根据顺序动态生成导航栏链接
@@ -11,10 +12,10 @@ import {
 // ============================================================================
 const getDynamicNavBarConfig = (): NavBarConfig => {
 	// 基础导航栏链接
-	const links: NavBarLink[] = [];
-
-	// 主页
-	links.push(LinkPresets.Home);
+	const links: NavBarLink[] = [
+		// 主页
+		LinkPresets.Home,
+	];
 
 	// 文章及其子菜单
 	links.push({
@@ -36,21 +37,12 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
-	//社交及其子菜单
-	links.push({
-		name: "社交",
-		url: "#",
-		icon: "material-symbols:group",
-		children: [
-			// 友链
-			LinkPresets.Friends,
+	// 友链 —— 2026-06-12:siteConfig.pages.friends = false,导航栏入口移除
+	// 恢复方法:取消下面一行的注释即可
+	// links.push(LinkPresets.Friends);
 
-			// 留言
-			LinkPresets.Guestbook,
-		],
-	});
-
-	// 我的及其子菜单
+	// 我的入口 —— 2026-08-15:由本地"动态"菜单替换为上游"我的"结构
+	// 子项通过 pageKey 由 Navbar 按 siteConfig.pages 自动过滤（关闭的页面不显示）
 	links.push({
 		name: "我的",
 		url: "#",
@@ -62,39 +54,66 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 			// 相册
 			LinkPresets.Gallery,
 
-			// 书签导航
-			LinkPresets.Booknav,
-
-			// 哔哩哔哩追番
-			LinkPresets.Bilibili,
-
-			// 番组计划
-			LinkPresets.Bangumi,
-
 			// VNDB
 			LinkPresets.VNDB,
 
-			// MyAnimeList
-			LinkPresets.MAL,
-		],
-	});
+			// 书签导航
+			LinkPresets.Booknav,
 
-	// 关于及其子菜单
-	links.push({
-		name: "关于",
-		url: "#",
-		icon: "material-symbols:info",
-		children: [
-			// 打赏
-			LinkPresets.Sponsor,
-
-			// 关于页面
+			// 关于我 —— 2026-08-15:由顶层"关于"移入
 			LinkPresets.About,
 		],
 	});
 
-	// 自定义导航栏链接
-	links.push({
+	// 记录入口 - 书架、影视和音乐、游戏、更新日志、规划、足迹
+	const recordChildren: NavBarLink[] = [];
+	if (siteConfig.pages.books) {
+		recordChildren.push(LinkPresets.Books);
+	}
+	if (siteConfig.pages.moviesGames) {
+		recordChildren.push(LinkPresets.MoviesGames);
+	}
+	if (siteConfig.pages.games) {
+		recordChildren.push(LinkPresets.Games);
+	}
+	if (siteConfig.pages.musicPage) {
+		recordChildren.push(LinkPresets.MusicPage);
+	}
+	if (siteConfig.pages.changelog) {
+		recordChildren.push(LinkPresets.Changelog);
+	}
+	if (siteConfig.pages.routines) {
+		recordChildren.push(LinkPresets.Routines);
+	}
+	if (siteConfig.pages.places) {
+		recordChildren.push(LinkPresets.Places);
+	}
+
+	if (recordChildren.length > 0) {
+		const defaultUrl = siteConfig.pages.books
+			? "/books/"
+			: siteConfig.pages.moviesGames
+				? "/movies-games/"
+				: siteConfig.pages.games
+					? "/games/"
+					: siteConfig.pages.musicPage
+						? "/music/"
+						: siteConfig.pages.routines
+							? "/routines/"
+							: "/places/";
+
+		links.push({
+			name: "记录",
+			url: defaultUrl,
+			icon: "material-symbols:camera-outdoor",
+			children: recordChildren,
+		});
+	}
+
+	// 关于我 —— 2026-08-15:已移入"我的"子菜单,不再单独展示
+
+	// 自定义导航栏链接,并且支持多级菜单
+	/*links.push({
 		name: "链接",
 		url: "#",
 		icon: "material-symbols:link",
@@ -102,10 +121,11 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		children: [
 			{
 				name: "GitHub",
-				url: "https://github.com/CuteLeaf/Firefly",
+				url: "https://github.com/Dani3lWang",
 				external: true,
 				icon: "fa7-brands:github",
 			},
+			/*#预留示例(注释保留供使用者参考)
 			{
 				name: "Gitee",
 				url: "https://gitee.com/CuteLeaf/Firefly",
@@ -124,9 +144,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "material-symbols:docs",
 			},
+			
 		],
-	});
-
+	});*/
 	// 文档链接
 	// links.push({
 	// 	name: "文档",
@@ -173,41 +193,41 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/series/",
 		icon: "material-symbols:layers",
 	},
-	Friends: {
-		name: "友链",
-		url: "/friends/",
-		icon: "material-symbols:link-2-rounded",
-		pageKey: "friends",
-	},
-	Guestbook: {
-		name: "留言",
-		url: "/guestbook/",
-		icon: "material-symbols:chat",
-		pageKey: "guestbook",
-	},
 	Dynamic: {
 		name: "动态",
 		url: "/dynamic/",
-		icon: "material-symbols:forum-rounded",
+		icon: "material-symbols:dynamic-feed",
 		pageKey: "dynamic",
 	},
-	Gallery: {
-		name: "相册",
-		url: "/gallery/",
-		icon: "material-symbols:photo-library",
-		pageKey: "gallery",
+	Friends: {
+		name: "友链",
+		url: "/friends/",
+		icon: "material-symbols:group",
 	},
-	Booknav: {
-		name: "书签导航",
-		url: "/booknav/",
-		icon: "material-symbols:bookmarks",
-		pageKey: "booknav",
+	Sponsor: {
+		name: "赞助",
+		url: "/sponsor/",
+		icon: "material-symbols:favorite",
 	},
-	Bilibili: {
-		name: "哔哩哔哩",
-		url: "/bilibili/",
-		icon: "fa7-brands:bilibili",
-		pageKey: "bilibili",
+	Guestbook: {
+		name: "留言板",
+		url: "/moments/guestbook/",
+		icon: "material-symbols:menu-book",
+	},
+	Notebooks: {
+		name: "笔记本",
+		url: "/moments/notebooks/",
+		icon: "material-symbols:book-outline",
+	},
+	Routines: {
+		name: "规划",
+		url: "/routines/",
+		icon: "material-symbols:schedule-outline",
+	},
+	Places: {
+		name: "足迹",
+		url: "/places/",
+		icon: "material-symbols:location-on-outline",
 	},
 	Bangumi: {
 		name: "番组计划",
@@ -215,28 +235,60 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:movie",
 		pageKey: "bangumi",
 	},
-	VNDB: {
-		name: "VNDB",
-		url: "/vndb/",
-		icon: "material-symbols:chrome-reader-mode-rounded",
-		pageKey: "vndb",
+	Booknav: {
+		name: "书签导航",
+		url: "/booknav/",
+		icon: "material-symbols:bookmarks",
+		pageKey: "booknav",
 	},
-	MAL: {
-		name: "AnimeList",
-		url: "/myanimelist/",
-		icon: "material-symbols:menu-book",
-		pageKey: "mal",
-	},
-	Sponsor: {
-		name: "打赏",
-		url: "/sponsor/",
-		icon: "material-symbols:favorite",
-		pageKey: "sponsor",
+	Gallery: {
+		name: "相册",
+		url: "/moments/gallery/",
+		// 2026-06-12:修正为 outline-rounded 变体,material-symbols 合集里没有
+		// 纯 "photo-library" 也没有纯 "photo-library-outline"
+		icon: "material-symbols:photo-library-outline-rounded",
+		pageKey: "gallery",
 	},
 	About: {
 		name: "关于我",
 		url: "/about/",
 		icon: "material-symbols:person",
+	},
+	Moments: {
+		name: "动态",
+		url: "/moments/",
+		icon: "material-symbols:local-cafe",
+	},
+	Books: {
+		name: "书架",
+		url: "/books/",
+		icon: "material-symbols:book",
+	},
+	MoviesGames: {
+		name: "影视和音乐",
+		url: "/movies-games/",
+		icon: "material-symbols:movie",
+	},
+	Games: {
+		name: "游戏",
+		url: "/games/",
+		icon: "material-symbols:sports-esports",
+	},
+	MusicPage: {
+		name: "音乐",
+		url: "/music/",
+		icon: "material-symbols:library-music",
+	},
+	Changelog: {
+		name: "更新日志",
+		url: "/changelog/",
+		icon: "material-symbols:update",
+	},
+	VNDB: {
+		name: "VNDB",
+		url: "/vndb/",
+		icon: "material-symbols:movie",
+		pageKey: "vndb",
 	},
 };
 

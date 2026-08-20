@@ -30,9 +30,11 @@ interface Props {
 	apiUrl: string;
 	limit: number;
 	memos?: MemosConfig;
+	avatarSrc: string;
+	authorName: string;
 }
 
-let { apiUrl, limit, memos }: Props = $props();
+let { apiUrl, limit, memos, avatarSrc, authorName }: Props = $props();
 
 let entries: DynamicEntry[] = $state([]);
 let totalCount = $state(0);
@@ -104,43 +106,54 @@ function formatDate(timestamp: number): string {
 	{:else}
 		{#each entries as entry (entry.id)}
 			{@const text = getPlainText(entry.html)}
-			{@const hasImage = (entry.images?.length ?? 0) > 0}
+			{@const image = entry.images?.[0]}
 			<a
 				href={url(`/dynamic/#dynamic-${entry.id}`)}
-				class="group flex min-w-0 min-h-16 items-center gap-3 rounded-lg p-2
-					text-neutral-700/75 dark:text-neutral-300/75
-					hover:bg-(--btn-plain-bg-hover) hover:text-(--primary)
-					active:bg-(--btn-plain-bg-active) transition-colors duration-150"
+				class="group flex min-w-0 items-center gap-2.5 rounded-lg border border-transparent p-2
+					transition-colors duration-150
+					hover:border-(--primary)/40 hover:bg-(--btn-plain-bg-hover)"
 				aria-label={`${i18n(I18nKey.dynamic)}: ${text}`}
 			>
+				{#if avatarSrc}
+					<img
+						src={avatarSrc}
+						alt={authorName}
+						class="size-9 shrink-0 rounded-full border-2 border-(--primary) object-cover"
+						loading="lazy"
+						decoding="async"
+					/>
+				{/if}
 				<div class="min-w-0 flex-1">
-					<div class="mb-1 flex items-center gap-1 text-xs leading-4 text-(--primary)">
-						<svg class="size-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-							<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-						</svg>
-						<time datetime={new Date(entry.published).toISOString()}>
+					<div class="flex items-baseline justify-between gap-2 text-xs leading-4">
+						<strong class="truncate font-semibold text-(--text-color) transition-colors group-hover:text-(--primary)">
+							{authorName}
+						</strong>
+						<time
+							datetime={new Date(entry.published).toISOString()}
+							class="shrink-0 text-(--content-meta)"
+						>
 							{formatDate(entry.published)}
 						</time>
-						{#if hasImage || entry.pinned}
-							<span class="ml-auto inline-flex items-center gap-1.5">
-								{#if hasImage}
-									<svg class="size-3.5 shrink-0 text-neutral-500 dark:text-neutral-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-										<path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3L14.5 12l4.5 6H5z"/>
-									</svg>
-								{/if}
-								{#if entry.pinned}
-									<span class="inline-flex items-center gap-0.5 text-[10px] px-1 py-0.5 rounded bg-(--primary)/10 text-(--primary) font-medium">
-										<svg class="size-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>
-										{i18n(I18nKey.pinned)}
-									</span>
-								{/if}
-							</span>
-						{/if}
 					</div>
-					<p class="m-0 line-clamp-3 text-sm leading-[1.35rem]">
+					<p class="m-0 mt-0.5 line-clamp-2 text-sm leading-[1.35rem] text-(--text-color)">
 						{text}
 					</p>
+					{#if entry.pinned}
+						<span class="mt-1 inline-flex items-center gap-0.5 rounded bg-(--primary)/10 px-1 py-0.5 text-[10px] font-medium text-(--primary)">
+							<svg class="size-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>
+							{i18n(I18nKey.pinned)}
+						</span>
+					{/if}
 				</div>
+				{#if image}
+					<img
+						src={image.src}
+						alt={image.alt}
+						class="size-12 shrink-0 rounded-lg bg-(--btn-plain-bg-hover) object-cover"
+						loading="lazy"
+						decoding="async"
+					/>
+				{/if}
 			</a>
 		{/each}
 	{/if}

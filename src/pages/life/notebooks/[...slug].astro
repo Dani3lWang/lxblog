@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+	const entries = await getCollection("notebooks");
+	const paths: { params: { slug: string } }[] = [];
+
+	for (const entry of entries) {
+		const normalizedId = entry.id.replace(/\\/g, "/");
+		// 跳过 README 和非 md 文件
+		if (normalizedId.toLowerCase().includes("readme")) continue;
+		if (!normalizedId.endsWith(".md")) continue;
+
+		const segments = normalizedId.split("/");
+		if (segments.length < 2) continue;
+
+		const folderName = segments[0];
+		const fileName = segments[segments.length - 1].replace(/\.md$/, "");
+
+		// 文件夹首页旧链接
+		paths.push({ params: { slug: folderName } });
+		// 单条日记旧链接
+		paths.push({ params: { slug: `${folderName}/${fileName}` } });
+	}
+
+	return paths;
+}
+
+const { slug } = Astro.params;
+const target = `/moments/notebooks/${slug}/`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="refresh" content={`0; url=${target}`} />
+		<link rel="canonical" href={target} />
+		<title>页面已移动</title>
+	</head>
+	<body>
+		<p>此笔记本已迁移至 <a href={target}>{target}</a>，正在跳转…</p>
+	</body>
+</html>

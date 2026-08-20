@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lxblog 博客编辑器</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="window-bar">
+        <div class="traffic-lights" aria-hidden="true">
+          <span class="traffic-dot close"></span>
+          <span class="traffic-dot minimize"></span>
+          <span class="traffic-dot zoom"></span>
+        </div>
+        <div class="window-title">Lxblog 博客编辑器</div>
+      </header>
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark"><img src="/admin.jpg" alt="Admin"></span>
+          <div>
+            <h1>Lxblog 博客编辑器</h1>
+            <p>文章 / 书影音 / 动态 / 更新日志</p>
+          </div>
+        </div>
+
+        <label class="root-field">
+          <span>Astro 博客根目录</span>
+          <div class="root-row">
+            <input id="rootInput" type="text" spellcheck="false">
+            <button id="loadBtn" class="icon-btn" title="重新读取">↻</button>
+          </div>
+        </label>
+
+        <nav class="tabs">
+          <button class="tab active" data-tab="posts">文章 <span id="postCount">0</span></button>
+          <button class="tab" data-tab="books">书籍 <span id="bookCount">0</span></button>
+          <button class="tab" data-tab="movies">影视 <span id="movieCount">0</span></button>
+          <button class="tab" data-tab="music">音乐 <span id="musicCount">0</span></button>
+          <button class="tab" data-tab="games">游戏 <span id="gameCount">0</span></button>
+          <button class="tab" data-tab="moments">动态 <span id="momentCount">0</span></button>
+          <button class="tab" data-tab="changelog">更新日志 <span id="changelogCount">0</span></button>
+        </nav>
+
+        <div class="actions">
+          <button id="saveBtn" class="primary">保存</button>
+          <button id="checkBtn">检查</button>
+          <button id="typecheckBtn">类型检查</button>
+          <button id="buildBtn" class="primary">构建</button>
+        </div>
+
+        <pre id="status" class="status">准备就绪</pre>
+      </aside>
+
+      <main class="workspace">
+        <header class="toolbar">
+          <div class="search">
+            <input id="searchInput" type="search" placeholder="搜索标题、作者、分类、标签、内容">
+          </div>
+          <button id="addBtn" class="primary">新增</button>
+          <button id="moveUpBtn">上移</button>
+          <button id="moveDownBtn">下移</button>
+          <button id="deleteBtn" class="danger">删除</button>
+        </header>
+
+        <section class="pane">
+          <div id="list" class="list"></div>
+          <form id="editor" class="editor"></form>
+        </section>
+      </main>
+      <div class="resize-hit resize-right" data-resize="right"></div>
+      <div class="resize-hit resize-bottom" data-resize="bottom"></div>
+      <div class="resize-hit resize-corner" data-resize="bottomRight"></div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

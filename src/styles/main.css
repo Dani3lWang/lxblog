@@ -234,7 +234,7 @@ html {
     }
     
     .card-base {
-        @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg) transition-colors duration-150;
+        @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg-transparent) transition-colors duration-150;
     }
     .card-base-transparent {
         @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg-transparent) transition-colors duration-150;
