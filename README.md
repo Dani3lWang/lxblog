@@ -313,6 +313,22 @@ src/
 
 > Epic / Xbox / Switch 平台暂未实现自动同步，游戏需手动维护在 JSON 中（`sync.epic` / `sync.exophase` / `sync.switch` 为预留开关）。
 
+## 🎵 音乐下载脚本
+
+`scripts/fetch-music/` 提供一组 Python 音乐工具（依赖 `mutagen`，搜索下载需可用的 Meting API）：
+
+- `fetch-lrc.py`：主脚本。M4A 封面/歌词提取 + 多平台搜索下载（tencent → kugou → netease 自动 fallback，直到拿到完整版音频），支持 `--md` 自动生成博客 Markdown（默认输出到 `src/content/bangumi/music/`）
+- `batch-download.py`：从 QQ 音乐复制的歌单文本批量下载（音频 + 封面 + 歌词 + md）
+- `extract-lrc.py`：从本地 M4A 文件提取内嵌歌词生成 .lrc，无需 ffmpeg
+
+```bash
+python scripts/fetch-music/fetch-lrc.py "晴天" "周杰伦" --md        # 搜索下载
+python scripts/fetch-music/fetch-lrc.py <本地M4A文件> --md          # 本地提取
+python scripts/fetch-music/batch-download.py songs.txt --dry-run   # 歌单批量（先预览）
+```
+
+自定义 API 端点、默认输出目录与音频 URL 前缀等均可在脚本头部注释中配置。
+
 ## ⚙️ 文章 Frontmatter
 
 ```yaml
@@ -376,6 +392,7 @@ location: China # 位置
 | `pnpm new-d <content>`     | 创建一条动态                           |
 | `pnpm new-dynamic <content>` | 创建一条动态（完整命令）              |
 | `pnpm sync-games`          | 手动触发 Steam 游戏数据同步（构建前也会自动执行） |
+| `python scripts/fetch-music/fetch-lrc.py "歌名" "歌手" --md` | 多平台搜索下载音乐（音频+歌词+封面+博客md） |
 | `pnpm astro ...`           | 执行 `astro add`, `astro check` 等指令 |
 | `pnpm astro --help`        | 显示 Astro CLI 帮助                    |
 
