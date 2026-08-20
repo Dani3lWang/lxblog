@@ -270,6 +270,8 @@ pnpm douban-ratings           # 手动增量同步
 pnpm douban-ratings --refresh # 强制重新抓取全部
 ```
 
+点击卡片可打开条目详情页（`/bangumi/{slug}/`），展示封面、元信息、短评与豆瓣评分，正文可在条目文件 Markdown 中撰写。
+
 ## 🎮 游戏模块（平台游戏库）
 
 独立的游戏记录页面 `/games/`，按平台（Steam / Nintendo Switch / Xbox / Epic / PlayStation）展示游戏，支持游玩时长、最近游玩、成就进度等数据。影视与游戏页面（`/movies-games/`）已剥离游戏内容，专注影视和音乐。
