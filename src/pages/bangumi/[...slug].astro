@@ -1,10 +1,12 @@
 ---
 import { getCollection, render } from "astro:content";
 import Markdown from "@/components/common/Markdown.astro";
+import { musicPlayerConfig } from "@/config";
 import doubanRatings from "@/constants/douban-ratings.json";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import type { BangumiTrack } from "@/types/bangumi";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
 import { removeFileExtension } from "@/utils/url-utils";
 
@@ -71,7 +73,28 @@ const douban = entry.data.doubanId
 	? doubanRatingsMap[String(entry.data.doubanId)]
 	: undefined;
 
-const tracks = entry.data.tracks ?? [];
+const tracks: BangumiTrack[] = (entry.data.tracks ?? []).map((track) =>
+	typeof track === "string" ? { name: track } : track,
+);
+
+// 可站内播放的曲目（有本地音源或 meting ID）
+const playableIndexes = new Set<number>();
+tracks.forEach((track, index) => {
+	if (track.url || track.metingId) playableIndexes.add(index);
+});
+
+const detailMusicData = JSON.stringify({
+	playlist: tracks.map((track) => ({
+		name: track.name,
+		artist: entry.data.artist || "",
+		url: track.url || "",
+		pic: imageSrc,
+		lrc: track.lrc || "",
+		metingServer: track.metingServer || "",
+		metingId: track.metingId || "",
+	})),
+	metingApiUrl: musicPlayerConfig.meting?.api || "",
+}).replace(/</g, "\\u003c");
 ---
 
 <MainGridLayout
@@ -166,11 +189,44 @@ const tracks = entry.data.tracks ?? [];
 				</h2>
 				<ol class="mg-tracklist-list">
 					{tracks.map((track, index) => (
-						<li class="mg-track">
+						<li
+							class:list={[
+								"mg-track",
+								{ "mg-track-playable": playableIndexes.has(index) },
+								{ "mg-track-external": Boolean(track.link) },
+							]}
+							data-track-index={playableIndexes.has(index) ? index : undefined}
+						>
 							<span class="mg-track-no">
 								{String(index + 1).padStart(2, "0")}
 							</span>
-							<span class="mg-track-name">{track}</span>
+							{track.link && !playableIndexes.has(index) ? (
+								<a
+									class="mg-track-name mg-track-link"
+									href={track.link}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{track.name}
+									<svg class="mg-track-external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
+								</a>
+							) : (
+								<span class="mg-track-name">{track.name}</span>
+							)}
+							{playableIndexes.has(index) && (
+								<svg class="mg-track-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+							)}
+							{track.link && playableIndexes.has(index) && (
+								<a
+									class="mg-track-ext"
+									href={track.link}
+									target="_blank"
+									rel="noopener noreferrer"
+									title={track.name}
+								>
+									<svg class="mg-track-external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
+								</a>
+							)}
 						</li>
 					))}
 				</ol>
@@ -178,6 +234,8 @@ const tracks = entry.data.tracks ?? [];
 		)}
 	</div>
 </MainGridLayout>
+
+<script is:inline type="application/json" id="mg-detail-music-data" data-swup-ignore-script set:html={detailMusicData} />
 
 <style>
 	.mg-cover-wrap {
@@ -297,7 +355,7 @@ const tracks = entry.data.tracks ?? [];
 
 	.mg-track {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		gap: 0.625rem;
 		padding: 0.45rem 0.5rem;
 		border-radius: 0.5rem;
@@ -308,6 +366,67 @@ const tracks = entry.data.tracks ?? [];
 
 	.mg-track:hover {
 		background: var(--btn-regular-bg);
+	}
+
+	.mg-track-playable {
+		cursor: pointer;
+	}
+
+	.mg-track-play {
+		flex-shrink: 0;
+		width: 13px;
+		height: 13px;
+		margin-left: auto;
+		color: var(--primary);
+		opacity: 0;
+		transition: opacity 0.15s ease;
+	}
+
+	.mg-track-playable:hover .mg-track-play,
+	.mg-track.playing .mg-track-play {
+		opacity: 1;
+	}
+
+	.mg-track-playable:hover .mg-track-name,
+	.mg-track.playing .mg-track-name {
+		color: var(--primary);
+	}
+
+	.mg-track.playing .mg-track-name {
+		font-weight: 600;
+	}
+
+	.mg-track-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.mg-track-link:hover {
+		color: var(--primary);
+	}
+
+	.mg-track-external-icon {
+		width: 12px;
+		height: 12px;
+		opacity: 0.55;
+		flex-shrink: 0;
+	}
+
+	.mg-track-ext {
+		display: inline-flex;
+		align-items: center;
+		flex-shrink: 0;
+		color: var(--content-meta);
+		opacity: 0.75;
+		transition: color 0.15s ease, opacity 0.15s ease;
+	}
+
+	.mg-track-ext:hover {
+		color: var(--primary);
+		opacity: 1;
 	}
 
 	.mg-track-no {

@@ -3,6 +3,7 @@ import type { ImageMetadata } from "astro";
 import type { CollectionConfig, SchemaContext } from "astro/content/config";
 import { glob } from "astro/loaders";
 import { type ZodType, z } from "astro/zod";
+import type { BangumiTrack } from "./types/bangumi";
 import type { MusicGenreId } from "./config/musicGenreConfig";
 import { musicGenreIds } from "./config/musicGenreConfig";
 
@@ -138,8 +139,8 @@ type BangumiData = {
 	metingServer?: string;
 	metingId?: string;
 	musicType?: "album" | "single" | "ep";
-	// 专辑曲目列表（按专辑内顺序）
-	tracks?: string[];
+	// 专辑曲目列表（按专辑内顺序）；字符串仅展示，对象可携带音源/外链
+	tracks?: Array<string | BangumiTrack>;
 };
 
 const bangumiSchema: (ctx: SchemaContext) => ZodType<BangumiData> = ({
@@ -168,8 +169,22 @@ const bangumiSchema: (ctx: SchemaContext) => ZodType<BangumiData> = ({
 		metingServer: z.string().optional(),
 		metingId: z.string().optional(),
 		musicType: z.enum(["album", "single", "ep"]).optional(),
-		// 专辑曲目列表（按专辑内顺序）
-		tracks: z.array(z.string()).optional(),
+		// 专辑曲目列表（按专辑内顺序）；字符串仅展示，对象可携带音源/外链
+		tracks: z
+			.array(
+				z.union([
+					z.string(),
+					z.object({
+						name: z.string(),
+						url: z.string().optional(),
+						lrc: z.string().optional(),
+						metingServer: z.string().optional(),
+						metingId: z.string().optional(),
+						link: z.string().optional(),
+					}),
+				]),
+			)
+			.optional(),
 	});
 
 const bangumiCollection: ContentCollection<BangumiData> = defineCollection({

@@ -3,11 +3,16 @@
 		"title": "聪明镇 聰明鎮‎ (2026)",
 		"rate": "5.0",
 		"url": "https://movie.douban.com/subject/35896166/",
-		"updatedAt": "2026-08-20",
+		"updatedAt": "2026-08-21",
 		"year": "2026",
 		"region": "中国台湾",
-		"directors": ["谢骏毅"],
-		"types": ["剧情", "恐怖"],
+		"directors": [
+			"谢骏毅"
+		],
+		"types": [
+			"剧情",
+			"恐怖"
+		],
 		"episodes": "10"
 	}
 }

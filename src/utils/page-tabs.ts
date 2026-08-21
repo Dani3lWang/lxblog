@@ -216,7 +216,29 @@ async function resolveMusicPlaylist(data: MusicData): Promise<MusicTrack[]> {
 					  };
 				const data2 = Array.isArray(raw) ? raw[0] : raw;
 				if (data2) {
-					if (data2.url) track.url = data2.url;
+					let url = data2.url;
+					// 部分 meting 实例返回中间跳转（type=url），需再请求一次拿到直链；
+					// 跳转失败时置空，避免把 API 地址交给 audio 播放
+					if (url && /[?&]type=url(&|$)/.test(url)) {
+						let resolved = "";
+						try {
+							const res2 = await fetch(url);
+							if (res2.ok) {
+								const raw2 = (await res2.json()) as {
+									url?: string;
+								};
+								resolved = raw2.url || "";
+							}
+						} catch (err2) {
+							console.warn(
+								"[MoviesGamesMusic] Meting url resolve failed:",
+								track.name,
+								err2,
+							);
+						}
+						url = resolved;
+					}
+					if (url) track.url = url;
 					if (data2.pic && !track.pic) track.pic = data2.pic;
 					if (data2.lrc && !track.lrc) track.lrc = data2.lrc;
 					track.artist = track.artist || data2.author || data2.artist || "";
@@ -242,6 +264,11 @@ function updatePlayingVisual(currentName: string): void {
 		const titleEl = card.querySelector(".music-title");
 		const title = titleEl ? titleEl.textContent : "";
 		card.classList.toggle("playing", !!(currentName && title === currentName));
+	});
+	document.querySelectorAll<HTMLElement>(".mg-track").forEach((row) => {
+		const nameEl = row.querySelector(".mg-track-name");
+		const name = nameEl ? nameEl.textContent?.trim() : "";
+		row.classList.toggle("playing", !!(currentName && name === currentName));
 	});
 }
 
@@ -283,6 +310,31 @@ function initMusicCards(root: HTMLElement, data: MusicData): void {
 		});
 }
 
+function initDetailTracklist(root: HTMLElement, data: MusicData): void {
+	const rows = root.querySelectorAll<HTMLElement>(
+		".mg-track[data-track-index]",
+	);
+	if (rows.length === 0) return;
+
+	rows.forEach((row) => {
+		const clone = row.cloneNode(true) as HTMLElement;
+		row.parentNode?.replaceChild(clone, row);
+	});
+
+	root
+		.querySelectorAll<HTMLElement>(".mg-track[data-track-index]")
+		.forEach((row) => {
+			row.addEventListener("click", (e) => {
+				// 配置了外链的曲目由链接自身处理跳转
+				if ((e.target as HTMLElement).closest("a")) return;
+				const idx = Number.parseInt(row.dataset.trackIndex || "-1", 10);
+				if (idx >= 0) {
+					void playMusicByIndex(data, idx);
+				}
+			});
+		});
+}
+
 function listenToPlayState(): void {
 	const mgr = getMgr();
 	if (!mgr || musicListenersAttached) return;
@@ -302,8 +354,11 @@ function listenToPlayState(): void {
 	});
 }
 
-function getMusicData(root: HTMLElement): MusicData | null {
-	const el = root.querySelector<HTMLElement>("#mg-music-data");
+function getMusicData(
+	root: HTMLElement,
+	selector = "#mg-music-data",
+): MusicData | null {
+	const el = root.querySelector<HTMLElement>(selector);
 	if (!el) return null;
 	try {
 		return JSON.parse(el.textContent || "{}") as MusicData;
@@ -325,6 +380,8 @@ export function initPageTabs(): void {
 	const hasMgFilters = root.querySelector(".mg-filter-btn") !== null;
 	const hasGamesTabs = root.querySelector(".games-tab") !== null;
 	const hasMusic = root.querySelector(".music-card") !== null;
+	const hasDetailTracklist =
+		root.querySelector(".mg-track[data-track-index]") !== null;
 
 	if (hasMgTabs) initMgTabs(root);
 	if (hasMgFilters) initMgFilters(root);
@@ -333,6 +390,13 @@ export function initPageTabs(): void {
 		const data = getMusicData(root);
 		if (data) {
 			initMusicCards(root, data);
+			listenToPlayState();
+		}
+	}
+	if (hasDetailTracklist) {
+		const data = getMusicData(root, "#mg-detail-music-data");
+		if (data) {
+			initDetailTracklist(root, data);
 			listenToPlayState();
 		}
 	}
