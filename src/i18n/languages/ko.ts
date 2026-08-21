@@ -457,6 +457,7 @@ export const ko: Translation = {
 	[Key.moviesGamesTabMusic]: "音乐",
 	[Key.moviesGamesNoData]: "暂无条目",
 	[Key.moviesGamesDoubanRating]: "두반 평점",
+	[Key.moviesGamesTracklist]: "수록곡",
 	// 音乐页面
 	[Key.musicPage]: "音乐",
 	[Key.musicPageTitle]: "音乐",

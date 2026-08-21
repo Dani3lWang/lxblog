@@ -138,6 +138,8 @@ type BangumiData = {
 	metingServer?: string;
 	metingId?: string;
 	musicType?: "album" | "single" | "ep";
+	// 专辑曲目列表（按专辑内顺序）
+	tracks?: string[];
 };
 
 const bangumiSchema: (ctx: SchemaContext) => ZodType<BangumiData> = ({
@@ -166,6 +168,8 @@ const bangumiSchema: (ctx: SchemaContext) => ZodType<BangumiData> = ({
 		metingServer: z.string().optional(),
 		metingId: z.string().optional(),
 		musicType: z.enum(["album", "single", "ep"]).optional(),
+		// 专辑曲目列表（按专辑内顺序）
+		tracks: z.array(z.string()).optional(),
 	});
 
 const bangumiCollection: ContentCollection<BangumiData> = defineCollection({

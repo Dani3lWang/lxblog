@@ -256,6 +256,7 @@ export const ja: Translation = {
 	[Key.moviesGamesTabMusic]: "音楽",
 	[Key.moviesGamesNoData]: "コンテンツがありません",
 	[Key.moviesGamesDoubanRating]: "豆瓣評価",
+	[Key.moviesGamesTracklist]: "収録曲",
 
 	// ゲームページ（プラットフォーム別ゲームライブラリ）
 	[Key.games]: "ゲーム",

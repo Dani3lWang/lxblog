@@ -253,6 +253,7 @@ export const zh_TW: Translation = {
 	[Key.moviesGamesTabMusic]: "音樂",
 	[Key.moviesGamesNoData]: "暫無內容",
 	[Key.moviesGamesDoubanRating]: "豆瓣評分",
+	[Key.moviesGamesTracklist]: "曲目列表",
 
 	// 遊戲頁面（平台遊戲庫）
 	[Key.games]: "遊戲",

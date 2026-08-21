@@ -441,18 +441,20 @@ const musicDataJson = JSON.stringify({
 														data-item-section={sec.tabKey}
 														data-item-status={statusMap[item.status] || "unknown"}
 													>
-														<MusicCollectionCard
-															title={item.title}
-															artist={item.artist}
-															image={item.image}
-															score={item.score}
-															statusText={getMusicStatusText(item.status)}
-															statusColor={getMusicStatusColor(item.status)}
-															comment={item.comment}
-															musicType={item.musicType}
-															hasAudio={item.hasAudio}
-															playlistIndex={item.playlistIndex}
-														/>
+														<a href={item.link} class="music-card-link">
+															<MusicCollectionCard
+																title={item.title}
+																artist={item.artist}
+																image={item.image}
+																score={item.score}
+																statusText={getMusicStatusText(item.status)}
+																statusColor={getMusicStatusColor(item.status)}
+																comment={item.comment}
+																musicType={item.musicType}
+																hasAudio={item.hasAudio}
+																playlistIndex={item.playlistIndex}
+															/>
+														</a>
 													</div>
 												))
 											: (sec.items as MgItem[]).map((item) => (
@@ -533,6 +535,10 @@ const musicDataJson = JSON.stringify({
 	}
 	.scrollbar-hide::-webkit-scrollbar {
 		display: none;
+	}
+
+	.music-card-link {
+		display: block;
 	}
 
 	@media (max-width: 640px) {
