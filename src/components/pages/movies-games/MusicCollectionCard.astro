@@ -4,8 +4,6 @@ interface Props {
 	artist?: string;
 	image: string;
 	score?: number;
-	statusText: string;
-	statusColor: string;
 	comment?: string;
 	musicType?: "album" | "single" | "ep";
 	hasAudio: boolean;
@@ -17,8 +15,6 @@ const {
 	artist,
 	image,
 	score = 0,
-	statusText,
-	statusColor,
 	comment,
 	musicType,
 	hasAudio,
@@ -40,10 +36,6 @@ const typeLabels: Record<string, string> = {
 >
 	<div class="music-cover">
 		<img src={image} alt={title} class="music-img" loading="lazy" />
-
-		<span class={`music-status ${statusColor}`}>
-			{statusText}
-		</span>
 
 		{musicType && (
 			<span class="music-type">
@@ -141,25 +133,20 @@ const typeLabels: Record<string, string> = {
 		z-index: 1;
 	}
 
-	.music-status,
 	.music-type {
 		position: absolute;
 		top: 8px;
-		left: 8px;
+		right: 8px;
 		padding: 3px 10px;
 		border-radius: 9999px;
 		font-size: 10px;
 		font-weight: 600;
 		letter-spacing: .04em;
 		color: #fff;
+		background: rgba(0,0,0,.48);
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
 		z-index: 3;
-	}
-	.music-type {
-		left: auto;
-		right: 8px;
-		background: rgba(0,0,0,.48);
 	}
 
 	.music-score {
@@ -294,14 +281,12 @@ const typeLabels: Record<string, string> = {
 	}
 
 	@media (max-width: 640px) {
-		.music-status,
 		.music-type {
 			top: 5px;
-			left: 5px;
+			right: 5px;
 			padding: 2px 7px;
 			font-size: 9px;
 		}
-		.music-type { left: auto; right: 5px; }
 		.music-score {
 			top: 28px;
 			right: 5px;

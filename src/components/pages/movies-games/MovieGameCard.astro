@@ -10,44 +10,6 @@ interface Props {
 
 const { item, link } = Astro.props;
 
-const getStatusColor = (type: number) => {
-	switch (type) {
-		case 1:
-			return "bg-sky-500/80";
-		case 2:
-			return "bg-emerald-500/80";
-		case 3:
-			return "bg-amber-500/80";
-		case 4:
-			return "bg-violet-500/80";
-		case 5:
-			return "bg-rose-400/80";
-		default:
-			return "bg-gray-500/80";
-	}
-};
-
-const getStatusText = (type: number) => {
-	const subjectType = item.subject_type;
-	switch (type) {
-		case 1:
-			if (subjectType === 4) return i18n(I18nKey.bangumiStatusGameWish);
-			return i18n(I18nKey.bangumiStatusWish);
-		case 2:
-			if (subjectType === 4) return i18n(I18nKey.bangumiStatusGamePlayed);
-			return i18n(I18nKey.bangumiStatusWatched);
-		case 3:
-			if (subjectType === 4) return i18n(I18nKey.bangumiStatusGamePlaying);
-			return i18n(I18nKey.bangumiStatusWatching);
-		case 4:
-			return i18n(I18nKey.bangumiStatusOnHold);
-		case 5:
-			return i18n(I18nKey.bangumiStatusDropped);
-		default:
-			return i18n(I18nKey.bangumiStatusUnknown);
-	}
-};
-
 const displayTags = item.tags?.length > 0 ? item.tags.slice(0, 3) : [];
 const title = item.subject.name_cn || item.subject.name;
 const rawScore = item.subject.score ?? 0;
@@ -74,10 +36,6 @@ const douban = (
 		/>
 
 		<div class="mg-gradient" />
-
-		<span class={`mg-status ${getStatusColor(item.type)}`}>
-			{getStatusText(item.type)}
-		</span>
 
 		{hasScore && (
 			<span class="mg-score">
@@ -164,21 +122,6 @@ const douban = (
 		background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.28) 50%, transparent 100%);
 		pointer-events: none;
 		z-index: 1;
-	}
-
-	.mg-status {
-		position: absolute;
-		top: 8px;
-		left: 8px;
-		padding: 3px 10px;
-		border-radius: 9999px;
-		font-size: 10px;
-		font-weight: 600;
-		letter-spacing: .04em;
-		color: #fff;
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
-		z-index: 3;
 	}
 
 	.mg-score {
@@ -318,12 +261,6 @@ const douban = (
 	}
 
 	@media (max-width: 640px) {
-		.mg-status {
-			top: 5px;
-			left: 5px;
-			padding: 2px 7px;
-			font-size: 9px;
-		}
 		.mg-score {
 			top: 5px;
 			right: 5px;
