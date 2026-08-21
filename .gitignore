@@ -37,12 +37,14 @@ yarn.lock
 .claude/
 .vscode/
 .reasonix/
+.zcode/
 
 # docs
 Firefly-docs/
 docs/分析/
 src/content/example/
 src/content/template/
+.playwright-mcp/
 
 # lite 版本
 Firefly-Lite/
