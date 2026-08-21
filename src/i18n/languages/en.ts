@@ -262,6 +262,7 @@ export const en: Translation = {
 	[Key.moviesGamesTabMusic]: "Music",
 	[Key.moviesGamesNoData]: "No content yet",
 	[Key.moviesGamesDoubanRating]: "Douban Rating",
+	[Key.moviesGamesTracklist]: "Tracklist",
 
 	// Games Page (platform game library)
 	[Key.games]: "Games",

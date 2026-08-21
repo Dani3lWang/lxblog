@@ -70,6 +70,8 @@ const imageSrc =
 const douban = entry.data.doubanId
 	? doubanRatingsMap[String(entry.data.doubanId)]
 	: undefined;
+
+const tracks = entry.data.tracks ?? [];
 ---
 
 <MainGridLayout
@@ -77,7 +79,12 @@ const douban = entry.data.doubanId
 	headings={headings}
 	bannerPostMeta={bannerPostMeta}
 >
-	<div class="flex w-full rounded-(--radius-large) overflow-hidden relative mb-4">
+	<div
+		class:list={[
+			"flex w-full rounded-(--radius-large) overflow-hidden relative mb-4",
+			tracks.length > 0 ? "mg-detail-with-tracks" : "",
+		]}
+	>
 		<div data-pagefind-body class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
 			<!-- header -->
 			<div class="onload-animation flex gap-6 mb-6">
@@ -150,6 +157,25 @@ const douban = entry.data.doubanId
 				<Content />
 			</Markdown>
 		</div>
+
+		{tracks.length > 0 && (
+			<aside class="mg-tracklist" aria-label={i18n(I18nKey.moviesGamesTracklist)}>
+				<h2 class="mg-tracklist-title">
+					{i18n(I18nKey.moviesGamesTracklist)}
+					<span class="mg-tracklist-count">{tracks.length}</span>
+				</h2>
+				<ol class="mg-tracklist-list">
+					{tracks.map((track, index) => (
+						<li class="mg-track">
+							<span class="mg-track-no">
+								{String(index + 1).padStart(2, "0")}
+							</span>
+							<span class="mg-track-name">{track}</span>
+						</li>
+					))}
+				</ol>
+			</aside>
+		)}
 	</div>
 </MainGridLayout>
 
@@ -226,6 +252,86 @@ const douban = entry.data.doubanId
 		font-size: 14px;
 		line-height: 1.8;
 		color: var(--deep-text);
+	}
+
+	.mg-detail-with-tracks .card-base {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.mg-tracklist {
+		flex-shrink: 0;
+		width: 17.5rem;
+		padding: 1rem 1rem 0.5rem;
+		border: 1px solid var(--line-divider);
+		border-radius: var(--radius-large);
+		background: var(--card-bg);
+	}
+
+	.mg-tracklist-title {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin: 0 0 0.75rem;
+		padding-bottom: 0.625rem;
+		border-bottom: 1px solid var(--line-divider);
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: var(--deep-text);
+	}
+
+	.mg-tracklist-count {
+		padding: 2px 8px;
+		border-radius: 9999px;
+		background: var(--primary);
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: #fff;
+	}
+
+	.mg-tracklist-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.mg-track {
+		display: flex;
+		align-items: baseline;
+		gap: 0.625rem;
+		padding: 0.45rem 0.5rem;
+		border-radius: 0.5rem;
+		font-size: 0.85rem;
+		color: var(--deep-text);
+		transition: background 0.15s ease;
+	}
+
+	.mg-track:hover {
+		background: var(--btn-regular-bg);
+	}
+
+	.mg-track-no {
+		flex-shrink: 0;
+		min-width: 1.5rem;
+		text-align: right;
+		font-size: 0.75rem;
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		color: var(--content-meta);
+	}
+
+	.mg-track-name {
+		line-height: 1.5;
+		word-break: break-word;
+	}
+
+	@media (max-width: 960px) {
+		.mg-detail-with-tracks {
+			flex-direction: column;
+		}
+		.mg-tracklist {
+			width: 100%;
+		}
 	}
 
 	@media (max-width: 640px) {

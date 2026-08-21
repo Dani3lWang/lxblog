@@ -251,6 +251,7 @@ export const zh_CN: Translation = {
 	[Key.moviesGamesTabMusic]: "音乐",
 	[Key.moviesGamesNoData]: "暂无内容",
 	[Key.moviesGamesDoubanRating]: "豆瓣评分",
+	[Key.moviesGamesTracklist]: "曲目列表",
 
 	// 游戏页面（平台游戏库）
 	[Key.games]: "游戏",
