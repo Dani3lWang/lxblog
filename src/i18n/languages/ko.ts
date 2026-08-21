@@ -220,7 +220,6 @@ export const ko: Translation = {
 
 	// Anime Tracking - Shared components
 
-
 	// Pagination
 	[Key.paginationFirst]: "처음",
 	[Key.paginationPrev]: "이전",
@@ -475,6 +474,7 @@ export const ko: Translation = {
 	[Key.moviesGamesTabGame]: "游戏",
 	[Key.moviesGamesTabMusic]: "音乐",
 	[Key.moviesGamesNoData]: "暂无条目",
+	[Key.moviesGamesDoubanRating]: "두반 평점",
 	// 音乐页面
 	[Key.musicPage]: "音乐",
 	[Key.musicPageTitle]: "音乐",

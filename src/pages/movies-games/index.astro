@@ -7,11 +7,18 @@ import LifeNavTabs from "@/components/pages/life/LifeNavTabs.astro";
 import MovieGameCard from "@/components/pages/movies-games/MovieGameCard.astro";
 import MusicCollectionCard from "@/components/pages/movies-games/MusicCollectionCard.astro";
 import { musicPlayerConfig, siteConfig } from "@/config";
+import doubanRatings from "@/constants/douban-ratings.json";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
 import { formatDateI18nWithTime } from "@/utils/date-utils";
 import { removeFileExtension } from "@/utils/url-utils";
+
+// 豆瓣评分缓存（scripts/generate-douban-ratings.ts 构建时生成）
+const doubanRatingsMap = doubanRatings as unknown as Record<
+	string,
+	{ rate: string; url: string; title?: string } | undefined
+>;
 
 if (!siteConfig.pages.moviesGames) {
 	return Astro.redirect("/404/");
@@ -43,6 +50,7 @@ interface MgItem {
 	updated_at: string;
 	private: boolean;
 	link: string;
+	douban?: { rate: string; url: string; title?: string };
 	subject: {
 		id: number;
 		type: number;
@@ -93,6 +101,11 @@ const mgItems: MgItem[] = customBangumi
 
 		const finalLink = "/bangumi/" + removeFileExtension(id) + "/";
 
+		// 豆瓣评分缓存（构建时由 generate-douban-ratings.ts 生成）
+		const doubanEntry = data.doubanId
+			? doubanRatingsMap[String(data.doubanId)]
+			: undefined;
+
 		const subjectTypeMap: Record<string, number> = {
 			anime: 2,
 			game: 4,
@@ -113,6 +126,13 @@ const mgItems: MgItem[] = customBangumi
 			updated_at: data.published?.toISOString() || new Date().toISOString(),
 			private: false,
 			link: finalLink,
+			douban: doubanEntry
+				? {
+						rate: doubanEntry.rate,
+						url: doubanEntry.url,
+						title: doubanEntry.title,
+					}
+				: undefined,
 			_subcategory: subcategory,
 			subject: {
 				id: 0,

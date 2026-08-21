@@ -216,8 +216,6 @@ export const ja: Translation = {
 	[Key.vndbLengthLong]: "長い",
 	[Key.vndbLengthVeryLong]: "非常に長い",
 
-
-
 	// 動態
 	[Key.moments]: "動態",
 	[Key.recentMoments]: "最新の動態",
@@ -258,6 +256,7 @@ export const ja: Translation = {
 	[Key.moviesGamesTabGame]: "ゲーム",
 	[Key.moviesGamesTabMusic]: "音楽",
 	[Key.moviesGamesNoData]: "コンテンツがありません",
+	[Key.moviesGamesDoubanRating]: "豆瓣評価",
 
 	// ゲームページ（プラットフォーム別ゲームライブラリ）
 	[Key.games]: "ゲーム",

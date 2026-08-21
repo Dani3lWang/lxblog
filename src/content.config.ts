@@ -129,6 +129,7 @@ type BangumiData = {
 	status: number; // 1: 想看, 2: 看过, 3: 在看, 4: 搁置, 5: 抛弃
 	image: ImageMetadata | string;
 	link?: string;
+	doubanId?: string | number; // 豆瓣条目 ID，构建时抓取豆瓣评分
 	score?: number;
 	comment?: string;
 	tags: string[];
@@ -156,6 +157,7 @@ const bangumiSchema: (ctx: SchemaContext) => ZodType<BangumiData> = ({
 		status: z.number().min(1).max(5).default(2), // 1: 想看, 2: 看过, 3: 在看, 4: 搁置, 5: 抛弃
 		image: image().or(z.string()),
 		link: z.string().optional(), // 对应文章的链接；为空时自动从文件路径推导
+		doubanId: z.union([z.string(), z.number()]).optional(), // 豆瓣条目 ID，用于构建时抓取并展示豆瓣评分
 		score: z.number().min(0).max(10).optional(),
 		comment: z.string().optional(),
 		tags: z.array(z.string()).optional().default([]),

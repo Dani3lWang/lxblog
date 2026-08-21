@@ -246,6 +246,30 @@ src/
 │   ├── sponsorConfig.ts          # 打赏配置
 ```
 
+## 🎬 影视与音乐（豆瓣评分）
+
+`/movies-games/` 页面的影视条目来自 `src/content/bangumi/` 内容集合：`category` 用 `real`（影视）或 `anime`（动画），`subcategory` 用 `tv` / `movie` / `documentary` / `anime`，短评写在 `comment` 字段，悬停卡片即可查看。
+
+条目配置 `doubanId`（豆瓣条目 ID，即豆瓣页面 URL 中的数字）后，构建时会自动从豆瓣抓取评分，卡片短评区域会显示豆瓣评分，点击右侧外链图标可跳转豆瓣条目页：
+
+```yaml
+---
+title: "聪明镇"
+category: "real"
+subcategory: "tv"
+status: 2
+doubanId: 35896166   # 豆瓣条目 ID
+comment: "短评内容……"
+---
+```
+
+评分缓存写入 `src/constants/douban-ratings.json`（构建时增量更新，当天已抓取的条目不重复请求；豆瓣不可用时保留旧数据、不中断构建），也可手动同步：
+
+```bash
+pnpm douban-ratings           # 手动增量同步
+pnpm douban-ratings --refresh # 强制重新抓取全部
+```
+
 ## 🎮 游戏模块（平台游戏库）
 
 独立的游戏记录页面 `/games/`，按平台（Steam / Nintendo Switch / Xbox / Epic / PlayStation）展示游戏，支持游玩时长、最近游玩、成就进度等数据。影视与游戏页面（`/movies-games/`）已剥离游戏内容，专注影视和音乐。
@@ -392,6 +416,7 @@ location: China # 位置
 | `pnpm new-d <content>`     | 创建一条动态                           |
 | `pnpm new-dynamic <content>` | 创建一条动态（完整命令）              |
 | `pnpm sync-games`          | 手动触发 Steam 游戏数据同步（构建前也会自动执行） |
+| `pnpm douban-ratings`     | 手动同步豆瓣评分（构建前也会自动执行，追加 `--refresh` 强制重抓） |
 | `python scripts/fetch-music/fetch-lrc.py "歌名" "歌手" --md` | 多平台搜索下载音乐（音频+歌词+封面+博客md） |
 | `pnpm astro ...`           | 执行 `astro add`, `astro check` 等指令 |
 | `pnpm astro --help`        | 显示 Astro CLI 帮助                    |
