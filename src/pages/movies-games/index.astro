@@ -213,40 +213,6 @@ musicItems.forEach((item) => {
 	item.playlistIndex = musicPlaylistIndexByTitle.get(item.title) ?? -1;
 });
 
-function getMusicStatusColor(type: number): string {
-	switch (type) {
-		case 1:
-			return "bg-sky-500/80";
-		case 2:
-			return "bg-emerald-500/80";
-		case 3:
-			return "bg-amber-500/80";
-		case 4:
-			return "bg-violet-500/80";
-		case 5:
-			return "bg-rose-400/80";
-		default:
-			return "bg-gray-500/80";
-	}
-}
-
-function getMusicStatusText(type: number): string {
-	switch (type) {
-		case 1:
-			return i18n(I18nKey.bangumiStatusMusicWish);
-		case 2:
-			return i18n(I18nKey.bangumiStatusMusicListened);
-		case 3:
-			return i18n(I18nKey.bangumiStatusMusicListening);
-		case 4:
-			return i18n(I18nKey.bangumiStatusOnHold);
-		case 5:
-			return i18n(I18nKey.bangumiStatusDropped);
-		default:
-			return i18n(I18nKey.bangumiStatusUnknown);
-	}
-}
-
 function getItemSubcategory(item: MgItem): string {
 	if (item._subcategory) return item._subcategory;
 	const tags = item.tags || [];
@@ -447,8 +413,6 @@ const musicDataJson = JSON.stringify({
 																artist={item.artist}
 																image={item.image}
 																score={item.score}
-																statusText={getMusicStatusText(item.status)}
-																statusColor={getMusicStatusColor(item.status)}
 																comment={item.comment}
 																musicType={item.musicType}
 																hasAudio={item.hasAudio}
