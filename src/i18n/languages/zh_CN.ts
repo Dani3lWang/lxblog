@@ -211,8 +211,6 @@ export const zh_CN: Translation = {
 	[Key.vndbLengthLong]: "长",
 	[Key.vndbLengthVeryLong]: "极长",
 
-
-
 	// 动态
 	[Key.moments]: "动态",
 	[Key.recentMoments]: "最新动态",
@@ -251,6 +249,7 @@ export const zh_CN: Translation = {
 	[Key.moviesGamesTabGame]: "游戏",
 	[Key.moviesGamesTabMusic]: "音乐",
 	[Key.moviesGamesNoData]: "暂无内容",
+	[Key.moviesGamesDoubanRating]: "豆瓣评分",
 
 	// 游戏页面（平台游戏库）
 	[Key.games]: "游戏",

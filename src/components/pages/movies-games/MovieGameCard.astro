@@ -53,11 +53,17 @@ const title = item.subject.name_cn || item.subject.name;
 const rawScore = item.subject.score ?? 0;
 const scoreText = rawScore > 0 ? `${rawScore}`.replace(/\.0$/, "") : "";
 const hasScore = rawScore > 0;
+
+// 豆瓣评分信息由 movies-games 页面组装注入（含 rate / url / title）
+const douban = (
+	item as { douban?: { rate: string; url: string; title?: string } }
+).douban;
 ---
 
+<div class="mg-card group">
 <a
 	href={link}
-	class="mg-card group"
+	class="mg-card-link"
 >
 	<div class="mg-cover">
 		<img
@@ -90,17 +96,29 @@ const hasScore = rawScore > 0;
 				</div>
 			)}
 		</div>
-
-		{item.comment && (
-			<div class="mg-overlay">
-				<p class="mg-comment">{item.comment}</p>
-			</div>
-		)}
 	</div>
 </a>
 
+{item.comment && (
+	<div class="mg-overlay">
+		<p class="mg-comment">{item.comment}</p>
+		{douban && (
+			<div class="mg-douban">
+				<svg class="mg-douban-star" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+				<span class="mg-douban-rate">{douban.rate}</span>
+				<span class="mg-douban-label">{i18n(I18nKey.moviesGamesDoubanRating)}</span>
+				<a class="mg-douban-link" href={douban.url} target="_blank" rel="noopener noreferrer" title={douban.title}>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
+				</a>
+			</div>
+		)}
+	</div>
+)}
+</div>
+
 <style>
 	.mg-card {
+		position: relative;
 		display: block;
 		border-radius: var(--radius-large);
 		overflow: hidden;
@@ -115,6 +133,11 @@ const hasScore = rawScore > 0;
 	}
 	:global(html.dark) .mg-card:hover {
 		box-shadow: 0 8px 25px -6px rgba(0,0,0,.35), 0 0 0 1px var(--primary);
+	}
+	.mg-card-link {
+		display: block;
+		text-decoration: none;
+		color: inherit;
 	}
 
 	.mg-cover {
@@ -228,8 +251,7 @@ const hasScore = rawScore > 0;
 		opacity: 0;
 		transition: opacity .25s ease;
 		display: flex;
-		align-items: flex-start;
-		justify-content: center;
+		flex-direction: column;
 		padding: 16px;
 		pointer-events: none;
 		z-index: 20;
@@ -241,12 +263,58 @@ const hasScore = rawScore > 0;
 		font-size: 12px;
 		line-height: 1.7;
 		color: rgba(255,255,255,.92);
-		margin: auto 0 0;
+		margin: 0 0 10px;
 		width: 100%;
 		display: -webkit-box;
 		-webkit-line-clamp: 5;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+	}
+	.mg-douban {
+		margin-top: auto;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		width: fit-content;
+		padding: 4px 10px 4px 8px;
+		border-radius: 9999px;
+		background: rgba(255,255,255,.14);
+		backdrop-filter: blur(4px);
+		-webkit-backdrop-filter: blur(4px);
+		font-size: 11px;
+		font-weight: 600;
+		color: rgba(255,255,255,.95);
+		pointer-events: auto;
+	}
+	.mg-douban-star {
+		width: 12px;
+		height: 12px;
+		color: #fbbf24;
+		flex-shrink: 0;
+	}
+	.mg-douban-rate {
+		font-size: 12px;
+		font-weight: 800;
+		line-height: 1;
+	}
+	.mg-douban-label {
+		opacity: .75;
+		font-weight: 500;
+	}
+	.mg-douban-link {
+		display: inline-flex;
+		align-items: center;
+		margin-left: 2px;
+		color: rgba(255,255,255,.85);
+		text-decoration: none;
+		transition: color .2s ease;
+	}
+	.mg-douban-link:hover {
+		color: #fff;
+	}
+	.mg-douban-link svg {
+		width: 12px;
+		height: 12px;
 	}
 
 	@media (max-width: 640px) {
@@ -272,6 +340,10 @@ const hasScore = rawScore > 0;
 		.mg-tag {
 			font-size: 9px;
 			padding: 1px 6px;
+		}
+		.mg-douban {
+			font-size: 10px;
+			padding: 3px 8px 3px 6px;
 		}
 	}
 </style>
