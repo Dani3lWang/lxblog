@@ -55,3 +55,13 @@ export type SubjectImages = {
 	small: string;
 	grid: string;
 };
+
+// 专辑曲目：纯字符串仅展示；对象形式可携带音源与外链
+export type BangumiTrack = {
+	name: string; // 曲目名
+	url?: string; // 本地音频路径（相对于 public 目录）
+	lrc?: string; // 本地歌词路径或 LRC 内容
+	metingServer?: string; // Meting 平台（netease/tencent/kugou…）
+	metingId?: string; // Meting 歌曲 ID
+	link?: string; // 外部播放页链接（点击跳转，优先于站内播放）
+};
