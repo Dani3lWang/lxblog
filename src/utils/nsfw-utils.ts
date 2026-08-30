@@ -1,11 +1,10 @@
 import type { UserSubjectCollection } from "@/types/bangumi";
-import type { MalListItem } from "@/types/mal";
 import type { NsfwMode } from "@/types/nsfw";
 import type { VndbUlistEntry } from "@/types/vndb";
 
 // 三个库共用的 NSFW 违禁词，按需增删。
 // 各库标签 / genre 命名不同，但常见 NSFW 用语大多重叠，集中一处便于维护。
-// 注：MAL 只有英文 genre，中 / 日词匹配不到；ecchi 属打码边缘，这里一并拦截。
+// 注：ecchi 属打码边缘，这里一并拦截。
 const NSFW_KEYWORDS = [
 	"Hentai",
 	"Ecchi",
@@ -30,10 +29,6 @@ export function isVndbNsfw(item: VndbUlistEntry): boolean {
 		(img?.violence ?? 0) > 1 ||
 		(item.vn?.tags ?? []).some((t) => NSFW_KEYWORDS.includes(t.name))
 	);
-}
-
-export function isMalNsfw(item: MalListItem): boolean {
-	return (item.node?.genres ?? []).some((g) => NSFW_KEYWORDS.includes(g.name));
 }
 
 export function isBangumiNsfw(item: UserSubjectCollection): boolean {

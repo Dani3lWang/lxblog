@@ -79,6 +79,7 @@
 - [x] **响应式设计** - 完美适配桌面端、平板和移动设备
 - [x] **多语言支持** - i18n 国际化，UI 支持简体中文、繁体中文、英文、日文、俄语、韩文
 - [x] **全文搜索** - 基于 Pagefind 的客户端搜索，支持文章内容索引
+- [x] **文章系列** - 通过 frontmatter 的 `series` / `seriesOrder` 将文章归入系列，`/series/` 页面聚合展示并支持上一篇/下一篇导航
 
 ### 个性化
 - [x] **动态侧边栏** - 支持配置单侧边栏、双侧边栏
@@ -369,6 +370,8 @@ draft: false
 lang: zh-CN      # 仅当文章语言与 `siteConfig.ts` 中的网站语言不同时需要设置
 pinned: false    # 置顶
 comment: true    # 是否允许评论
+series: "系列名"  # 所属文章系列，同一系列名的文章归入 /series/ 同一系列
+seriesOrder: 1   # 该篇在系列中的顺序（可选）
 ---
 ```
 
@@ -419,6 +422,7 @@ location: China # 位置
 | `pnpm new-dynamic <content>` | 创建一条动态（完整命令）              |
 | `pnpm sync-games`          | 手动触发 Steam 游戏数据同步（构建前也会自动执行） |
 | `pnpm douban-ratings`     | 手动同步豆瓣评分（构建前也会自动执行，追加 `--refresh` 强制重抓） |
+| `pnpm github-cards`       | 生成 GitHub 卡片缓存数据（构建前也会自动执行） |
 | `python scripts/fetch-music/fetch-lrc.py "歌名" "歌手" --md` | 多平台搜索下载音乐（音频+歌词+封面+博客md） |
 | `pnpm astro ...`           | 执行 `astro add`, `astro check` 等指令 |
 | `pnpm astro --help`        | 显示 Astro CLI 帮助                    |
