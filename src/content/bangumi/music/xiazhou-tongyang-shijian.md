@@ -2,7 +2,7 @@
 title: "下周同样时间"
 name_cn: "下週同樣時間"
 category: "music"
-status: 2
+status: 1
 image: "./covers/xiazhou-tongyang-shijian.jpg"
 artist: "曾沛慈"
 comment: "加盟华研音乐后的回归之作，制作上比过去明显更精致。《下周同样时间》把想念写得轻盈又不腻，《失眠的人》的深夜孤独感很戳人，《抢先看》是整张里最有新鲜感的开场；后半张抒情浓度偏高、风格略显同质，但曾沛慈的声音本身就值得循环。"

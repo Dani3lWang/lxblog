@@ -8,6 +8,8 @@ interface Props {
 	musicType?: "album" | "single" | "ep";
 	hasAudio: boolean;
 	playlistIndex: number;
+	/** 专辑 key：有该值时卡片为专辑形态，播放按钮触发整专播放 */
+	albumKey?: string;
 }
 
 const {
@@ -19,6 +21,7 @@ const {
 	musicType,
 	hasAudio,
 	playlistIndex,
+	albumKey,
 } = Astro.props;
 
 const scoreText = score > 0 ? `${score}`.replace(/\.0$/, "") : "";
@@ -33,6 +36,7 @@ const typeLabels: Record<string, string> = {
 	class="music-card group"
 	data-playlist-index={playlistIndex}
 	data-has-audio={hasAudio ? "1" : "0"}
+	data-album={albumKey || undefined}
 >
 	<div class="music-cover">
 		<img src={image} alt={title} class="music-img" loading="lazy" />
@@ -59,7 +63,9 @@ const typeLabels: Record<string, string> = {
 
 		{hasAudio && (
 			<div class="music-play-overlay">
-				<svg class="music-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+				<button type="button" class="music-play-btn" aria-label="播放">
+					<svg class="music-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+				</button>
 			</div>
 		)}
 
@@ -218,11 +224,31 @@ const typeLabels: Record<string, string> = {
 	.music-card:hover .music-play-overlay {
 		opacity: 1;
 	}
+	/* 显式播放按钮：卡片主体点击仍走外层链接进详情，仅按钮触发播放 */
+	.music-play-btn {
+		pointer-events: auto;
+		width: 52px;
+		height: 52px;
+		border-radius: 9999px;
+		border: none;
+		background: rgba(255,255,255,.92);
+		color: var(--primary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: transform .2s cubic-bezier(.23,1,.32,1), box-shadow .2s ease;
+		box-shadow: 0 4px 14px -2px rgba(0,0,0,.35);
+	}
+	.music-play-btn:hover {
+		transform: scale(1.1);
+	}
 	.music-play-icon {
-		width: 48px;
-		height: 48px;
-		color: #fff;
-		filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+		width: 26px;
+		height: 26px;
+		margin-left: 3px;
+		color: inherit;
+		filter: none;
 	}
 
 	.music-eq {
@@ -303,9 +329,13 @@ const typeLabels: Record<string, string> = {
 		.music-artist {
 			font-size: 10px;
 		}
+		.music-play-btn {
+			width: 46px;
+			height: 46px;
+		}
 		.music-play-icon {
-			width: 40px;
-			height: 40px;
+			width: 22px;
+			height: 22px;
 		}
 	}
 </style>

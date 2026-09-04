@@ -8,25 +8,23 @@
 // 通过 astro:page-load / swup:contentReplaced / DOMContentLoaded 事件
 // 在每次页面切换后执行，与新页面的 DOM 根节点（#swup-container）绑定。
 
-interface MusicTrack {
-	name: string;
-	artist: string;
-	url: string;
-	pic: string;
-	lrc: string;
-	metingServer: string;
-	metingId: string;
-}
-
-interface MusicData {
-	playlist: MusicTrack[];
-	metingApiUrl: string;
-}
+// 统一 meting 解析逻辑在 src/utils/music-source.ts(纯函数模块),
+// 本文件只保留页面绑定 / 高亮 / 缓存等 DOM 交互部分
+import { resolveMusicPlaylist } from "./music-source";
+import type {
+	MusicSourceData as MusicData,
+	MusicSourceTrack as MusicTrack,
+} from "./music-source";
 
 type MusicManager = {
 	setPlaylist: (playlist: MusicTrack[]) => void;
-	loadTrack: (index: number, autoPlay: boolean) => void;
-	on: (event: string, callback: (payload: unknown) => void) => void;
+	playTrackByIndex: (index: number) => void;
+	getState: () => {
+		playlist: MusicTrack[];
+		currentIndex: number;
+		track: MusicTrack | null;
+		isPlaying: boolean;
+	};
 };
 
 const TAB_ACTIVE_CLASSES = [
@@ -57,6 +55,21 @@ const FILTER_INACTIVE_CLASSES = [
 // 防重复绑定：mg-tab / games-tab / filter 通过 clone 去重，无全局状态；
 // music manager 的事件监听需要全局标记避免累积
 let musicListenersAttached = false;
+
+// 本页激活的播放列表引用（playMusicByIndex 在 setPlaylist 前记录）。
+// 全局播放器切换到其他歌单（如本地歌单）时引用不同，据此避免误更新本页高亮
+let activeResolvedPlaylist: MusicTrack[] | null = null;
+
+// 激活数据的内容指纹，与 activeResolvedPlaylist 配对做解析缓存命中判断
+let activeDataKey = "";
+
+// 正在播放的专辑 key（影视页整专播放），用于专辑卡片高亮；单曲播放时为空
+let activeAlbumKey = "";
+
+// 页面注入数据可携带的专辑子列表（albums[key] = 该专辑可播曲目）
+interface PageMusicData extends MusicData {
+	albums?: Record<string, MusicTrack[]>;
+}
 
 function initMgTabs(root: HTMLElement): void {
 	const tabButtons = root.querySelectorAll<HTMLElement>(".mg-tab");
@@ -169,124 +182,86 @@ function getMgr(): MusicManager | undefined {
 		.__fireflyMusic;
 }
 
-function resolveMetingUrl(
-	metingApi: string,
-	server: string,
-	id: string,
-): string {
-	if (!metingApi) return "";
-	const s = encodeURIComponent(server || "");
-	const i = encodeURIComponent(id || "");
-	return metingApi
-		.replace(":server", s)
-		.replace(":type", "song")
-		.replace(":id", i)
-		.replace(":r", Date.now().toString());
+function clearPlayingUI(): void {
+	document
+		.querySelectorAll<HTMLElement>(".music-card.playing, .mg-track.playing")
+		.forEach((el) => el.classList.remove("playing"));
 }
 
-async function resolveMusicPlaylist(data: MusicData): Promise<MusicTrack[]> {
-	if (!data.playlist || data.playlist.length === 0) return [];
-	const resolved = JSON.parse(JSON.stringify(data.playlist)) as MusicTrack[];
-	for (const track of resolved) {
-		if (track.metingServer && track.metingId && !track.url) {
-			try {
-				const url = resolveMetingUrl(
-					data.metingApiUrl,
-					track.metingServer,
-					track.metingId,
-				);
-				const res = await fetch(url);
-				if (!res.ok) throw new Error(`HTTP ${res.status}`);
-				const raw = (await res.json()) as
-					| Array<{
-							url?: string;
-							pic?: string;
-							lrc?: string;
-							title?: string;
-							author?: string;
-							artist?: string;
-					  }>
-					| {
-							url?: string;
-							pic?: string;
-							lrc?: string;
-							title?: string;
-							author?: string;
-							artist?: string;
-					  };
-				const data2 = Array.isArray(raw) ? raw[0] : raw;
-				if (data2) {
-					let url = data2.url;
-					// 部分 meting 实例返回中间跳转（type=url），需再请求一次拿到直链；
-					// 跳转失败时置空，避免把 API 地址交给 audio 播放
-					if (url && /[?&]type=url(&|$)/.test(url)) {
-						let resolved = "";
-						try {
-							const res2 = await fetch(url);
-							if (res2.ok) {
-								const raw2 = (await res2.json()) as {
-									url?: string;
-								};
-								resolved = raw2.url || "";
-							}
-						} catch (err2) {
-							console.warn(
-								"[MoviesGamesMusic] Meting url resolve failed:",
-								track.name,
-								err2,
-							);
-						}
-						url = resolved;
-					}
-					if (url) track.url = url;
-					if (data2.pic && !track.pic) track.pic = data2.pic;
-					if (data2.lrc && !track.lrc) track.lrc = data2.lrc;
-					track.artist = track.artist || data2.author || data2.artist || "";
-					track.name =
-						track.name && track.name !== track.metingId
-							? track.name
-							: data2.title || track.name;
-				}
-			} catch (err) {
-				console.warn(
-					"[MoviesGamesMusic] Meting resolve failed:",
-					track.name,
-					err,
-				);
-			}
-		}
+// 高亮当前播放:曲目行按歌单索引匹配(data-track-index),防重名误亮;
+// 卡片单曲按曲名匹配,整专播放按专辑 key 匹配
+function updatePlayingUI(): void {
+	const mgr = getMgr();
+	if (!mgr || !isActivePlaylist()) {
+		clearPlayingUI();
+		return;
 	}
-	return resolved;
-}
-
-function updatePlayingVisual(currentName: string): void {
+	const state = mgr.getState();
+	const idx = state.currentIndex;
+	document
+		.querySelectorAll<HTMLElement>(".mg-track[data-track-index]")
+		.forEach((row) => {
+			row.classList.toggle(
+				"playing",
+				Number.parseInt(row.dataset.trackIndex || "-1", 10) === idx,
+			);
+		});
+	const track = state.track;
 	document.querySelectorAll<HTMLElement>(".music-card").forEach((card) => {
+		const albumKey = card.dataset.album || "";
 		const titleEl = card.querySelector(".music-title");
 		const title = titleEl ? titleEl.textContent : "";
-		card.classList.toggle("playing", !!(currentName && title === currentName));
-	});
-	document.querySelectorAll<HTMLElement>(".mg-track").forEach((row) => {
-		const nameEl = row.querySelector(".mg-track-name");
-		const name = nameEl ? nameEl.textContent?.trim() : "";
-		row.classList.toggle("playing", !!(currentName && name === currentName));
+		const match = activeAlbumKey
+			? albumKey === activeAlbumKey
+			: Boolean(track?.name && title === track.name);
+		card.classList.toggle("playing", match);
 	});
 }
 
-async function playMusicByIndex(data: MusicData, index: number): Promise<void> {
+// 播放任一源数据中的曲目：缓存命中跳过重解析与 setPlaylist；
+// 单曲/详情页入口统一走这里
+async function playSource(source: PageMusicData, index: number): Promise<void> {
 	const mgr = getMgr();
 	if (!mgr) {
 		console.warn("[MoviesGamesMusic] Music manager not found");
 		return;
 	}
-	const resolved = await resolveMusicPlaylist(data);
-	mgr.setPlaylist(resolved);
+	activeAlbumKey = "";
+	const dataKey = JSON.stringify(source);
+	let resolved: MusicTrack[];
+	if (
+		activeDataKey === dataKey &&
+		activeResolvedPlaylist !== null &&
+		mgr.getState().playlist === activeResolvedPlaylist
+	) {
+		// 缓存命中：跳过重解析与 setPlaylist，直接切歌或切换暂停
+		resolved = activeResolvedPlaylist;
+	} else {
+		resolved = await resolveMusicPlaylist(source);
+		activeDataKey = dataKey;
+		activeResolvedPlaylist = resolved;
+		mgr.setPlaylist(resolved);
+	}
 	if (index >= 0 && index < resolved.length) {
-		mgr.loadTrack(index, true);
-		updatePlayingVisual(resolved[index].name);
+		mgr.playTrackByIndex(index);
 	}
 }
 
-function initMusicCards(root: HTMLElement, data: MusicData): void {
+async function playMusicByIndex(data: MusicData, index: number): Promise<void> {
+	await playSource(data, index);
+}
+
+// 影视页整专播放：albums[key] 为该专辑可播曲目列表
+async function playAlbum(data: PageMusicData, albumKey: string): Promise<void> {
+	const album = data.albums?.[albumKey];
+	if (!album || album.length === 0) return;
+	const mgr = getMgr();
+	if (!mgr) return;
+	activeAlbumKey = albumKey;
+	await playSource({ ...data, playlist: album }, 0);
+}
+
+function initMusicCards(root: HTMLElement, data: PageMusicData): void {
 	const section = root.querySelector('[data-section="music"]');
 	if (!section) return;
 
@@ -301,13 +276,35 @@ function initMusicCards(root: HTMLElement, data: MusicData): void {
 		.querySelectorAll<HTMLElement>('.music-card[data-has-audio="1"]')
 		.forEach((card) => {
 			card.addEventListener("click", (e) => {
+				// 只有显式播放按钮触发播放；卡片主体点击放行外层链接进详情页
+				if (!(e.target as HTMLElement).closest(".music-play-btn")) return;
 				e.preventDefault();
+				// 阻止冒泡到外层 <a>，避免 swup 在 document 层拦截点击触发导航
+				e.stopPropagation();
+				const albumKey = card.dataset.album;
+				if (albumKey) {
+					void playAlbum(data, albumKey);
+					return;
+				}
 				const idx = Number.parseInt(card.dataset.playlistIndex || "-1", 10);
 				if (idx >= 0) {
 					void playMusicByIndex(data, idx);
 				}
 			});
 		});
+}
+
+// 详情页"播放全部"按钮
+function initPlayAllButton(root: HTMLElement, data: PageMusicData): void {
+	const btn = root.querySelector<HTMLElement>(
+		".mg-playall-btn[data-mg-playall]",
+	);
+	if (!btn) return;
+	const clone = btn.cloneNode(true) as HTMLElement;
+	btn.parentNode?.replaceChild(clone, btn);
+	clone.addEventListener("click", () => {
+		void playMusicByIndex(data, 0);
+	});
 }
 
 function initDetailTracklist(root: HTMLElement, data: MusicData): void {
@@ -335,21 +332,36 @@ function initDetailTracklist(root: HTMLElement, data: MusicData): void {
 		});
 }
 
-function listenToPlayState(): void {
+function isActivePlaylist(): boolean {
 	const mgr = getMgr();
-	if (!mgr || musicListenersAttached) return;
+	return (
+		activeResolvedPlaylist !== null &&
+		mgr !== undefined &&
+		mgr.getState().playlist === activeResolvedPlaylist
+	);
+}
+
+function listenToPlayState(): void {
+	if (musicListenersAttached) return;
 	musicListenersAttached = true;
-	mgr.on("fm:track-loaded", (payload) => {
-		const track = (payload as { track?: { name?: string } } | undefined)?.track;
-		if (track && track.name) {
-			updatePlayingVisual(track.name);
-		}
+
+	// 高亮统一由事件驱动：点击、切歌、自动播完下一首都经过 fm:track
+	window.addEventListener("fm:track", () => {
+		updatePlayingUI();
 	});
-	mgr.on("fm:play-state", (payload) => {
-		const isPlaying = (payload as { isPlaying?: boolean } | undefined)
+
+	window.addEventListener("fm:play-state", (event) => {
+		if (!isActivePlaylist()) {
+			clearPlayingUI();
+			return;
+		}
+		const isPlaying = (event as CustomEvent<{ isPlaying?: boolean }>).detail
 			?.isPlaying;
-		if (isPlaying === false) {
-			updatePlayingVisual("");
+		if (isPlaying === true) {
+			// 暂停后恢复：从播放器当前状态还原高亮
+			updatePlayingUI();
+		} else if (isPlaying === false) {
+			clearPlayingUI();
 		}
 	});
 }
@@ -357,11 +369,11 @@ function listenToPlayState(): void {
 function getMusicData(
 	root: HTMLElement,
 	selector = "#mg-music-data",
-): MusicData | null {
+): PageMusicData | null {
 	const el = root.querySelector<HTMLElement>(selector);
 	if (!el) return null;
 	try {
-		return JSON.parse(el.textContent || "{}") as MusicData;
+		return JSON.parse(el.textContent || "{}") as PageMusicData;
 	} catch {
 		return null;
 	}
@@ -397,6 +409,7 @@ export function initPageTabs(): void {
 		const data = getMusicData(root, "#mg-detail-music-data");
 		if (data) {
 			initDetailTracklist(root, data);
+			initPlayAllButton(root, data);
 			listenToPlayState();
 		}
 	}

@@ -48,6 +48,7 @@ const managerConfigStr = JSON.stringify({
 		failedLyrics: i18n(I18nKey.musicFailedLyrics),
 		noSongs: i18n(I18nKey.musicNoSongs),
 		error: i18n(I18nKey.musicError),
+		playFailed: i18n(I18nKey.musicPlayFailed),
 		play: i18n(I18nKey.musicPlay),
 		pause: i18n(I18nKey.musicPause),
 		progress: i18n(I18nKey.musicProgress),
@@ -117,7 +118,10 @@ const managerConfigStr = JSON.stringify({
         currentLrcIndex: -1,
         initialized: false,
         initializing: false,
-        error: null
+        error: null,
+        playlistSource: 'config', // 'config' 全局歌单 | 'page' 页面注入歌单
+        resumeIndex: -1,
+        resumeTime: 0
     };
 
     // Map config playMode string to number
@@ -147,7 +151,11 @@ const managerConfigStr = JSON.stringify({
                     .replace(':r', Math.random());
                 if (m.auth) fetchUrl += '&auth=' + m.auth;
 
-                var res = await fetch(fetchUrl);
+                // 复用统一解析器的超时 fetch，避免实例挂起时 init 无限等待
+                var fetchFn = (window.__musicSource && window.__musicSource.fetchWithTimeout)
+                    ? window.__musicSource.fetchWithTimeout
+                    : fetch;
+                var res = await fetchFn(fetchUrl);
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 var data = await res.json();
 
@@ -168,6 +176,78 @@ const managerConfigStr = JSON.stringify({
             }
         }
         throw new Error('All Meting APIs failed');
+    }
+
+    // ── 状态持久化 ───────────────────────────────────────────
+    // 只持久化 config 歌单（唯一能在刷新后重建的）；页面注入歌单
+    // 需要重新解析，刷新后回退到 config 歌单
+    function persistState() {
+        try {
+            var payload = {
+                playMode: state.playMode,
+                isMuted: state.isMuted,
+                source: state.playlistSource,
+                index: state.currentIndex,
+                time: audio.currentTime || 0,
+                updatedAt: Date.now()
+            };
+            localStorage.setItem(STATE_KEY, JSON.stringify(payload));
+        } catch (e) { /* storage 不可用时忽略 */ }
+    }
+
+    function restoreState() {
+        var saved = null;
+        try {
+            saved = JSON.parse(localStorage.getItem(STATE_KEY) || 'null');
+        } catch (e) { /* ignore */ }
+        if (!saved || typeof saved !== 'object') return;
+        if (typeof saved.playMode === 'number' && saved.playMode >= 0 && saved.playMode <= 2) {
+            state.playMode = saved.playMode;
+        }
+        if (typeof saved.isMuted === 'boolean') {
+            state.isMuted = saved.isMuted;
+            audio.muted = saved.isMuted;
+        }
+        if (saved.source === 'config' && typeof saved.index === 'number' && saved.index >= 0) {
+            state.resumeIndex = saved.index;
+            state.resumeTime = typeof saved.time === 'number' && saved.time > 0 ? saved.time : 0;
+        }
+    }
+
+    // ── Media Session（系统媒体键/锁屏控制） ────────────────
+    function updateMediaSession(track) {
+        if (!('mediaSession' in navigator)) return;
+        try {
+            var meta = {};
+            if (track.name) meta.title = track.name;
+            if (track.artist) meta.artist = track.artist;
+            if (track.pic) {
+                meta.artwork = [{ src: track.pic, sizes: '512x512' }];
+            }
+            navigator.mediaSession.metadata = new MediaMetadata(meta);
+            navigator.mediaSession.setActionHandler('play', function () {
+                if (audio.paused) togglePlay();
+            });
+            navigator.mediaSession.setActionHandler('pause', function () {
+                if (!audio.paused) togglePlay();
+            });
+            navigator.mediaSession.setActionHandler('previoustrack', function () { playPrev(); });
+            navigator.mediaSession.setActionHandler('nexttrack', function () { playNext(false); });
+            if ('seekto' in navigator.mediaSession) {
+                navigator.mediaSession.setActionHandler('seekto', function (e) {
+                    if (e.seekTime) seekToTime(e.seekTime);
+                });
+            }
+        } catch (e) {
+            console.warn('MediaSession update failed:', e);
+        }
+    }
+
+    function setMediaPlaybackState(playing) {
+        if (!('mediaSession' in navigator)) return;
+        try {
+            navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+        } catch (e) { /* ignore */ }
     }
 
     // ── Lyrics ───────────────────────────────────────────────
@@ -205,6 +285,12 @@ const managerConfigStr = JSON.stringify({
     var currentTrackUrls = [];
     var currentTrackUrlIndex = 0;
     var errorSkipTimeout = null;
+    var retriedResolve = false; // 本次 loadTrack 内是否已重解析过一次直链
+
+    // 播放状态持久化（localStorage）与随机模式播放历史
+    var STATE_KEY = 'music-player-state';
+    var historyStack = [];
+    var lastPersistTime = 0;
 
     function tryPlayCurrentTrackUrl(autoPlay, ver) {
         if (ver !== loadVersion) return;
@@ -229,17 +315,19 @@ const managerConfigStr = JSON.stringify({
     }
 
     // ── Track loading ────────────────────────────────────────
-    function loadTrack(index, autoPlay) {
-        if (index < 0 || index >= state.playlist.length) return;
-        state.currentIndex = index;
+    // 从配置构建统一解析器需要的源信息（主 API + 备用 API）
+    function musicSourceData() {
+        var m = config.meting || {};
+        return {
+            playlist: [],
+            metingApiUrl: m.api || '',
+            fallbackApis: m.fallbackApis || []
+        };
+    }
+
+    // 已拿到 url 的曲目直接进入播放流程
+    function startTrackPlayback(index, autoPlay, ver) {
         var track = state.playlist[index];
-        var ver = ++loadVersion;
-
-        if (errorSkipTimeout) {
-            clearTimeout(errorSkipTimeout);
-            errorSkipTimeout = null;
-        }
-
         currentTrackUrls = [track.url];
         currentTrackUrlIndex = 0;
 
@@ -261,7 +349,57 @@ const managerConfigStr = JSON.stringify({
 
         emit('fm:track', { index: index, track: track, autoPlay: !!autoPlay });
 
+        updateMediaSession(track);
+        persistState();
+
         tryPlayCurrentTrackUrl(autoPlay, ver);
+    }
+
+    // 未解析直链的 meting 曲目：用统一解析器解析（带超时与备用源），
+    // 成功后再播放；失败发明确错误（含曲名），不再静默跳过
+    function loadTrackWithResolve(index, autoPlay, ver, track) {
+        var src = window.__musicSource;
+        if (!src) {
+            emit('fm:error', { message: track.name + ' — ' + config.i18n.playFailed });
+            return;
+        }
+        src.resolveMusicTrack(track, musicSourceData()).then(function (resolved) {
+            if (ver !== loadVersion) return; // stale, discard
+            if (!resolved.url) {
+                state.isPlaying = false;
+                state.error = 'resolve failed';
+                emit('fm:play-state', { isPlaying: false });
+                emit('fm:error', { message: track.name + ' — ' + config.i18n.playFailed });
+                return;
+            }
+            startTrackPlayback(index, autoPlay, ver);
+        });
+    }
+
+    function loadTrack(index, autoPlay) {
+        if (index < 0 || index >= state.playlist.length) return;
+        // 随机模式下记录播放历史，playPrev 可回溯上一首
+        if (state.currentIndex >= 0 && state.currentIndex !== index && state.playMode === 2) {
+            historyStack.push(state.currentIndex);
+            if (historyStack.length > 100) historyStack.shift();
+        }
+        state.currentIndex = index;
+        var track = state.playlist[index];
+        var ver = ++loadVersion;
+        retriedResolve = false;
+
+        if (errorSkipTimeout) {
+            clearTimeout(errorSkipTimeout);
+            errorSkipTimeout = null;
+        }
+
+        if (!track.url && track.metingServer && track.metingId) {
+            // 先广播曲目让 UI 有反馈，再异步解析
+            emit('fm:track', { index: index, track: track, autoPlay: !!autoPlay });
+            loadTrackWithResolve(index, autoPlay, ver, track);
+            return;
+        }
+        startTrackPlayback(index, autoPlay, ver);
     }
 
     // ── Playback controls ────────────────────────────────────
@@ -299,7 +437,10 @@ const managerConfigStr = JSON.stringify({
     function playPrev() {
         var prevIndex;
         if (state.playMode === 2) {
-            prevIndex = Math.floor(Math.random() * state.playlist.length);
+            // 随机模式优先回溯历史，无历史才随机跳
+            prevIndex = historyStack.length > 0
+                ? historyStack.pop()
+                : Math.floor(Math.random() * state.playlist.length);
         } else {
             prevIndex = (state.currentIndex - 1 + state.playlist.length) % state.playlist.length;
         }
@@ -313,6 +454,7 @@ const managerConfigStr = JSON.stringify({
 
     function cyclePlayMode() {
         setPlayMode((state.playMode + 1) % 3);
+        persistState();
     }
 
     function setVolume(val) {
@@ -329,6 +471,7 @@ const managerConfigStr = JSON.stringify({
         state.isMuted = !state.isMuted;
         audio.muted = state.isMuted;
         emit('fm:volume', { volume: state.volume, isMuted: state.isMuted });
+        persistState();
     }
 
     function seek(percent) {
@@ -350,9 +493,12 @@ const managerConfigStr = JSON.stringify({
     }
 
     function setPlaylist(playlist) {
+        audio.pause(); // 防止"界面显示暂停但声音继续"的状态错位
         state.playlist = playlist || [];
         state.currentIndex = -1;
         state.isPlaying = false;
+        state.playlistSource = 'page'; // 页面注入歌单：刷新后不可重建
+        historyStack = [];
         emit('fm:init', {
             playlist: state.playlist,
             playMode: state.playMode,
@@ -363,6 +509,13 @@ const managerConfigStr = JSON.stringify({
     }
 
     // ── Audio events → broadcast ─────────────────────────────
+    audio.addEventListener('play', function () {
+        setMediaPlaybackState(true);
+    });
+    audio.addEventListener('pause', function () {
+        setMediaPlaybackState(false);
+    });
+
     audio.addEventListener('timeupdate', function () {
         if (isNaN(audio.duration)) return;
         var ct = audio.currentTime;
@@ -376,6 +529,12 @@ const managerConfigStr = JSON.stringify({
             currentTimeStr: formatTime(ct),
             durationStr: formatTime(dur)
         });
+
+        // 播放进度节流持久化（每 10 秒）
+        if (state.isPlaying && Date.now() - lastPersistTime > 10000) {
+            lastPersistTime = Date.now();
+            persistState();
+        }
 
         // Lyrics sync
         if (state.lyrics.length > 0) {
@@ -395,29 +554,53 @@ const managerConfigStr = JSON.stringify({
         playNext(true);
     });
 
-    audio.addEventListener('error', function () {
-        var ver = loadVersion;
-        if (currentTrackUrlIndex < currentTrackUrls.length - 1) {
-            currentTrackUrlIndex++;
-            console.warn('Playback failed, trying fallback URL: ' + currentTrackUrls[currentTrackUrlIndex]);
-            tryPlayCurrentTrackUrl(true, ver);
-        } else {
-            state.error = 'Audio playback error';
-            emit('fm:error', { message: '播放失败，即将自动跳过...' });
-
-            if (errorSkipTimeout) clearTimeout(errorSkipTimeout);
+    // 播放失败收尾：多曲歌单 2 秒后自动跳下一首，单曲歌单停止不循环
+    function failCurrentTrack(ver) {
+        state.error = 'playback error';
+        emit('fm:error', { message: config.i18n.playFailed });
+        if (errorSkipTimeout) clearTimeout(errorSkipTimeout);
+        if (state.playlist.length > 1) {
             errorSkipTimeout = setTimeout(function () {
                 if (ver === loadVersion) {
                     playNext(true);
                 }
             }, 2000);
         }
+    }
+
+    audio.addEventListener('error', function () {
+        var ver = loadVersion;
+        if (currentTrackUrlIndex < currentTrackUrls.length - 1) {
+            currentTrackUrlIndex++;
+            console.warn('Playback failed, trying fallback URL: ' + currentTrackUrls[currentTrackUrlIndex]);
+            tryPlayCurrentTrackUrl(true, ver);
+            return;
+        }
+        var track = state.playlist[state.currentIndex];
+        // 直链播放失败（过期/防盗链）且曲目是 meting：清空直链重新解析一次
+        if (!retriedResolve && track && track.metingServer && track.metingId && window.__musicSource) {
+            retriedResolve = true;
+            emit('fm:error', { message: track.name + '：' + config.i18n.playFailed });
+            track.url = '';
+            window.__musicSource.resolveMusicTrack(track, musicSourceData()).then(function (resolved) {
+                if (ver !== loadVersion) return; // stale, discard
+                if (resolved.url) {
+                    startTrackPlayback(state.currentIndex, true, ver);
+                } else {
+                    failCurrentTrack(ver);
+                }
+            });
+            return;
+        }
+        failCurrentTrack(ver);
     });
 
     // ── Init (idempotent) ────────────────────────────────────
     async function init() {
         if (state.initialized || state.initializing) return;
         state.initializing = true;
+
+        restoreState(); // 恢复上次播放模式/静音;config 歌单的索引与进度
 
         try {
             if (config.mode === 'meting' && config.meting) {
@@ -431,11 +614,14 @@ const managerConfigStr = JSON.stringify({
                 audio.volume = state.volume;
 
                 var startIndex = 0;
-                if (state.playMode === 2) {
+                if (state.resumeIndex >= 0 && state.resumeIndex < state.playlist.length) {
+                    startIndex = state.resumeIndex;
+                } else if (state.playMode === 2) {
                     startIndex = Math.floor(Math.random() * state.playlist.length);
                 }
 
                 state.initialized = true;
+                state.playlistSource = 'config'; // config 歌单构建完成
 
                 emit('fm:init', {
                     playlist: state.playlist,
@@ -445,6 +631,18 @@ const managerConfigStr = JSON.stringify({
                 });
 
                 loadTrack(startIndex, false);
+
+                // 恢复上次播放进度(config 歌单,距末尾留 2 秒余量)
+                if (state.resumeTime > 1 && state.resumeTime > 0) {
+                    var resumeTime = state.resumeTime;
+                    state.resumeTime = 0;
+                    audio.addEventListener('loadedmetadata', function handler() {
+                        audio.removeEventListener('loadedmetadata', handler);
+                        if (resumeTime > 1 && resumeTime < audio.duration - 2) {
+                            audio.currentTime = resumeTime;
+                        }
+                    });
+                }
             } else {
                 state.initialized = true;
                 emit('fm:init', {

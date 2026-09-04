@@ -1,5 +1,6 @@
 import type { SakuraManagerLike } from "./types/sakura-worker";
 import type { WavesManagerLike } from "./types/waves";
+import type { MusicSourceApi } from "./utils/music-source";
 
 declare global {
 	interface HTMLElementTagNameMap {
@@ -69,6 +70,8 @@ declare global {
 			playTrackByIndex: (index: number) => void;
 			loadTrack: (index: number, autoPlay: boolean) => void;
 		};
+		/** 统一 meting 音源解析器（Layout 模块脚本挂载，供 is:inline 播放器脚本调用） */
+		__musicSource?: MusicSourceApi;
 		/** 樱花特效管理器,Worker 模式与主线程回退模式均实现该接口 */
 		sakuraManager?: SakuraManagerLike;
 		/** 樱花特效初始化守卫,确保只初始化一次(Swup 切页重跑脚本时复用) */

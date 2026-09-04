@@ -63,6 +63,7 @@ export const ko: Translation = {
 	[Key.musicFailedLyrics]: "가사를 불러오지 못했습니다",
 	[Key.musicNoSongs]: "곡 없음",
 	[Key.musicError]: "플레이어 오류",
+	[Key.musicPlayFailed]: "재생 실패",
 	[Key.musicPlay]: "재생",
 	[Key.musicPause]: "일시정지",
 	[Key.musicProgress]: "재생 진행률",

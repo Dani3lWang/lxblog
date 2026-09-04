@@ -9,7 +9,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	showInSidebar: true,
 
 	// 使用方式："meting" 使用 Meting API，"local" 使用本地音乐列表
-	mode: "local",
+	mode: "meting",
 
 	// 默认音量 (0-1)
 	volume: 0.7,
@@ -18,23 +18,28 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	playMode: "list",
 
 	// 是否显启用歌词
-	showLyrics: false,
+	showLyrics: true,
 
 	// Meting API 配置
 	meting: {
-		// Meting API 地址
-		// 默认使用官方 API，也可以使用自定义 API
-		api: "https://api.i-meto.com/meting/api?server=:server&type=:type&id=:id&r=:r",
-		// 音乐平台：netease=网易云音乐, tencent=QQ音乐, kugou=酷狗音乐, xiami=虾米音乐, baidu=百度音乐
+		// Meting API 地址(主源)
+		// mikus.ink 返回完整版直链且 CORS 放行,作为首选;
+		// 不可用时自动降级到下面的自建实例
+		api: "https://meting.mikus.ink/api?server=:server&type=:type&id=:id",
+		// 音乐平台：netease=网易云音乐, tencent=QQ音乐, kugou=酷狗音乐
 		server: "netease",
 		// 类型：song=单曲, playlist=歌单, album=专辑, search=搜索, artist=艺术家
 		type: "playlist",
 		// 歌单/专辑/单曲 ID 或搜索关键词
-		id: "10046455237",
+		id: "3778678",
 		// 认证 token（可选）
 		auth: "",
-		// 备用 API 配置（当主 API 失败时使用）
+		// 备用 API 配置：主源不可用时按顺序降级——先自建 meting-api
+		// (腾讯云 124.221.153.114,经 api.lovelongxin.me HTTPS 访问;其响应
+		// 缺 CORS 头,跨域会直接失败并落到后面的公共实例),
+		// 再到 injahow/moeyao 公共实例(HTTPS 且 CORS 放行,直链可能为试听版)
 		fallbackApis: [
+			"https://api.lovelongxin.me/meting/api?server=:server&type=:type&id=:id",
 			"https://api.injahow.cn/meting/?server=:server&type=:type&id=:id",
 			"https://api.moeyao.cn/meting/?server=:server&type=:type&id=:id",
 		],

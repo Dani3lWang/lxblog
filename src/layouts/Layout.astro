@@ -525,6 +525,18 @@ const siteLogo = await getSiteLogo();
     <!-- GitHub 卡片客户端实时补全（forks/stars） -->
     <GithubCardManager />
 
+    <!-- 统一 meting 音源解析器挂载：MusicManager 等 is:inline 脚本无法 import
+         模块，经 window.__musicSource 调用同一套解析逻辑（幂等） -->
+    <script>
+      import {
+        fetchWithTimeout,
+        resolveMusicPlaylist,
+        resolveMusicTrack,
+      } from "@/utils/music-source";
+
+      window.__musicSource ||= { fetchWithTimeout, resolveMusicPlaylist, resolveMusicTrack };
+    </script>
+
     <!-- 页面级 tab 交互全局初始化（mg-tabs / games-tabs / music-cards） -->
     <!-- Swup 导航后新页面 inline script 不执行，统一在此注册监听 -->
     <script>

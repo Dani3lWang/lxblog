@@ -94,6 +94,7 @@ const detailMusicData = JSON.stringify({
 		metingId: track.metingId || "",
 	})),
 	metingApiUrl: musicPlayerConfig.meting?.api || "",
+	fallbackApis: musicPlayerConfig.meting?.fallbackApis || [],
 }).replace(/</g, "\\u003c");
 ---
 
@@ -184,8 +185,16 @@ const detailMusicData = JSON.stringify({
 		{tracks.length > 0 && (
 			<aside class="mg-tracklist" aria-label={i18n(I18nKey.moviesGamesTracklist)}>
 				<h2 class="mg-tracklist-title">
-					{i18n(I18nKey.moviesGamesTracklist)}
-					<span class="mg-tracklist-count">{tracks.length}</span>
+					<span class="mg-tracklist-title-text">
+						{i18n(I18nKey.moviesGamesTracklist)}
+						<span class="mg-tracklist-count">{tracks.length}</span>
+					</span>
+					{playableIndexes.size > 0 && (
+						<button type="button" class="mg-playall-btn" data-mg-playall title="播放全部">
+							<svg class="mg-playall-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+							<span class="mg-playall-text">播放全部</span>
+						</button>
+					)}
 				</h2>
 				<ol class="mg-tracklist-list">
 					{tracks.map((track, index) => (
@@ -232,10 +241,15 @@ const detailMusicData = JSON.stringify({
 				</ol>
 			</aside>
 		)}
+		<script
+			is:inline
+			type="application/json"
+			id="mg-detail-music-data"
+			data-swup-ignore-script
+			set:html={detailMusicData}
+		/>
 	</div>
 </MainGridLayout>
-
-<script is:inline type="application/json" id="mg-detail-music-data" data-swup-ignore-script set:html={detailMusicData} />
 
 <style>
 	.mg-cover-wrap {
@@ -336,6 +350,40 @@ const detailMusicData = JSON.stringify({
 		font-size: 0.95rem;
 		font-weight: 700;
 		color: var(--deep-text);
+	}
+
+	.mg-tracklist-title-text {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
+	}
+
+	.mg-playall-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 3px 10px;
+		border-radius: 9999px;
+		border: 1px solid var(--line-divider);
+		background: transparent;
+		font-size: 0.72rem;
+		font-weight: 600;
+		color: var(--content-meta);
+		cursor: pointer;
+		transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+		flex-shrink: 0;
+	}
+
+	.mg-playall-btn:hover {
+		color: var(--primary);
+		border-color: var(--primary);
+		background: var(--btn-regular-bg);
+	}
+
+	.mg-playall-icon {
+		width: 11px;
+		height: 11px;
 	}
 
 	.mg-tracklist-count {

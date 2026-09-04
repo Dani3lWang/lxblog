@@ -58,6 +58,8 @@ const BANGUMI_KEYS = [
 	"lrcUrl",
 	"metingServer",
 	"metingId",
+	"doubanId",
+	"tracks",
 ];
 const DYNAMIC_KEYS = ["published", "pinned", "location"];
 const CHANGELOG_KEYS = ["version", "date", "time", "type", "description"];
@@ -234,6 +236,45 @@ function normalizeLines(value) {
 		.filter(Boolean);
 }
 
+// tracks: frontmatter 原始值(string|object 混合) → admin UI 结构
+function normalizeTracksForUI(raw) {
+	if (!Array.isArray(raw)) return [];
+	return raw.map(t => {
+		const o = t && typeof t === "object" ? t : {};
+		return {
+			name: String(o.name ?? ""),
+			url: String(o.url ?? ""),
+			lrc: String(o.lrc ?? ""),
+			metingServer: String(o.metingServer ?? ""),
+			metingId: String(o.metingId ?? ""),
+			link: String(o.link ?? ""),
+		};
+	});
+}
+
+// tracks: admin UI 结构 → frontmatter 值(纯展示曲目回退为字符串,避免无谓 diff)
+function serializeTracksForMd(tracks) {
+	if (!Array.isArray(tracks)) return [];
+	return tracks
+		.map(t => (t && typeof t === "object" ? t : { name: t }))
+		.filter(t => String(t.name || "").trim())
+		.map(t => {
+			const name = String(t.name || "").trim();
+			const url = String(t.url ?? "").trim();
+			const lrc = String(t.lrc ?? "").trim();
+			const metingServer = String(t.metingServer ?? "").trim();
+			const metingId = String(t.metingId ?? "").trim();
+			const link = String(t.link ?? "").trim();
+			const obj = { name };
+			if (url) obj.url = url;
+			if (lrc) obj.lrc = lrc;
+			if (metingServer) obj.metingServer = metingServer;
+			if (metingId) obj.metingId = metingId;
+			if (link) obj.link = link;
+			return Object.keys(obj).length === 1 ? name : obj;
+		});
+}
+
 function dateValue(value) {
 	const text = String(value || "");
 	const match = text.match(
@@ -337,6 +378,8 @@ function readBangumiDir(root, categoryDir, allowed) {
 			lrcUrl: parsed.data.lrcUrl || "",
 			metingServer: parsed.data.metingServer || "",
 			metingId: parsed.data.metingId || "",
+			doubanId: parsed.data.doubanId ?? "",
+			tracks: normalizeTracksForUI(parsed.data.tracks),
 			content: parsed.content,
 			knownKeys: new Set(BANGUMI_KEYS),
 		};
@@ -486,6 +529,10 @@ function normalizeBangumi(entry = {}, defaultCategory) {
 		const value = String(entry[key] ?? "").trim();
 		if (value) data[key] = value;
 	}
+	const doubanId = String(entry.doubanId ?? "").trim();
+	if (doubanId) data.doubanId = /^\d+$/.test(doubanId) ? Number(doubanId) : doubanId;
+	const tracks = serializeTracksForMd(entry.tracks);
+	if (tracks.length > 0) data.tracks = tracks;
 	for (const [key, value] of Object.entries(entry.extra || {})) {
 		if (!BANGUMI_KEYS.includes(key)) data[key] = value;
 	}
@@ -553,19 +600,21 @@ function deepEqual(a, b) {
 function writeMarkdownFile(root, dir, idBase, item, { defaultExt = ".md" } = {}) {
 	const oldExt = /\.(md|mdx)$/i.test(item.id || "") ? path.extname(item.id).toLowerCase() : "";
 	const ext = oldExt || defaultExt;
-	const idName = item.id ? item.id.split("/").pop() : "";
-	let filename = `${item.filename}${ext}`;
-	let nextFile = ensureInside(root, path.join(dir, filename));
-	let suffix = 2;
-	while (fs.existsSync(nextFile) && idName.toLowerCase() !== filename.toLowerCase()) {
-		filename = `${item.filename}-${suffix}${ext}`;
-		nextFile = ensureInside(root, path.join(dir, filename));
-		suffix += 1;
-	}
 	const oldFile =
 		item.id && /\.(md|mdx)$/i.test(item.id)
 			? ensureInside(root, path.join(idBase, item.id.split("/").join(path.sep)))
 			: "";
+	let filename = `${item.filename}${ext}`;
+	let nextFile = ensureInside(root, path.join(dir, filename));
+	let suffix = 2;
+	while (
+		fs.existsSync(nextFile) &&
+		(!oldFile || path.resolve(oldFile) !== path.resolve(nextFile))
+	) {
+		filename = `${item.filename}-${suffix}${ext}`;
+		nextFile = ensureInside(root, path.join(dir, filename));
+		suffix += 1;
+	}
 	const body = item.content.trimEnd();
 	const content = `---\n${dumpYaml(item.data)}---\n${body ? `\n${body}\n` : ""}`;
 	if (

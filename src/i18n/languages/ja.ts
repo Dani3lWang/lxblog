@@ -63,6 +63,7 @@ export const ja: Translation = {
 	[Key.musicFailedLyrics]: "歌詞の読み込みに失敗しました",
 	[Key.musicNoSongs]: "曲なし",
 	[Key.musicError]: "プレーヤーエラー",
+	[Key.musicPlayFailed]: "再生失敗",
 	[Key.musicPlay]: "再生",
 	[Key.musicPause]: "一時停止",
 	[Key.musicProgress]: "再生の進捗",

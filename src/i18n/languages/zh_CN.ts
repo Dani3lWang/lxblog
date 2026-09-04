@@ -63,6 +63,7 @@ export const zh_CN: Translation = {
 	[Key.musicFailedLyrics]: "歌词加载失败",
 	[Key.musicNoSongs]: "暂无歌曲",
 	[Key.musicError]: "播放器错误",
+	[Key.musicPlayFailed]: "播放失败",
 	[Key.musicPlay]: "播放",
 	[Key.musicPause]: "暂停",
 	[Key.musicProgress]: "播放进度",

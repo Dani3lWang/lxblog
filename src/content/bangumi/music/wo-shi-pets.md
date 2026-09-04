@@ -1,7 +1,7 @@
 ---
 title: "我是曾沛慈 I'm Pets"
 category: "music"
-status: 2
+status: 1
 image: "./covers/wo-shi-pets.jpg"
 artist: "曾沛慈"
 comment: "曾沛慈的出道专辑，星光二班时期的温暖声线在这里得到了完整呈现。《不过失去了一点点》《多年后》是她的招牌疗伤情歌，副歌记忆点很强；可惜专辑整体偏保守，十四首歌几乎全是抒情路线，缺少让人意外的尝试。适合深夜安静收听的一张专辑。"

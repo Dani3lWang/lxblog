@@ -380,9 +380,162 @@ function renderEditor() {
   for (const [key, label, type] of fieldSets[state.tab] || []) {
     els.editor.append(createField(item, key, label, type, () => { renderTabs(); renderList(); }));
   }
+  if (state.tab === "music") {
+    els.editor.append(renderTracksEditor(item));
+  }
   if (state.tab !== "moments" && state.tab !== "changelog") {
     els.editor.append(renderExtraJson(item, "extra", "额外 front matter"));
   }
+}
+
+// 音乐条目曲目列表可视化编辑器(曲目 = 字符串仅展示 | 对象携带音源/外链)
+function renderTracksEditor(item) {
+  ensureTracksStyles();
+  const wrap = document.createElement("div");
+  wrap.className = "field full";
+  const label = document.createElement("label");
+  label.textContent = "曲目列表(名称必填;本地音频填 url,平台曲目填 meting 服务器+ID,外部播放页填 link)";
+  const list = document.createElement("div");
+  list.className = "tracks-list";
+  if (!Array.isArray(item.tracks)) item.tracks = [];
+
+  function rerender() {
+    list.innerHTML = "";
+    if (item.tracks.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "tracks-empty";
+      empty.textContent = "暂无曲目,点击下方按钮添加";
+      list.append(empty);
+    }
+    item.tracks.forEach((track, index) => {
+      list.append(rowEl(track, index));
+    });
+  }
+
+  function fieldInput(track, key, placeholder) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = placeholder;
+    input.value = track[key] || "";
+    input.addEventListener("input", () => {
+      track[key] = input.value;
+      markDirty();
+    });
+    return input;
+  }
+
+  function rowEl(track, index) {
+    const row = document.createElement("div");
+    row.className = "track-row";
+
+    const top = document.createElement("div");
+    top.className = "track-row-top";
+    const no = document.createElement("span");
+    no.className = "track-no";
+    no.textContent = String(index + 1).padStart(2, "0");
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.className = "track-name";
+    nameInput.placeholder = "曲名(必填)";
+    nameInput.value = track.name || "";
+    nameInput.addEventListener("input", () => {
+      track.name = nameInput.value;
+      markDirty();
+    });
+    const ops = document.createElement("span");
+    ops.className = "track-ops";
+    for (const [opText, opTitle, fn] of [
+      ["↑", "上移", () => {
+        if (index === 0) return;
+        const arr = item.tracks;
+        [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
+        markDirty();
+        rerender();
+      }],
+      ["↓", "下移", () => {
+        if (index >= item.tracks.length - 1) return;
+        const arr = item.tracks;
+        [arr[index + 1], arr[index]] = [arr[index], arr[index + 1]];
+        markDirty();
+        rerender();
+      }],
+      ["×", "删除曲目", () => {
+        item.tracks.splice(index, 1);
+        markDirty();
+        rerender();
+      }],
+    ]) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "track-op";
+      btn.textContent = opText;
+      btn.title = opTitle;
+      btn.addEventListener("click", fn);
+      ops.append(btn);
+    }
+    top.append(no, nameInput, ops);
+
+    const fields = document.createElement("div");
+    fields.className = "track-row-fields";
+    fields.append(
+      fieldInput(track, "url", "/assets/music/xxx.mp3(本地音频)"),
+    );
+    const serverSelect = document.createElement("select");
+    serverSelect.innerHTML = ["", "netease", "tencent", "kugou", "xiami", "baidu"]
+      .map(v => `<option value="${v}"${track.metingServer === v ? " selected" : ""}>${v ? v + "(Meting)" : "平台(无)"}</option>`)
+      .join("");
+    serverSelect.addEventListener("change", () => {
+      track.metingServer = serverSelect.value;
+      markDirty();
+    });
+    fields.append(
+      serverSelect,
+      fieldInput(track, "metingId", "Meting 歌曲 ID"),
+      fieldInput(track, "link", "https://… 外部播放页"),
+      fieldInput(track, "lrc", "歌词 .lrc 路径"),
+    );
+
+    row.append(top, fields);
+    return row;
+  }
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "tracks-add";
+  addBtn.textContent = "+ 添加曲目";
+  addBtn.addEventListener("click", () => {
+    item.tracks.push({ name: "", url: "", lrc: "", metingServer: "", metingId: "", link: "" });
+    markDirty();
+    rerender();
+    list.scrollTop = list.scrollHeight;
+  });
+
+  wrap.append(label, list, addBtn);
+  rerender();
+  return wrap;
+}
+
+function ensureTracksStyles() {
+  if (document.getElementById("tracks-editor-style")) return;
+  const style = document.createElement("style");
+  style.id = "tracks-editor-style";
+  style.textContent = `
+    .tracks-list { display:flex; flex-direction:column; gap:6px; max-height:420px; overflow:auto; }
+    .tracks-empty { color:#999; font-size:12px; padding:6px 2px; }
+    .track-row { border:1px solid #ddd; border-radius:8px; padding:8px; display:flex; flex-direction:column; gap:6px; background:#fafafa; }
+    .track-row-top { display:flex; gap:6px; align-items:center; }
+    .track-no { flex-shrink:0; font-size:12px; font-weight:600; color:#888; font-variant-numeric:tabular-nums; }
+    .track-row-top .track-name { flex:1; }
+    .track-ops { display:flex; gap:4px; flex-shrink:0; }
+    .track-op { padding:2px 8px; border:1px solid #ccc; border-radius:6px; background:#fff; cursor:pointer; font-size:12px; }
+    .track-op:hover { border-color:var(--accent,#4f8cff); color:var(--accent,#4f8cff); }
+    .track-row-fields { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+    .track-row-fields input, .track-row-fields select { width:100%; box-sizing:border-box; font-size:12px; }
+    .tracks-add { margin-top:8px; align-self:flex-start; padding:4px 12px; border:1px solid #ccc; border-radius:6px; background:#fff; cursor:pointer; }
+    .tracks-add:hover { border-color:var(--accent,#4f8cff); color:var(--accent,#4f8cff); }
+    @media (max-width:700px) { .track-row-fields { grid-template-columns:1fr 1fr; } }
+  `;
+  document.head.append(style);
 }
 
 function renderExtraJson(item, key, label) {
@@ -579,7 +732,7 @@ function addItem() {
     id: "", filename: "new-item", title: "", name_cn: "", score: "", image: "",
     link: "", comment: "", tags: [], published: today, status: 2, artist: "",
     genre: "", musicType: "", audioUrl: "", lrcUrl: "", metingServer: "",
-    metingId: "", extra: {}, content: "",
+    metingId: "", doubanId: "", tracks: [], extra: {}, content: "",
   };
   let item;
   if (state.tab === "posts") {

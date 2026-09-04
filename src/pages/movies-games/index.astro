@@ -74,6 +74,15 @@ interface MgItem {
 	_subcategory?: string;
 }
 
+interface MusicTrackItem {
+	name: string;
+	url: string;
+	lrc: string;
+	metingServer: string;
+	metingId: string;
+	link: string;
+}
+
 interface MusicItem {
 	title: string;
 	artist?: string;
@@ -90,6 +99,9 @@ interface MusicItem {
 	link: string;
 	playlistIndex: number;
 	hasAudio: boolean;
+	/** 无条目级音源、但 tracks 含可播曲目的专辑 key(用于整专播放) */
+	albumKey?: string;
+	tracks: MusicTrackItem[];
 }
 
 const mgItems: MgItem[] = customBangumi
@@ -168,7 +180,28 @@ const musicItems: MusicItem[] = customBangumi
 		const imageSrc =
 			typeof data.image === "string" ? data.image : data.image.src;
 		const finalLink = "/bangumi/" + removeFileExtension(item.id) + "/";
-		const hasAudio = Boolean(data.audioUrl || data.metingId);
+		// 归一化曲目：字符串仅展示，对象可携带音源/外链
+		const tracks: MusicTrackItem[] = (data.tracks ?? []).map((t) =>
+			typeof t === "string"
+				? {
+						name: t,
+						url: "",
+						lrc: "",
+						metingServer: "",
+						metingId: "",
+						link: "",
+					}
+				: {
+						name: t.name,
+						url: t.url || "",
+						lrc: t.lrc || "",
+						metingServer: t.metingServer || "",
+						metingId: t.metingId || "",
+						link: t.link || "",
+					},
+		);
+		const entryHasAudio = Boolean(data.audioUrl || data.metingId);
+		const albumHasAudio = tracks.some((t) => t.url || t.metingId);
 		return {
 			title: data.title,
 			artist: data.artist || "",
@@ -184,16 +217,19 @@ const musicItems: MusicItem[] = customBangumi
 			published: data.published?.toISOString() || new Date().toISOString(),
 			link: finalLink,
 			playlistIndex: -1,
-			hasAudio,
+			hasAudio: entryHasAudio || albumHasAudio,
+			albumKey: !entryHasAudio && albumHasAudio ? data.title : undefined,
+			tracks,
 		};
 	})
 	.sort(
 		(a, b) => new Date(b.published).getTime() - new Date(a.published).getTime(),
 	);
 
-// Build playlist only from entries that have audioUrl or metingId
+// Build playlist only from entries that have top-level audioUrl or metingId
+//（专辑条目走 albums 整专播放，不进单曲列表）
 const musicPlaylist = musicItems
-	.filter((item) => item.hasAudio)
+	.filter((item) => item.hasAudio && !item.albumKey)
 	.map((item) => ({
 		name: item.title,
 		artist: item.artist || "",
@@ -203,6 +239,36 @@ const musicPlaylist = musicItems
 		metingServer: item.metingServer || "",
 		metingId: item.metingId || "",
 	}));
+
+// 专辑子列表：无条目级音源但有可播曲目的条目，按 title 组织其可播曲目，
+// 供列表页整专播放（page-tabs playAlbum）
+const musicAlbums: Record<
+	string,
+	Array<{
+		name: string;
+		artist: string;
+		url: string;
+		pic: string;
+		lrc: string;
+		metingServer: string;
+		metingId: string;
+	}>
+> = {};
+musicItems.forEach((item) => {
+	if (item.albumKey && item.tracks.length > 0) {
+		musicAlbums[item.albumKey] = item.tracks
+			.filter((t) => t.url || t.metingId)
+			.map((t) => ({
+				name: t.name,
+				artist: item.artist || "",
+				url: t.url,
+				pic: item.image,
+				lrc: t.lrc,
+				metingServer: t.metingServer || "",
+				metingId: t.metingId || "",
+			}));
+	}
+});
 
 // Assign playlist index for each music item
 const musicPlaylistIndexByTitle = new Map<string, number>();
@@ -316,6 +382,8 @@ const activeTab = sections[0]?.tabKey || "all";
 const musicDataJson = JSON.stringify({
 	playlist: musicPlaylist,
 	metingApiUrl: metingApiBase,
+	fallbackApis: musicPlayerConfig.meting?.fallbackApis || [],
+	albums: musicAlbums,
 }).replace(/</g, "\\u003c");
 ---
 
@@ -417,6 +485,7 @@ const musicDataJson = JSON.stringify({
 																musicType={item.musicType}
 																hasAudio={item.hasAudio}
 																playlistIndex={item.playlistIndex}
+																albumKey={item.albumKey}
 															/>
 														</a>
 													</div>
@@ -458,6 +527,13 @@ const musicDataJson = JSON.stringify({
 					</h3>
 				</div>
 			)}
+			<script
+				is:inline
+				type="application/json"
+				id="mg-music-data"
+				data-swup-ignore-script
+				set:html={musicDataJson}
+			/>
 		</div>
 	</div>
 <Comment customPath="/movies-games/" />
@@ -514,6 +590,4 @@ const musicDataJson = JSON.stringify({
 		}
 	}
 </style>
-
-<script is:inline type="application/json" id="mg-music-data" data-swup-ignore-script set:html={musicDataJson} />
 
