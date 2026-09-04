@@ -48,13 +48,25 @@ const categoryLabel =
 			(entry.data.category === "real" ? "影视" : "动漫");
 
 const getStatusText = (status: number) => {
+	// 音乐条目用"想听/听过/在听"语义,影视沿用"想看/看过/在看"
+	const music = entry.data.category === "music";
 	switch (status) {
 		case 1:
-			return i18n(I18nKey.bangumiStatusWish);
+			return i18n(
+				music ? I18nKey.bangumiStatusMusicWish : I18nKey.bangumiStatusWish,
+			);
 		case 2:
-			return i18n(I18nKey.bangumiStatusWatched);
+			return i18n(
+				music
+					? I18nKey.bangumiStatusMusicListened
+					: I18nKey.bangumiStatusWatched,
+			);
 		case 3:
-			return i18n(I18nKey.bangumiStatusWatching);
+			return i18n(
+				music
+					? I18nKey.bangumiStatusMusicListening
+					: I18nKey.bangumiStatusWatching,
+			);
 		case 4:
 			return i18n(I18nKey.bangumiStatusOnHold);
 		case 5:
@@ -83,16 +95,42 @@ tracks.forEach((track, index) => {
 	if (track.url || track.metingId) playableIndexes.add(index);
 });
 
+// 播放语义与影视音乐页一致：tracks 有可播曲目 → 专辑模式(整轨列表);
+// 否则条目级 audioUrl/metingId → 单曲模式(单曲音源)
+const hasAlbumPlayable = playableIndexes.size > 0;
+const hasEntryPlayable = Boolean(entry.data.audioUrl || entry.data.metingId);
+const detailPlaylist = hasAlbumPlayable
+	? tracks.map((track) => ({
+			name: track.name,
+			artist: entry.data.artist || "",
+			url: track.url || "",
+			pic: imageSrc,
+			lrc: track.lrc || "",
+			metingServer: track.metingServer || "",
+			metingId: track.metingId || "",
+		}))
+	: hasEntryPlayable
+		? [
+				{
+					name: entry.data.title,
+					artist: entry.data.artist || "",
+					url: entry.data.audioUrl || "",
+					pic: imageSrc,
+					lrc: entry.data.lrcUrl || "",
+					metingServer: entry.data.metingServer || "",
+					metingId: entry.data.metingId || "",
+				},
+			]
+		: [];
+
+// "播放全部"起播位置：专辑模式从首个可播曲目开始(行号与歌单保持对齐)
+const firstPlayableIndex = hasAlbumPlayable
+	? tracks.findIndex((t) => Boolean(t.url || t.metingId))
+	: 0;
+
 const detailMusicData = JSON.stringify({
-	playlist: tracks.map((track) => ({
-		name: track.name,
-		artist: entry.data.artist || "",
-		url: track.url || "",
-		pic: imageSrc,
-		lrc: track.lrc || "",
-		metingServer: track.metingServer || "",
-		metingId: track.metingId || "",
-	})),
+	playlist: detailPlaylist,
+	firstPlayable: firstPlayableIndex,
 	metingApiUrl: musicPlayerConfig.meting?.api || "",
 	fallbackApis: musicPlayerConfig.meting?.fallbackApis || [],
 }).replace(/</g, "\\u003c");
@@ -112,7 +150,7 @@ const detailMusicData = JSON.stringify({
 		<div data-pagefind-body class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
 			<!-- header -->
 			<div class="onload-animation flex gap-6 mb-6">
-				<div class="mg-cover-wrap shrink-0">
+				<div class:list={["mg-cover-wrap shrink-0", { "mg-cover-square": entry.data.category === "music" }]}>
 					<img src={imageSrc} alt={entry.data.title} class="mg-cover-img" loading="lazy" />
 				</div>
 				<div class="min-w-0 flex-1">
@@ -182,63 +220,79 @@ const detailMusicData = JSON.stringify({
 			</Markdown>
 		</div>
 
-		{tracks.length > 0 && (
+		{detailPlaylist.length > 0 && (
 			<aside class="mg-tracklist" aria-label={i18n(I18nKey.moviesGamesTracklist)}>
 				<h2 class="mg-tracklist-title">
 					<span class="mg-tracklist-title-text">
 						{i18n(I18nKey.moviesGamesTracklist)}
-						<span class="mg-tracklist-count">{tracks.length}</span>
+						{hasAlbumPlayable && (
+							<span class="mg-tracklist-count">{tracks.length}</span>
+						)}
 					</span>
-					{playableIndexes.size > 0 && (
+					{hasAlbumPlayable ? (
 						<button type="button" class="mg-playall-btn" data-mg-playall title="播放全部">
 							<svg class="mg-playall-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
 							<span class="mg-playall-text">播放全部</span>
 						</button>
+					) : (
+						<button type="button" class="mg-playall-btn" data-mg-playall title="播放">
+							<svg class="mg-playall-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+							<span class="mg-playall-text">播放</span>
+						</button>
 					)}
 				</h2>
-				<ol class="mg-tracklist-list">
-					{tracks.map((track, index) => (
-						<li
-							class:list={[
-								"mg-track",
-								{ "mg-track-playable": playableIndexes.has(index) },
-								{ "mg-track-external": Boolean(track.link) },
-							]}
-							data-track-index={playableIndexes.has(index) ? index : undefined}
-						>
-							<span class="mg-track-no">
-								{String(index + 1).padStart(2, "0")}
-							</span>
-							{track.link && !playableIndexes.has(index) ? (
-								<a
-									class="mg-track-name mg-track-link"
-									href={track.link}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									{track.name}
-									<svg class="mg-track-external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
-								</a>
-							) : (
-								<span class="mg-track-name">{track.name}</span>
-							)}
-							{playableIndexes.has(index) && (
-								<svg class="mg-track-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
-							)}
-							{track.link && playableIndexes.has(index) && (
-								<a
-									class="mg-track-ext"
-									href={track.link}
-									target="_blank"
-									rel="noopener noreferrer"
-									title={track.name}
-								>
-									<svg class="mg-track-external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
-								</a>
-							)}
-						</li>
-					))}
-				</ol>
+				{hasAlbumPlayable ? (
+					<ol class="mg-tracklist-list">
+						{tracks.map((track, index) => (
+							<li
+								class:list={[
+									"mg-track",
+									{ "mg-track-playable": playableIndexes.has(index) },
+									{ "mg-track-external": Boolean(track.link) },
+								]}
+								data-track-index={playableIndexes.has(index) ? index : undefined}
+							>
+								<span class="mg-track-no">
+									{String(index + 1).padStart(2, "0")}
+								</span>
+								{track.link && !playableIndexes.has(index) ? (
+									<a
+										class="mg-track-name mg-track-link"
+										href={track.link}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{track.name}
+										<svg class="mg-track-external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
+									</a>
+								) : (
+									<span class="mg-track-name">{track.name}</span>
+								)}
+								{playableIndexes.has(index) && (
+									<svg class="mg-track-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+								)}
+								{track.link && playableIndexes.has(index) && (
+									<a
+										class="mg-track-ext"
+										href={track.link}
+										target="_blank"
+										rel="noopener noreferrer"
+										title={track.name}
+									>
+										<svg class="mg-track-external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" /></svg>
+									</a>
+								)}
+							</li>
+						))}
+					</ol>
+				) : (
+					<div class="mg-single-info">
+						<span class="mg-single-name">{entry.data.title}</span>
+						{entry.data.artist && (
+							<span class="mg-single-artist">{entry.data.artist}</span>
+						)}
+					</div>
+				)}
 			</aside>
 		)}
 		<script
@@ -263,6 +317,11 @@ const detailMusicData = JSON.stringify({
 		width: 100%;
 		aspect-ratio: 2/3;
 		object-fit: cover;
+	}
+
+	/* 音乐专辑封面为正方形(与列表页 1:1 一致),避免 2:3 裁切 */
+	.mg-cover-square .mg-cover-img {
+		aspect-ratio: 1/1;
 	}
 	.mg-cat-pill {
 		padding: 3px 12px;
@@ -393,6 +452,23 @@ const detailMusicData = JSON.stringify({
 		font-size: 0.7rem;
 		font-weight: 600;
 		color: #fff;
+	}
+
+	.mg-single-info {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		padding: 2px 2px 0;
+	}
+
+	.mg-single-name {
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.mg-single-artist {
+		font-size: 0.75rem;
+		color: var(--content-meta);
 	}
 
 	.mg-tracklist-list {

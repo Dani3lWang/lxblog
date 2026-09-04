@@ -586,18 +586,59 @@ const viewConfigStr = JSON.stringify({
         ui.btnRepeat.addEventListener('click', function () { mgr.cyclePlayMode(); });
         ui.btnMute.addEventListener('click', function () { mgr.toggleMute(); });
 
-        ui.volContainer.addEventListener('click', function (e) {
-            var rect = ui.volContainer.getBoundingClientRect();
-            var x = e.clientX - rect.left;
-            var val = Math.max(0, Math.min(1, x / rect.width));
-            mgr.setVolume(val);
+        // 进度/音量支持点击与按住拖动(pointer capture),拖动由位置计算;
+        // 拖动结束后浏览器合成的 click 会再触发一次同值 seek,幂等无副作用
+        function bindDrag(container, apply) {
+            var dragging = false;
+            container.addEventListener('pointerdown', function (e) {
+                dragging = true;
+                if (container.setPointerCapture) container.setPointerCapture(e.pointerId);
+                apply(e);
+            });
+            container.addEventListener('pointermove', function (e) {
+                if (dragging) apply(e);
+            });
+            var endDrag = function () { dragging = false; };
+            container.addEventListener('pointerup', endDrag);
+            container.addEventListener('pointercancel', endDrag);
+        }
+        function ratioFromEvent(e, container) {
+            var rect = container.getBoundingClientRect();
+            return Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        }
+
+        bindDrag(ui.volContainer, function (e) {
+            mgr.setVolume(ratioFromEvent(e, ui.volContainer));
         });
 
-        ui.progressContainer.addEventListener('click', function (e) {
-            var rect = ui.progressContainer.getBoundingClientRect();
-            var clickX = e.clientX - rect.left;
-            var percent = Math.min(Math.max(clickX / rect.width, 0), 1);
-            mgr.seek(percent);
+        bindDrag(ui.progressContainer, function (e) {
+            mgr.seek(ratioFromEvent(e, ui.progressContainer));
+        });
+
+        // 键盘调节:进度 ←/→ ±5s(Home/End 到头/尾),音量 ↑/↓ ±0.05
+        ui.progressContainer.addEventListener('keydown', function (e) {
+            var st = mgr.getState();
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                var delta = e.key === 'ArrowRight' ? 5 : -5;
+                mgr.seekToTime((st.currentTime || 0) + delta);
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                mgr.seekToTime(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                if (st.duration) mgr.seekToTime(st.duration);
+            }
+        });
+
+        ui.volContainer.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                mgr.setVolume((mgr.getState().volume || 0) + 0.05);
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                mgr.setVolume((mgr.getState().volume || 0) - 0.05);
+            }
         });
 
         // ── Drawer logic (local state) ───────────────────────────

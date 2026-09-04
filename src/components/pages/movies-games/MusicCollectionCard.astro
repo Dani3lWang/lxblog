@@ -1,4 +1,7 @@
 ---
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+
 interface Props {
 	title: string;
 	artist?: string;
@@ -10,6 +13,8 @@ interface Props {
 	playlistIndex: number;
 	/** 专辑 key：有该值时卡片为专辑形态，播放按钮触发整专播放 */
 	albumKey?: string;
+	/** 收藏状态 1-5(想听/听过/在听/搁置/抛弃),用于封面状态徽标 */
+	status?: number;
 }
 
 const {
@@ -22,6 +27,7 @@ const {
 	hasAudio,
 	playlistIndex,
 	albumKey,
+	status,
 } = Astro.props;
 
 const scoreText = score > 0 ? `${score}`.replace(/\.0$/, "") : "";
@@ -30,6 +36,23 @@ const typeLabels: Record<string, string> = {
 	single: "单曲",
 	ep: "EP",
 };
+
+const statusText =
+	status && status >= 1 && status <= 5
+		? (
+				[
+					i18n(I18nKey.bangumiStatusMusicWish),
+					i18n(I18nKey.bangumiStatusMusicListened),
+					i18n(I18nKey.bangumiStatusMusicListening),
+					i18n(I18nKey.bangumiStatusOnHold),
+					i18n(I18nKey.bangumiStatusDropped),
+				] as const
+			)[status - 1]
+		: "";
+const statusColor =
+	status && status >= 1 && status <= 5
+		? ["#3b82f6", "#22c55e", "#eab308", "#f97316", "#ef4444"][status - 1]
+		: "";
 ---
 
 <div
@@ -40,6 +63,15 @@ const typeLabels: Record<string, string> = {
 >
 	<div class="music-cover">
 		<img src={image} alt={title} class="music-img" loading="lazy" />
+
+		{statusText && (
+			<span
+				class="music-status-badge"
+				style={`background: ${statusColor};`}
+			>
+				{statusText}
+			</span>
+		)}
 
 		{musicType && (
 			<span class="music-type">
@@ -152,6 +184,19 @@ const typeLabels: Record<string, string> = {
 		background: rgba(0,0,0,.48);
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
+		z-index: 3;
+	}
+
+	.music-status-badge {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		padding: 3px 10px;
+		border-radius: 9999px;
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: .04em;
+		color: #fff;
 		z-index: 3;
 	}
 
@@ -313,6 +358,12 @@ const typeLabels: Record<string, string> = {
 			padding: 2px 7px;
 			font-size: 9px;
 		}
+		.music-status-badge {
+			top: 5px;
+			left: 5px;
+			padding: 2px 7px;
+			font-size: 9px;
+		}
 		.music-score {
 			top: 28px;
 			right: 5px;
@@ -336,6 +387,21 @@ const typeLabels: Record<string, string> = {
 		.music-play-icon {
 			width: 22px;
 			height: 22px;
+		}
+	}
+
+	/* 触屏设备(无 hover)：播放按钮与评述常显可点,无需悬停 */
+	@media (hover: none) {
+		.music-play-overlay {
+			opacity: 1;
+			background: rgba(0,0,0,.28);
+		}
+		.music-card.playing .music-play-overlay {
+			opacity: 0;
+		}
+		.music-comment-overlay {
+			opacity: 1;
+			background: rgba(0,0,0,.6);
 		}
 	}
 </style>

@@ -20,6 +20,24 @@ const hasScore = rawScore > 0;
 const douban = (
 	item as { douban?: { rate: string; url: string; title?: string } }
 ).douban;
+
+// 收藏状态徽标文案(1-5:想看/看过/在看/搁置/抛弃)
+const statusText =
+	item.type && item.type >= 1 && item.type <= 5
+		? (
+				[
+					i18n(I18nKey.bangumiStatusWish),
+					i18n(I18nKey.bangumiStatusWatched),
+					i18n(I18nKey.bangumiStatusWatching),
+					i18n(I18nKey.bangumiStatusOnHold),
+					i18n(I18nKey.bangumiStatusDropped),
+				] as const
+			)[item.type - 1]
+		: "";
+const statusColor =
+	item.type && item.type >= 1 && item.type <= 5
+		? ["#3b82f6", "#22c55e", "#eab308", "#f97316", "#ef4444"][item.type - 1]
+		: "";
 ---
 
 <div class="mg-card group">
@@ -36,6 +54,15 @@ const douban = (
 		/>
 
 		<div class="mg-gradient" />
+
+		{statusText && (
+			<span
+				class="mg-status-badge"
+				style={`background: ${statusColor};`}
+			>
+				{statusText}
+			</span>
+		)}
 
 		{hasScore && (
 			<span class="mg-score">
@@ -146,6 +173,19 @@ const douban = (
 		height: 11px;
 		color: #fbbf24;
 		flex-shrink: 0;
+	}
+
+	.mg-status-badge {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		padding: 3px 10px;
+		border-radius: 9999px;
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: .04em;
+		color: #fff;
+		z-index: 3;
 	}
 
 	.mg-info {
@@ -267,6 +307,12 @@ const douban = (
 			padding: 2px 7px 2px 5px;
 			font-size: 10px;
 		}
+		.mg-status-badge {
+			top: 5px;
+			left: 5px;
+			padding: 2px 7px;
+			font-size: 9px;
+		}
 		.mg-info {
 			padding: 0 8px 8px;
 		}
@@ -281,6 +327,14 @@ const douban = (
 		.mg-douban {
 			font-size: 10px;
 			padding: 3px 8px 3px 6px;
+		}
+	}
+
+	/* 触屏设备(无 hover)：评论与豆瓣评分常显可点,无需悬停 */
+	@media (hover: none) {
+		.mg-overlay {
+			opacity: 1;
+			background: rgba(0,0,0,.6);
 		}
 	}
 </style>

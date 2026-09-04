@@ -218,7 +218,9 @@ const musicItems: MusicItem[] = customBangumi
 			link: finalLink,
 			playlistIndex: -1,
 			hasAudio: entryHasAudio || albumHasAudio,
-			albumKey: !entryHasAudio && albumHasAudio ? data.title : undefined,
+			// 专辑模式优先(与详情页语义一致)：tracks 有可播曲目即整专播放，
+			// albumKey 用内容文件 id,防同名条目互相覆盖
+			albumKey: albumHasAudio ? removeFileExtension(item.id) : undefined,
 			tracks,
 		};
 	})
@@ -270,13 +272,12 @@ musicItems.forEach((item) => {
 	}
 });
 
-// Assign playlist index for each music item
-const musicPlaylistIndexByTitle = new Map<string, number>();
-musicPlaylist.forEach((track, i) => {
-	musicPlaylistIndexByTitle.set(track.name, i);
-});
-musicItems.forEach((item) => {
-	item.playlistIndex = musicPlaylistIndexByTitle.get(item.title) ?? -1;
+// 单曲条目按 musicPlaylist 顺序赋播放索引(基于内容 id 过滤,防同名错位)
+const musicPlaylistSingleItems = musicItems.filter(
+	(item) => item.hasAudio && !item.albumKey,
+);
+musicPlaylistSingleItems.forEach((item, i) => {
+	item.playlistIndex = i;
 });
 
 function getItemSubcategory(item: MgItem): string {
@@ -333,6 +334,9 @@ for (const tc of tabConfig) {
 		statusCounts[s] = (statusCounts[s] || 0) + 1;
 	}
 
+	// 音乐分区使用"听过/在听/想听"语义文案,影视沿用"看过/在看/想看"
+	const isMusicSection = tc.key === "music";
+
 	const filters = [
 		{
 			value: "all",
@@ -341,17 +345,23 @@ for (const tc of tabConfig) {
 		},
 		{
 			value: "collect",
-			label: i18n(I18nKey.bangumiFilterWatched),
+			label: isMusicSection
+				? i18n(I18nKey.bangumiFilterMusicListened)
+				: i18n(I18nKey.bangumiFilterWatched),
 			count: statusCounts.collect || 0,
 		},
 		{
 			value: "doing",
-			label: i18n(I18nKey.bangumiFilterWatching),
+			label: isMusicSection
+				? i18n(I18nKey.bangumiFilterMusicListening)
+				: i18n(I18nKey.bangumiFilterWatching),
 			count: statusCounts.doing || 0,
 		},
 		{
 			value: "wish",
-			label: i18n(I18nKey.bangumiFilterWish),
+			label: isMusicSection
+				? i18n(I18nKey.bangumiFilterMusicWish)
+				: i18n(I18nKey.bangumiFilterWish),
 			count: statusCounts.wish || 0,
 		},
 		{
@@ -486,6 +496,7 @@ const musicDataJson = JSON.stringify({
 																hasAudio={item.hasAudio}
 																playlistIndex={item.playlistIndex}
 																albumKey={item.albumKey}
+																status={item.status}
 															/>
 														</a>
 													</div>

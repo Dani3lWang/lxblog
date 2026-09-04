@@ -136,9 +136,10 @@ const managerConfigStr = JSON.stringify({
 
     // ── Meting fetch ─────────────────────────────────────────
     async function fetchMetingData() {
-        if (!config.meting) return;
+        if (!config.meting) return true;
         var m = config.meting;
         var apis = [m.api].concat(m.fallbackApis || []);
+        var playlistSnapshot = state.playlist; // await 期间页面可能 setPlaylist 接管
 
         for (var i = 0; i < apis.length; i++) {
             var baseApi = apis[i];
@@ -160,16 +161,22 @@ const managerConfigStr = JSON.stringify({
                 var data = await res.json();
 
                 if (Array.isArray(data) && data.length > 0) {
+                    // 已被页面歌单接管：放弃本次结果，由 init 短路返回
+                    if (state.playlist !== playlistSnapshot) return false;
                     state.playlist = data.map(function (item) {
+                        // 保留 meting 标识：直链过期后 error 分支可重新解析
+                        var idMatch = (item.url || '').match(/[?&]id=([^&]+)/);
                         return {
                             name: item.title || item.name || 'Unknown',
                             artist: item.author || item.artist || 'Unknown',
                             url: item.url,
                             pic: item.pic || item.cover || '',
-                            lrc: item.lrc
+                            lrc: item.lrc,
+                            metingServer: m.server,
+                            metingId: idMatch ? idMatch[1] : (item.id || item.musicId || '')
                         };
                     });
-                    return;
+                    return true;
                 }
             } catch (e) {
                 console.warn('Meting API failed for ' + baseApi, e);
@@ -252,6 +259,7 @@ const managerConfigStr = JSON.stringify({
 
     // ── Lyrics ───────────────────────────────────────────────
     function loadLyrics(track) {
+        var ver = loadVersion; // 切歌后丢弃过期歌词,防止旧曲覆盖新曲
         state.lyrics = [];
         state.currentLrcIndex = -1;
 
@@ -266,13 +274,18 @@ const managerConfigStr = JSON.stringify({
 
         if (isLrcUrl) {
             emit('fm:lyrics', { lyrics: [], status: 'loading' });
-            fetch(track.lrc)
+            var fetchFn = (window.__musicSource && window.__musicSource.fetchWithTimeout)
+                ? window.__musicSource.fetchWithTimeout
+                : fetch;
+            fetchFn(track.lrc)
                 .then(function (r) { return r.text(); })
                 .then(function (text) {
+                    if (ver !== loadVersion) return; // stale, discard
                     state.lyrics = parseLRC(text);
                     emit('fm:lyrics', { lyrics: state.lyrics, status: 'loaded' });
                 })
                 .catch(function () {
+                    if (ver !== loadVersion) return; // stale, discard
                     state.lyrics = [];
                     emit('fm:lyrics', { lyrics: [], status: 'failed' });
                 });
@@ -286,6 +299,7 @@ const managerConfigStr = JSON.stringify({
     var currentTrackUrlIndex = 0;
     var errorSkipTimeout = null;
     var retriedResolve = false; // 本次 loadTrack 内是否已重解析过一次直链
+    var consecutiveFailures = 0; // 连续播放失败计数,达阈值后停止自动跳过
 
     // 播放状态持久化（localStorage）与随机模式播放历史
     var STATE_KEY = 'music-player-state';
@@ -302,10 +316,13 @@ const managerConfigStr = JSON.stringify({
                 if (ver !== loadVersion) return; // stale, discard
                 state.isPlaying = true;
                 state.error = null;
+                consecutiveFailures = 0;
                 emit('fm:play-state', { isPlaying: true });
             }).catch(function (e) {
                 if (ver !== loadVersion) return; // stale, discard
                 if (e.name === 'AbortError') return; // interrupted by new load
+                state.isPlaying = false;
+                emit('fm:play-state', { isPlaying: false });
                 console.warn('Autoplay blocked:', e);
             });
         } else {
@@ -360,6 +377,8 @@ const managerConfigStr = JSON.stringify({
     function loadTrackWithResolve(index, autoPlay, ver, track) {
         var src = window.__musicSource;
         if (!src) {
+            state.isPlaying = false;
+            emit('fm:play-state', { isPlaying: false });
             emit('fm:error', { message: track.name + ' — ' + config.i18n.playFailed });
             return;
         }
@@ -377,7 +396,7 @@ const managerConfigStr = JSON.stringify({
     }
 
     function loadTrack(index, autoPlay) {
-        if (index < 0 || index >= state.playlist.length) return;
+        if (!state.playlist.length || !(index >= 0 && index < state.playlist.length)) return;
         // 随机模式下记录播放历史，playPrev 可回溯上一首
         if (state.currentIndex >= 0 && state.currentIndex !== index && state.playMode === 2) {
             historyStack.push(state.currentIndex);
@@ -410,6 +429,8 @@ const managerConfigStr = JSON.stringify({
                 emit('fm:play-state', { isPlaying: true });
             }).catch(function (e) {
                 if (e.name === 'AbortError') return;
+                state.isPlaying = false;
+                emit('fm:play-state', { isPlaying: false });
                 console.warn('Playback failed:', e);
             });
         } else {
@@ -420,6 +441,7 @@ const managerConfigStr = JSON.stringify({
     }
 
     function playNext(auto) {
+        if (!state.playlist.length) return;
         if (state.playMode === 1 && auto) {
             audio.currentTime = 0;
             audio.play();
@@ -435,6 +457,7 @@ const managerConfigStr = JSON.stringify({
     }
 
     function playPrev() {
+        if (!state.playlist.length) return;
         var prevIndex;
         if (state.playMode === 2) {
             // 随机模式优先回溯历史，无历史才随机跳
@@ -485,7 +508,8 @@ const managerConfigStr = JSON.stringify({
     }
 
     function playTrackByIndex(index) {
-        if (index === state.currentIndex && !audio.paused) {
+        if (index === state.currentIndex) {
+            // 播放中点击当前曲 → 暂停;暂停中点击当前曲 → 恢复播放
             togglePlay();
         } else {
             loadTrack(index, true);
@@ -554,12 +578,18 @@ const managerConfigStr = JSON.stringify({
         playNext(true);
     });
 
-    // 播放失败收尾：多曲歌单 2 秒后自动跳下一首，单曲歌单停止不循环
+    // 播放失败收尾：多曲歌单 2 秒后自动跳下一首。
+    // 单曲循环 / 歌单仅一首 / 连续失败达 3 次时停住等待用户操作，
+    // 避免坏链时 2 秒一次无限空转（单曲循环重播同一死链、整单死链自动自走）
     function failCurrentTrack(ver) {
+        consecutiveFailures++;
         state.error = 'playback error';
+        state.isPlaying = false;
+        emit('fm:play-state', { isPlaying: false });
         emit('fm:error', { message: config.i18n.playFailed });
         if (errorSkipTimeout) clearTimeout(errorSkipTimeout);
-        if (state.playlist.length > 1) {
+        var stopAutoSkip = state.playMode === 1 || consecutiveFailures >= 3 || state.playlist.length <= 1;
+        if (!stopAutoSkip) {
             errorSkipTimeout = setTimeout(function () {
                 if (ver === loadVersion) {
                     playNext(true);
@@ -580,7 +610,7 @@ const managerConfigStr = JSON.stringify({
         // 直链播放失败（过期/防盗链）且曲目是 meting：清空直链重新解析一次
         if (!retriedResolve && track && track.metingServer && track.metingId && window.__musicSource) {
             retriedResolve = true;
-            emit('fm:error', { message: track.name + '：' + config.i18n.playFailed });
+            emit('fm:error', { message: track.name + ' — ' + config.i18n.playFailed });
             track.url = '';
             window.__musicSource.resolveMusicTrack(track, musicSourceData()).then(function (resolved) {
                 if (ver !== loadVersion) return; // stale, discard
@@ -603,10 +633,18 @@ const managerConfigStr = JSON.stringify({
         restoreState(); // 恢复上次播放模式/静音;config 歌单的索引与进度
 
         try {
+            var loadResult = true;
             if (config.mode === 'meting' && config.meting) {
-                await fetchMetingData();
+                loadResult = await fetchMetingData();
             } else if (config.mode === 'local') {
                 state.playlist = config.localPlaylist || [];
+            }
+
+            // 页面歌单在 config 加载期间接管（用户首次交互即点页面曲目）：
+            // 放弃 config 装载，避免把页面歌单打回第一首并暂停
+            if (loadResult === false) {
+                state.initialized = true;
+                return;
             }
 
             if (state.playlist.length > 0) {

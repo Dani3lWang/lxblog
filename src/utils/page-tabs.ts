@@ -67,8 +67,10 @@ let activeDataKey = "";
 let activeAlbumKey = "";
 
 // 页面注入数据可携带的专辑子列表（albums[key] = 该专辑可播曲目）
+// 与"播放全部"的起播索引（跳过歌单开头不可播的曲目，保持行号对齐）
 interface PageMusicData extends MusicData {
 	albums?: Record<string, MusicTrack[]>;
+	firstPlayable?: number;
 }
 
 function initMgTabs(root: HTMLElement): void {
@@ -189,7 +191,8 @@ function clearPlayingUI(): void {
 }
 
 // 高亮当前播放:曲目行按歌单索引匹配(data-track-index),防重名误亮;
-// 卡片单曲按曲名匹配,整专播放按专辑 key 匹配
+// 单曲卡片优先按歌单索引(data-playlist-index)匹配,无索引才按曲名兜底;
+// 整专播放按专辑 key(data-album)匹配
 function updatePlayingUI(): void {
 	const mgr = getMgr();
 	if (!mgr || !isActivePlaylist()) {
@@ -209,11 +212,17 @@ function updatePlayingUI(): void {
 	const track = state.track;
 	document.querySelectorAll<HTMLElement>(".music-card").forEach((card) => {
 		const albumKey = card.dataset.album || "";
-		const titleEl = card.querySelector(".music-title");
-		const title = titleEl ? titleEl.textContent : "";
-		const match = activeAlbumKey
-			? albumKey === activeAlbumKey
-			: Boolean(track?.name && title === track.name);
+		let match = false;
+		if (activeAlbumKey) {
+			match = albumKey === activeAlbumKey;
+		} else if (track?.name) {
+			const pi = Number.parseInt(card.dataset.playlistIndex || "-1", 10);
+			if (pi >= 0) {
+				match = pi === idx;
+			} else {
+				match = card.querySelector(".music-title")?.textContent === track.name;
+			}
+		}
 		card.classList.toggle("playing", match);
 	});
 }
@@ -226,7 +235,8 @@ async function playSource(source: PageMusicData, index: number): Promise<void> {
 		console.warn("[MoviesGamesMusic] Music manager not found");
 		return;
 	}
-	activeAlbumKey = "";
+	// 注：activeAlbumKey 由入口管理——playAlbum 设置、playMusicByIndex 清空，
+	// 这里不重置,否则专辑卡整专播放的高亮会被立即清除
 	const dataKey = JSON.stringify(source);
 	let resolved: MusicTrack[];
 	if (
@@ -248,6 +258,7 @@ async function playSource(source: PageMusicData, index: number): Promise<void> {
 }
 
 async function playMusicByIndex(data: MusicData, index: number): Promise<void> {
+	activeAlbumKey = ""; // 单曲/曲目行播放：退出整专卡片高亮
 	await playSource(data, index);
 }
 
@@ -303,7 +314,12 @@ function initPlayAllButton(root: HTMLElement, data: PageMusicData): void {
 	const clone = btn.cloneNode(true) as HTMLElement;
 	btn.parentNode?.replaceChild(clone, btn);
 	clone.addEventListener("click", () => {
-		void playMusicByIndex(data, 0);
+		// 歌单与行号对齐、可能以不可播曲目开头：从首个可播曲目起播
+		const startIndex =
+			typeof data.firstPlayable === "number" && data.firstPlayable >= 0
+				? data.firstPlayable
+				: 0;
+		void playMusicByIndex(data, startIndex);
 	});
 }
 
