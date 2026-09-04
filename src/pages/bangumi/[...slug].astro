@@ -48,25 +48,30 @@ const categoryLabel =
 			(entry.data.category === "real" ? "影视" : "动漫");
 
 const getStatusText = (status: number) => {
-	// 音乐条目用"想听/听过/在听"语义,影视沿用"想看/看过/在看"
+	// 音乐条目无"想听"档(写评测即已听过),状态为 听过/在听/搁置/抛弃;
+	// 影视/动漫沿用"想看/看过/在看"
 	const music = entry.data.category === "music";
+	if (music) {
+		switch (status) {
+			case 2:
+				return i18n(I18nKey.bangumiStatusMusicListened);
+			case 3:
+				return i18n(I18nKey.bangumiStatusMusicListening);
+			case 4:
+				return i18n(I18nKey.bangumiStatusOnHold);
+			case 5:
+				return i18n(I18nKey.bangumiStatusDropped);
+			default:
+				return i18n(I18nKey.bangumiStatusUnknown);
+		}
+	}
 	switch (status) {
 		case 1:
-			return i18n(
-				music ? I18nKey.bangumiStatusMusicWish : I18nKey.bangumiStatusWish,
-			);
+			return i18n(I18nKey.bangumiStatusWish);
 		case 2:
-			return i18n(
-				music
-					? I18nKey.bangumiStatusMusicListened
-					: I18nKey.bangumiStatusWatched,
-			);
+			return i18n(I18nKey.bangumiStatusWatched);
 		case 3:
-			return i18n(
-				music
-					? I18nKey.bangumiStatusMusicListening
-					: I18nKey.bangumiStatusWatching,
-			);
+			return i18n(I18nKey.bangumiStatusWatching);
 		case 4:
 			return i18n(I18nKey.bangumiStatusOnHold);
 		case 5:

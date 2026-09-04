@@ -13,7 +13,7 @@ interface Props {
 	playlistIndex: number;
 	/** 专辑 key：有该值时卡片为专辑形态，播放按钮触发整专播放 */
 	albumKey?: string;
-	/** 收藏状态 1-5(想听/听过/在听/搁置/抛弃),用于封面状态徽标 */
+	/** 收藏状态 2-5(听过/在听/搁置/抛弃;想听档已移除),用于封面状态徽标 */
 	status?: number;
 }
 
@@ -37,21 +37,21 @@ const typeLabels: Record<string, string> = {
 	ep: "EP",
 };
 
+// 音乐收藏状态已无"想听"档,status 2-5 依次为 听过/在听/搁置/抛弃
 const statusText =
-	status && status >= 1 && status <= 5
+	status && status >= 2 && status <= 5
 		? (
 				[
-					i18n(I18nKey.bangumiStatusMusicWish),
 					i18n(I18nKey.bangumiStatusMusicListened),
 					i18n(I18nKey.bangumiStatusMusicListening),
 					i18n(I18nKey.bangumiStatusOnHold),
 					i18n(I18nKey.bangumiStatusDropped),
 				] as const
-			)[status - 1]
+			)[status - 2]
 		: "";
 const statusColor =
-	status && status >= 1 && status <= 5
-		? ["#3b82f6", "#22c55e", "#eab308", "#f97316", "#ef4444"][status - 1]
+	status && status >= 2 && status <= 5
+		? ["#22c55e", "#eab308", "#f97316", "#ef4444"][status - 2]
 		: "";
 ---
 

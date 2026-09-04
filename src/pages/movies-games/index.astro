@@ -334,7 +334,7 @@ for (const tc of tabConfig) {
 		statusCounts[s] = (statusCounts[s] || 0) + 1;
 	}
 
-	// 音乐分区使用"听过/在听/想听"语义文案,影视沿用"看过/在看/想看"
+	// 音乐分区状态收敛为"听过/在听/搁置/抛弃"(无想听档),影视沿用"看过/在看/想看"
 	const isMusicSection = tc.key === "music";
 
 	const filters = [
@@ -357,13 +357,15 @@ for (const tc of tabConfig) {
 				: i18n(I18nKey.bangumiFilterWatching),
 			count: statusCounts.doing || 0,
 		},
-		{
-			value: "wish",
-			label: isMusicSection
-				? i18n(I18nKey.bangumiFilterMusicWish)
-				: i18n(I18nKey.bangumiFilterWish),
-			count: statusCounts.wish || 0,
-		},
+		...(isMusicSection
+			? []
+			: [
+					{
+						value: "wish",
+						label: i18n(I18nKey.bangumiFilterWish),
+						count: statusCounts.wish || 0,
+					},
+				]),
 		{
 			value: "on_hold",
 			label: i18n(I18nKey.bangumiFilterOnHold),
