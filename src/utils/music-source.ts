@@ -53,7 +53,7 @@ export function resolveMetingUrl(
 export async function fetchWithTimeout(
 	url: string,
 	init?: RequestInit,
-	timeoutMs = MUSIC_FETCH_TIMEOUT_MS,
+	timeoutMs: number = MUSIC_FETCH_TIMEOUT_MS,
 ): Promise<Response> {
 	const controller = new AbortController();
 	const timer = setTimeout(() => controller.abort(), timeoutMs);
